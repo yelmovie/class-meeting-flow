@@ -1,0 +1,10 @@
+# 미사용 원본 에셋 보관소 (배포 제외)
+asset-bank/
+
+# 의존성/빌드
+node_modules/
+dist/
+
+# OS/편집기
+Thumbs.db
+.DS_Store

@@ -1,0 +1,1022 @@
+{
+  "schemaVersion": "4.0.0",
+  "documentName": "class_meeting_elementary_advanced_final_review_and_1year_stability",
+  "language": "ko-KR",
+  "generatedAt": "2026-06-12T01:14:10",
+  "project": {
+    "name": "학급회의 시간",
+    "serviceType": "frontend-first classroom meeting facilitation web app",
+    "targetLevel": {
+      "primary": "초등 4~6학년 심화 수준",
+      "supported": "초등 3학년은 담임/진행자 보조 하에 사용 가능",
+      "explicitlyNot": "유치원·저학년용 단순 놀이형 앱"
+    },
+    "coreConcept": "귀여운 UI를 유지하되, 실제 학급회의의 사고 절차를 강화한 초등 심화형 회의 진행 웹앱",
+    "oneLineDescription": "안건 입력부터 지난 회의 반성, 의견과 근거 수집, 기준 비교, 토론, 거수/투표, 실천 계획, 회의록 백업까지 30분 학급회의를 안정적으로 진행하는 웹앱",
+    "criticalDesignDecision": "시각 감성은 친근하게, 회의 내용은 초등 고학년 사고 수준으로 설계한다."
+  },
+  "executiveSummary": {
+    "levelAssessment": {
+      "isTooKindergarten": false,
+      "reason": "단순 캐릭터·스티커 중심이 아니라 문제 상황, 원인, 의견의 근거, 대안 비교, 공정성·실현 가능성 판단, 투표 해석, 실천 검증을 포함하기 때문에 초등 심화 수준에 적합하다.",
+      "risk": "캐릭터, 파스텔 배경, 큰 버튼만 강조하면 유치원 수준처럼 보일 수 있음",
+      "mitigation": [
+        "각 페이지에 심화 발문을 배치한다.",
+        "의견 입력은 '의견+이유+기대 효과+걱정되는 점' 구조로 만든다.",
+        "투표 전에는 찬성 근거와 걱정되는 점을 반드시 다룬다.",
+        "투표 후에는 실천 방법과 성공 기준을 입력하게 한다.",
+        "회의록에는 왜 그런 결정이 나왔는지 과정이 남도록 한다."
+      ]
+    },
+    "oneYearStabilityAssessment": {
+      "isStableForOneYearIfImplemented": true,
+      "requiredConditions": [
+        "localStorage 단독 금지",
+        "IndexedDB를 기본 저장소로 사용",
+        "localStorage는 현재 진행 회의 snapshot에만 사용",
+        "JSON 백업/복구 기능 제공",
+        "PDF 저장 제공",
+        "스키마 버전과 마이그레이션 함수 제공",
+        "이미지 로딩 실패 fallback 제공",
+        "ErrorBoundary와 복구 화면 제공",
+        "회의 120개 이상 저장 테스트 수행"
+      ],
+      "highestRisk": "브라우저 데이터 삭제, 저장소 손상, 스키마 변경, 이미지 에셋 누락",
+      "mitigation": "IndexedDB + localStorage snapshot + JSON export/import + print PDF + migration + fallback UI"
+    }
+  },
+  "prd": {
+    "problemDefinition": {
+      "mainProblem": "학급회의가 단순 의견 발표와 다수결로 끝나고, 실제 실천과 다음 회의 검증으로 이어지지 않는 문제",
+      "detailedProblems": [
+        "회의 흐름이 느슨해져 30분 안에 끝나지 않음",
+        "지난 회의 약속을 제대로 확인하지 않음",
+        "의견은 나오지만 이유와 근거가 부족함",
+        "찬성·반대·보류 수만 세고 반대/보류 이유를 분석하지 않음",
+        "결정 후 담당자, 기간, 성공 기준이 불명확함",
+        "회의록이 실천 검증 자료로 남지 않음",
+        "1년 동안 회의 기록을 안정적으로 유지하기 어려움"
+      ]
+    },
+    "productGoals": [
+      "30분 안에 학급회의를 단계적으로 진행한다.",
+      "학급 상황에 맞게 안건, 반성 질문, 투표 질문, 단계명을 수정할 수 있다.",
+      "모든 학생이 의견, 공감, 거수, 투표 방식으로 참여할 수 있다.",
+      "의견에는 이유와 근거를 포함하게 한다.",
+      "토론에서는 제안 설명, 질문, 찬성 이유, 걱정되는 점, 수정 제안을 다룬다.",
+      "거수/투표 결과를 자동으로 회의록에 반영한다.",
+      "결정사항을 실천 계획과 다음 회의 확인 항목으로 연결한다.",
+      "1년간 회의록을 안정적으로 저장, 백업, 복구한다."
+    ],
+    "nonGoals": [
+      "로그인/회원가입",
+      "실시간 다중 접속",
+      "학생 개인별 투표 선택 저장",
+      "채팅형 토론",
+      "경쟁형 게임화",
+      "단순 스티커 보상 중심 서비스",
+      "외부 공유 링크 자동 생성",
+      "백엔드 서버 필수 구조"
+    ],
+    "successMetrics": [
+      {
+        "metric": "30분 내 회의 완료율",
+        "target": "80% 이상"
+      },
+      {
+        "metric": "의견에 이유가 포함된 비율",
+        "target": "70% 이상"
+      },
+      {
+        "metric": "심화형 회의에서 걱정되는 점 입력률",
+        "target": "60% 이상"
+      },
+      {
+        "metric": "투표 후 실천 계획 작성률",
+        "target": "90% 이상"
+      },
+      {
+        "metric": "다음 회의에서 이전 결정사항 재확인률",
+        "target": "80% 이상"
+      },
+      {
+        "metric": "회의록 자동 생성 성공률",
+        "target": "95% 이상"
+      },
+      {
+        "metric": "새로고침 후 상태 복구 성공률",
+        "target": "95% 이상"
+      },
+      {
+        "metric": "연간 저장 가능한 회의 수",
+        "target": "최소 120회"
+      }
+    ]
+  },
+  "levelDesignGuidelines": {
+    "targetThinkingSkills": [
+      "문제 발견",
+      "사실 확인",
+      "원인 분석",
+      "근거 제시",
+      "대안 비교",
+      "공정성 판단",
+      "실현 가능성 판단",
+      "안전성 판단",
+      "반대 의견 수용",
+      "합의와 조정",
+      "실천 계획",
+      "결과 검증"
+    ],
+    "doNotMakeItKindergarten": [
+      "선택지만 크게 보여주고 끝내지 않는다.",
+      "캐릭터가 화면의 핵심 정보를 가리지 않게 한다.",
+      "스티커 보상보다 회의 결과와 실천 계획을 강조한다.",
+      "의견 게시판을 단순 낙서장처럼 만들지 않는다.",
+      "찬성 수가 많다고 바로 끝내지 않는다.",
+      "결과 화면을 축하 화면으로만 만들지 않는다."
+    ],
+    "makeItElementaryAdvanced": [
+      "의견 입력 시 이유를 요구한다.",
+      "심화형에서는 기대 효과와 걱정되는 점을 추가한다.",
+      "의견 모아보기에서 공감 수 외에도 공정성, 실현 가능성, 안전성을 비교한다.",
+      "토론 화면에서 질문, 찬성 이유, 걱정되는 점, 수정 제안을 분리한다.",
+      "투표 화면에서 반대와 보류 이유 확인을 안내한다.",
+      "결정사항 정리에서 성공 기준과 다음 회의 확인 항목을 필수화한다.",
+      "회의록에 과정과 결정 근거가 남도록 한다."
+    ],
+    "copyTone": {
+      "avoid": [
+        "귀여운 친구들, 눌러봐요!",
+        "스티커를 모아보자!",
+        "찬성 버튼 누르면 끝!",
+        "참 잘했어요!"
+      ],
+      "useInstead": [
+        "이 의견을 선택한 이유를 한 줄로 적어 보세요.",
+        "우리 반 전체에게 공정한 방법인지 확인해요.",
+        "실천하기 어려운 점이 있다면 먼저 적어 봐요.",
+        "다음 회의에서 무엇으로 확인할지 정해요.",
+        "반대와 보류 의견도 결정에 도움이 되는 정보예요."
+      ]
+    },
+    "difficultyModes": {
+      "basic": {
+        "label": "기본형",
+        "recommendedGrade": "초등 3~4학년",
+        "requiredInputs": [
+          "의견",
+          "이유",
+          "찬성/반대/보류",
+          "실천 방법"
+        ]
+      },
+      "advanced": {
+        "label": "심화형",
+        "recommendedGrade": "초등 5~6학년",
+        "requiredInputs": [
+          "문제 상황",
+          "원인",
+          "의견",
+          "이유",
+          "기대 효과",
+          "걱정되는 점",
+          "수정 제안",
+          "성공 기준",
+          "다음 회의 확인"
+        ]
+      }
+    }
+  },
+  "meetingFlow": {
+    "screenCount": "메인 + 회의 흐름 10장",
+    "pageOrder": [
+      "main_landing",
+      "page_01_meeting_prepare",
+      "page_02_flow_setup",
+      "page_03_start_guide",
+      "page_04_reflection",
+      "page_05_opinion_board",
+      "page_06_opinion_summary",
+      "page_07_discussion",
+      "page_08_vote",
+      "page_09_decision",
+      "page_10_report"
+    ],
+    "thirtyMinutePlan": [
+      {
+        "page": "page_03_start_guide",
+        "minutes": 2,
+        "goal": "안건, 회의 목표, 역할, 약속 확인"
+      },
+      {
+        "page": "page_04_reflection",
+        "minutes": 5,
+        "goal": "지난 약속 실천 정도와 원인 분석"
+      },
+      {
+        "page": "page_05_opinion_board",
+        "minutes": 6,
+        "goal": "의견, 이유, 기대 효과, 걱정되는 점 수집"
+      },
+      {
+        "page": "page_06_opinion_summary",
+        "minutes": 4,
+        "goal": "의견 묶기와 기준 비교로 토론 주제 선정"
+      },
+      {
+        "page": "page_07_discussion",
+        "minutes": 7,
+        "goal": "제안 설명, 질문, 찬성 이유, 걱정되는 점, 수정 제안"
+      },
+      {
+        "page": "page_08_vote",
+        "minutes": 3,
+        "goal": "찬성·반대·보류 수합과 결과 해석"
+      },
+      {
+        "page": "page_09_decision",
+        "minutes": 2,
+        "goal": "실천 계획, 담당자, 기간, 성공 기준 확정"
+      },
+      {
+        "page": "page_10_report",
+        "minutes": 1,
+        "goal": "회의록 확인, PDF 저장, JSON 백업 안내"
+      }
+    ],
+    "flowControl": {
+      "sequentialProgress": true,
+      "allowBack": true,
+      "allowSkipWithReason": true,
+      "pauseTimer": true,
+      "extendStageByOneMinute": true,
+      "teacherOverride": true,
+      "autoSaveOnEveryInput": true,
+      "autoSaveOnPageTransition": true,
+      "showCurrentStep": true,
+      "showElapsedTime": true,
+      "showRemainingTime": true
+    }
+  },
+  "pageDesigns": [
+    {
+      "id": "main_landing",
+      "title": "메인 페이지",
+      "purpose": "새 회의 시작, 이어하기, 샘플 회의 시작, 백업 불러오기",
+      "screenDesignDirection": "환영용 화면이지만 단순 게임 시작 화면처럼 보이지 않게 최근 회의, 백업, 회의 목표를 함께 보여준다.",
+      "maturityRisk": "캐릭터와 큰 시작 버튼만 있으면 유치해 보임",
+      "advancedUpgrade": "최근 회의 이어하기, 회의 기록 관리, 백업 불러오기를 노출한다.",
+      "mainSections": [
+        "앱 제목",
+        "새 회의 시작",
+        "저장된 회의 이어하기",
+        "샘플 회의 시작",
+        "JSON 백업 불러오기",
+        "소리/모션 설정"
+      ],
+      "data": [
+        "recentMeetings",
+        "lastSnapshot",
+        "backupImportStatus"
+      ],
+      "stabilityRequirements": [
+        "IndexedDB 최근 회의 목록 조회",
+        "저장 데이터 없음 처리",
+        "백업 JSON import 실패 처리"
+      ]
+    },
+    {
+      "id": "page_01_meeting_prepare",
+      "title": "회의 준비 입력",
+      "purpose": "회의 제목, 날짜, 인원, 안건, 문제 상황, 지난 약속, 회의 수준 설정",
+      "screenDesignDirection": "회의 전 준비 문서처럼 보이게 구성한다. 귀여운 캐릭터는 보조 안내자로만 사용한다.",
+      "mainSections": [
+        "회의 제목",
+        "날짜",
+        "학급 인원",
+        "오늘의 안건",
+        "문제 상황 설명",
+        "기대하는 변화",
+        "지난 회의 약속",
+        "기본형/심화형 선택"
+      ],
+      "advancedPrompts": [
+        "이 안건은 우리 반 생활에 어떤 영향을 주나요?",
+        "해결하지 않으면 어떤 불편함이 계속될까요?",
+        "오늘 회의에서 꼭 정해야 할 것은 무엇인가요?"
+      ],
+      "validation": [
+        "학급 인원 1~40",
+        "안건 제목 2자 이상",
+        "심화형에서는 문제 상황 설명 권장"
+      ],
+      "outputs": [
+        "meeting.title",
+        "meeting.totalStudents",
+        "agenda.title",
+        "agenda.problemContext",
+        "previous.promise",
+        "settings.depthMode"
+      ]
+    },
+    {
+      "id": "page_02_flow_setup",
+      "title": "회의 흐름 설정",
+      "purpose": "회의 단계명, 역할, 결정 기준, 거수 입력 방식 설정",
+      "screenDesignDirection": "학급회의 운영판 느낌. 단계와 역할의 책임을 분명히 보여준다.",
+      "mainSections": [
+        "단계명 수정",
+        "사회자",
+        "기록자",
+        "시간관리자",
+        "격려자",
+        "결정 기준",
+        "거수 방식",
+        "발문 수준"
+      ],
+      "roles": [
+        {
+          "name": "사회자",
+          "responsibility": "순서 진행, 발언권 안내, 다음 단계 이동"
+        },
+        {
+          "name": "기록자",
+          "responsibility": "의견, 거수 수, 결정사항 기록"
+        },
+        {
+          "name": "시간관리자",
+          "responsibility": "타이머 확인과 시간 연장 안내"
+        },
+        {
+          "name": "격려자",
+          "responsibility": "존중 표현과 경청 태도 확인"
+        }
+      ],
+      "advancedPrompts": [
+        "오늘 회의에서 어떤 기준으로 결정할까요?",
+        "다수결 외에 꼭 확인해야 할 조건이 있나요?"
+      ],
+      "outputs": [
+        "flow.stepLabels",
+        "roles",
+        "decisionRules",
+        "handRaiseMode"
+      ]
+    },
+    {
+      "id": "page_03_start_guide",
+      "title": "회의 시작 안내",
+      "purpose": "안건, 목표, 역할, 회의 약속, 결정 기준 확인",
+      "screenDesignDirection": "회의 시작 화면. 축하보다 절차와 목표를 강조한다.",
+      "mainSections": [
+        "오늘의 안건",
+        "회의 목표",
+        "결정 기준",
+        "역할 확인",
+        "회의 약속",
+        "타이머 시작"
+      ],
+      "meetingRules": [
+        "친구의 말을 끝까지 듣는다.",
+        "의견에는 이유를 함께 말한다.",
+        "반대할 때는 사람보다 의견에 대해 말한다.",
+        "결정 후에는 실천 방법까지 정한다."
+      ],
+      "advancedPrompts": [
+        "오늘 회의가 끝나면 무엇이 달라져야 하나요?",
+        "공정한 결정인지 어떻게 확인할까요?"
+      ],
+      "outputs": [
+        "timer.startedAt",
+        "currentStep"
+      ]
+    },
+    {
+      "id": "page_04_reflection",
+      "title": "지난 회의 실천 반성",
+      "purpose": "지난 약속의 실천 정도, 증거, 원인, 개선안 기록",
+      "screenDesignDirection": "감정 체크가 아니라 회고 분석 화면으로 설계한다.",
+      "mainSections": [
+        "지난 회의 약속",
+        "실천 정도 거수",
+        "실천 근거",
+        "어려웠던 원인",
+        "개선 제안"
+      ],
+      "handRaiseCounters": [
+        "잘 지켜졌어요",
+        "보통이에요",
+        "조금 어려웠어요"
+      ],
+      "advancedPrompts": [
+        "잘 지켜졌다고 판단한 근거는 무엇인가요?",
+        "어려웠다면 어떤 상황에서 어려웠나요?",
+        "같은 문제가 반복되지 않게 무엇을 바꿔야 하나요?"
+      ],
+      "outputs": [
+        "previous.handRaise",
+        "previous.evidence",
+        "previous.cause",
+        "previous.improvement"
+      ]
+    },
+    {
+      "id": "page_05_opinion_board",
+      "title": "의견 게시판",
+      "purpose": "의견, 이유, 기대 효과, 걱정되는 점 수집",
+      "screenDesignDirection": "포스트잇 감성은 유지하되, 의견 구조는 고학년형으로 만든다.",
+      "mainSections": [
+        "오늘의 안건",
+        "의견",
+        "이유",
+        "기대 효과",
+        "걱정되는 점",
+        "카테고리",
+        "공감 수",
+        "발표 희망 거수"
+      ],
+      "requiredInputsByMode": {
+        "basic": [
+          "opinion.text",
+          "opinion.reason"
+        ],
+        "advanced": [
+          "opinion.text",
+          "opinion.reason",
+          "opinion.expectedEffect",
+          "opinion.concern"
+        ]
+      },
+      "advancedPrompts": [
+        "이 방법이 우리 반 전체에게 왜 도움이 되나요?",
+        "실행할 때 걱정되는 점은 무엇인가요?",
+        "필요한 준비물이나 담당자가 있나요?"
+      ],
+      "outputs": [
+        "opinions[]",
+        "opinionPresenterHands"
+      ]
+    },
+    {
+      "id": "page_06_opinion_summary",
+      "title": "의견 모아보기",
+      "purpose": "의견을 묶고 기준에 따라 토론 주제를 선택",
+      "screenDesignDirection": "정리·분류·비교 화면. 단순 인기순보다 기준 비교를 강조한다.",
+      "mainSections": [
+        "공감 많은 의견",
+        "비슷한 의견 묶음",
+        "토론 후보",
+        "공정성",
+        "실현 가능성",
+        "안전성",
+        "후보별 거수",
+        "선택된 토론 주제"
+      ],
+      "comparisonCriteria": [
+        "공정성",
+        "실현 가능성",
+        "안전성",
+        "준비물 필요 여부",
+        "담당자 부담"
+      ],
+      "advancedPrompts": [
+        "공감 수가 많아도 실행하기 어려운 의견은 없나요?",
+        "두 의견을 합치면 더 좋은 방법이 되나요?",
+        "토론할 가치가 가장 큰 주제는 무엇인가요?"
+      ],
+      "outputs": [
+        "topicSelection.candidates",
+        "topicSelection.criteriaScores",
+        "topicSelection.selectedTopic"
+      ]
+    },
+    {
+      "id": "page_07_discussion",
+      "title": "토론 진행",
+      "purpose": "제안 설명, 질문, 찬성 이유, 걱정되는 점, 수정 제안 정리",
+      "screenDesignDirection": "토론방/회의장 느낌. 캐릭터보다 4~5개 토론 카드가 중심이다.",
+      "mainSections": [
+        "토론 주제",
+        "제안 설명",
+        "궁금한 점",
+        "찬성 이유",
+        "걱정되는 점",
+        "수정 제안",
+        "발언 거수"
+      ],
+      "handRaiseCounters": [
+        "발표하고 싶은 친구",
+        "질문 있는 친구",
+        "찬성 의견 말할 친구",
+        "걱정 의견 말할 친구"
+      ],
+      "advancedPrompts": [
+        "이 의견의 가장 큰 장점은 무엇인가요?",
+        "실제로 해보면 어떤 문제가 생길 수 있나요?",
+        "걱정을 줄이려면 어떤 조건을 붙이면 좋을까요?"
+      ],
+      "outputs": [
+        "discussion.proposal",
+        "discussion.questions",
+        "discussion.agreeReasons",
+        "discussion.concerns",
+        "discussion.revisionSuggestion",
+        "discussion.handRaise"
+      ]
+    },
+    {
+      "id": "page_08_vote",
+      "title": "투표하기 / 거수 수합",
+      "purpose": "찬성, 반대, 보류 수합과 결과 해석",
+      "screenDesignDirection": "선택 화면이지만 판단 기준과 재논의 조건을 함께 보여준다.",
+      "mainSections": [
+        "투표 질문",
+        "투표 방식",
+        "찬성",
+        "반대",
+        "보류",
+        "비율 그래프",
+        "결정 기준",
+        "재논의 조건"
+      ],
+      "decisionRules": [
+        "찬성률 60% 이상이면 채택 후보",
+        "보류가 30% 이상이면 조건 수정 또는 재논의 권장",
+        "반대 이유가 안전 문제이면 조건 검토",
+        "투표 후 반드시 실천 가능성 확인"
+      ],
+      "advancedPrompts": [
+        "반대나 보류가 나온 이유를 확인했나요?",
+        "바로 실천할 수 있는 결정인가요?",
+        "조건을 붙이면 더 좋은 결정이 되나요?"
+      ],
+      "outputs": [
+        "vote.agree",
+        "vote.disagree",
+        "vote.hold",
+        "vote.percentages",
+        "vote.interpretation"
+      ]
+    },
+    {
+      "id": "page_09_decision",
+      "title": "결정사항 정리",
+      "purpose": "결정을 실천 계획으로 전환",
+      "screenDesignDirection": "도장/문서 느낌은 유지하되 실행 계획서처럼 명확하게 구성한다.",
+      "mainSections": [
+        "투표 결과 요약",
+        "오늘의 결정",
+        "실천 방법",
+        "담당자",
+        "실천 기간",
+        "성공 기준",
+        "다음 회의 확인 내용",
+        "담당자 지원 거수"
+      ],
+      "advancedPrompts": [
+        "이 결정이 성공했다고 말하려면 어떤 모습을 보면 되나요?",
+        "담당자가 너무 부담스럽지는 않나요?",
+        "언제 다시 확인할까요?"
+      ],
+      "requiredFields": [
+        "decision.text",
+        "decision.practiceMethod",
+        "decision.owner",
+        "decision.period",
+        "decision.successCriteria",
+        "decision.nextReview"
+      ],
+      "outputs": [
+        "decision"
+      ]
+    },
+    {
+      "id": "page_10_report",
+      "title": "결과 공유 / 회의록",
+      "purpose": "회의 전체 과정과 결정을 공식 기록으로 저장",
+      "screenDesignDirection": "축하 화면이 아니라 다음 회의에서 다시 확인할 수 있는 회의록 화면이다.",
+      "mainSections": [
+        "회의 정보",
+        "지난 약속 반성",
+        "주요 의견",
+        "토론 요약",
+        "거수 기록",
+        "투표 결과",
+        "최종 결정",
+        "실천 계획",
+        "다음 회의 확인",
+        "선생님 한마디",
+        "PDF 저장",
+        "JSON 백업"
+      ],
+      "advancedPrompts": [
+        "회의록을 읽으면 왜 이 결정이 나왔는지 알 수 있나요?",
+        "다음 회의에서 확인할 내용이 분명한가요?"
+      ],
+      "outputs": [
+        "report",
+        "pdfExport",
+        "jsonBackup"
+      ]
+    }
+  ],
+  "problemLevelDesign": {
+    "purpose": "회의 주제가 너무 유치하지 않도록 생활 문제를 사고 과제로 바꾼다.",
+    "categories": [
+      {
+        "category": "학급 생활",
+        "basicQuestion": "우리 반 생활에서 불편한 점은 무엇인가요?",
+        "advancedQuestion": "불편함이 반복되는 원인과 영향을 분석하고, 모두에게 공정한 해결 방법을 제안해요.",
+        "topics": [
+          "청소 역할 공정 배분",
+          "급식 줄 질서",
+          "쉬는 시간 소음",
+          "교실 물건 관리",
+          "아침 활동 준비"
+        ]
+      },
+      {
+        "category": "관계와 배려",
+        "basicQuestion": "친구에게 바라는 점은 무엇인가요?",
+        "advancedQuestion": "서로 다른 입장을 고려해 갈등을 줄일 수 있는 학급 약속을 만들어요.",
+        "topics": [
+          "모둠 활동 역할 분담",
+          "발표 기회 균형",
+          "놀이 규칙 정하기",
+          "갈등 상황 말하기 방법"
+        ]
+      },
+      {
+        "category": "공간과 안전",
+        "basicQuestion": "어떤 공간을 더 안전하게 쓰고 싶나요?",
+        "advancedQuestion": "위험 요인을 찾고, 실천 가능한 예방 규칙과 확인 방법을 정해요.",
+        "topics": [
+          "복도에서 뛰지 않기",
+          "계단 이용 질서",
+          "화장실 사용 약속",
+          "체육 시간 준비"
+        ]
+      },
+      {
+        "category": "학습과 참여",
+        "basicQuestion": "수업 참여를 더 잘하려면 무엇이 필요할까요?",
+        "advancedQuestion": "참여가 어려운 이유를 분석하고, 학생이 스스로 지킬 수 있는 실천 방법을 정해요.",
+        "topics": [
+          "발표 순서 공정성",
+          "준비물 챙기기",
+          "모둠 발표 기준",
+          "수업 중 질문 방법"
+        ]
+      }
+    ]
+  },
+  "oneYearStabilityDesign": {
+    "storageVerdict": "1년 운영에는 localStorage 단독 구조가 위험하다. IndexedDB를 기본 저장소로 사용하고, localStorage는 현재 진행 회의 snapshot과 설정 캐시에만 사용한다.",
+    "storageArchitecture": {
+      "primaryStorage": "IndexedDB",
+      "recommendedLibrary": "idb or Dexie.js",
+      "secondaryStorage": "localStorage snapshot",
+      "backup": "JSON export/import",
+      "archive": "PDF export via window.print",
+      "reason": [
+        "localStorage는 용량 제한과 손상 위험이 큼",
+        "1년치 회의록은 구조화 저장이 필요",
+        "스키마 변경 시 마이그레이션이 필요",
+        "기기 변경과 브라우저 데이터 삭제에 대비해 JSON 백업이 필요"
+      ]
+    },
+    "dataRetention": {
+      "expectedMeetingsPerYear": {
+        "weekly": 40,
+        "twiceWeekly": 80,
+        "safeLimit": 120
+      },
+      "retentionPolicy": [
+        "1년치 회의는 IndexedDB에 저장",
+        "학기말 JSON 백업 권장",
+        "PDF 회의록 저장 가능",
+        "자동 삭제 기본 비활성화",
+        "학기별 보관함 제공"
+      ]
+    },
+    "schemaVersioning": {
+      "currentSchemaVersion": 4,
+      "rules": [
+        "모든 Meeting 객체에 schemaVersion 포함",
+        "앱 시작 시 저장된 데이터 버전 검사",
+        "구버전 데이터는 migration 함수로 최신 구조로 변환",
+        "마이그레이션 실패 시 원본 데이터를 preservedBackup에 보관"
+      ],
+      "exampleMigrations": [
+        "v1 opinions.reason 없음 -> '이유 미입력' 기본값 추가",
+        "v2 decision.successCriteria 없음 -> 빈 문자열 추가",
+        "v3 localStorage meetingState -> v4 IndexedDB meetings store로 이전"
+      ]
+    },
+    "crashPrevention": {
+      "errorBoundaries": [
+        "AppErrorBoundary",
+        "PageErrorBoundary",
+        "ReportRenderBoundary"
+      ],
+      "autosave": [
+        "입력 변경 debounce 500ms 저장",
+        "페이지 이동 시 즉시 저장",
+        "beforeunload에서 마지막 snapshot 저장",
+        "타이머 상태는 Date.now 기반으로 저장"
+      ],
+      "recovery": [
+        "앱 재시작 시 마지막 회의 복원",
+        "손상된 JSON 감지 시 백업 복원 안내",
+        "현재 페이지 렌더 실패 시 복구 화면으로 이동",
+        "회의록 생성 실패 시 원본 데이터 다운로드 제공"
+      ],
+      "assetFallback": [
+        "배경 이미지 실패 시 CSS gradient",
+        "캐릭터 이미지 실패 시 기본 SVG/CSS 아이콘",
+        "아이콘 이미지 실패 시 텍스트 라벨"
+      ],
+      "timerSafety": [
+        "setInterval 누적값에만 의존하지 않음",
+        "startedAt, pausedAt, accumulatedMs로 계산",
+        "탭 비활성화 후 돌아와도 시간 계산 유지"
+      ]
+    },
+    "performanceBudget": {
+      "initialLoad": "3MB 이하 권장",
+      "perPageAssetLimit": "이미지 10개 이하",
+      "perPageImageBudget": "1.5MB 이하 권장",
+      "lazyLoading": "현재 페이지와 다음 페이지 에셋만 preload",
+      "imagePolicy": [
+        "배경은 1600x900 또는 webp 권장",
+        "투명 캐릭터/아이콘은 png",
+        "버튼/입력창/카운터는 CSS",
+        "프린트용 화면에서는 고해상도 배경 제거 가능"
+      ]
+    },
+    "backupAndRestore": {
+      "requiredFeatures": [
+        "전체 회의 JSON 내보내기",
+        "단일 회의 JSON 내보내기",
+        "JSON 가져오기",
+        "회의록 PDF 저장",
+        "학기별 아카이브",
+        "저장소 상태 점검 화면"
+      ],
+      "backupPackageShape": {
+        "schemaVersion": 4,
+        "exportedAt": "ISO datetime",
+        "appVersion": "string",
+        "meetings": "Meeting[]",
+        "settings": "AppSettings"
+      }
+    },
+    "testingPlan": {
+      "unitTests": [
+        "HandRaiseCounter min/max",
+        "vote percentage calculation",
+        "schema migration v1->v4",
+        "report generation with empty values",
+        "timer pause/resume calculation"
+      ],
+      "integrationTests": [
+        "메인에서 회의록까지 전체 흐름",
+        "새로고침 후 상태 복구",
+        "IndexedDB 저장 후 회의 목록 조회",
+        "JSON export/import",
+        "PDF print layout"
+      ],
+      "loadTests": [
+        "회의 120개 저장",
+        "회의당 의견 50개 저장",
+        "회의록 PDF 40회 생성",
+        "앱 재시작 100회 복원"
+      ],
+      "manualTests": [
+        "iPad landscape 1194x834",
+        "iPad portrait 834x1194",
+        "Chrome desktop",
+        "Edge desktop",
+        "이미지 로딩 실패",
+        "저장소 용량 부족",
+        "긴 안건명",
+        "거수 수가 학급 인원을 넘는 경우"
+      ]
+    },
+    "maintenancePlan12Months": [
+      {
+        "month": 1,
+        "task": "MVP 배포 후 저장/복구 오류 점검"
+      },
+      {
+        "month": 2,
+        "task": "태블릿 세로 UI와 긴 문장 깨짐 수정"
+      },
+      {
+        "month": 3,
+        "task": "문제은행과 심화 발문 보강"
+      },
+      {
+        "month": 4,
+        "task": "1학기 중간 JSON 백업 점검"
+      },
+      {
+        "month": 5,
+        "task": "프린트/PDF 회의록 레이아웃 개선"
+      },
+      {
+        "month": 6,
+        "task": "1학기 보관함 내보내기 테스트"
+      },
+      {
+        "month": 7,
+        "task": "스키마 마이그레이션 리허설"
+      },
+      {
+        "month": 8,
+        "task": "2학기 회의 템플릿 업데이트"
+      },
+      {
+        "month": 9,
+        "task": "누적 회의 80개 이상 저장 테스트"
+      },
+      {
+        "month": 10,
+        "task": "사용자 피드백 기반 문구 수준 조정"
+      },
+      {
+        "month": 11,
+        "task": "연말 통합 회의록 내보내기 검수"
+      },
+      {
+        "month": 12,
+        "task": "전체 백업, 다음 학년도 초기화/복원 시나리오 점검"
+      }
+    ]
+  },
+  "dataModel": {
+    "stores": [
+      {
+        "name": "meetings",
+        "key": "id",
+        "indexes": [
+          "date",
+          "archived",
+          "updatedAt"
+        ]
+      },
+      {
+        "name": "settings",
+        "key": "id",
+        "records": [
+          "app-settings"
+        ]
+      },
+      {
+        "name": "backupLogs",
+        "key": "id",
+        "indexes": [
+          "createdAt"
+        ]
+      }
+    ],
+    "typescriptSketch": {
+      "Meeting": {
+        "id": "string",
+        "schemaVersion": "number",
+        "title": "string",
+        "date": "string",
+        "totalStudents": "number",
+        "depthMode": "basic | advanced",
+        "roles": "Roles",
+        "customText": "CustomText",
+        "previous": "PreviousReflection",
+        "agenda": "Agenda",
+        "opinions": "Opinion[]",
+        "topicSelection": "TopicSelection",
+        "discussion": "Discussion",
+        "vote": "VoteResult",
+        "decision": "Decision",
+        "teacherComment": "string",
+        "createdAt": "string",
+        "updatedAt": "string",
+        "archived": "boolean"
+      },
+      "Opinion": {
+        "id": "string",
+        "text": "string",
+        "reason": "string",
+        "expectedEffect": "string",
+        "concern": "string",
+        "category": "string",
+        "likes": "number"
+      },
+      "Decision": {
+        "text": "string",
+        "practiceMethod": "string",
+        "owner": "string",
+        "period": "string",
+        "successCriteria": "string",
+        "nextReview": "string",
+        "volunteerHands": "number"
+      }
+    }
+  },
+  "claudeCodeImplementationGuide": {
+    "recommendedStack": {
+      "frontend": "React + Vite + TypeScript",
+      "styling": "CSS variables + CSS Modules or plain CSS",
+      "state": "React Context + useReducer",
+      "storage": "IndexedDB via idb or Dexie.js",
+      "snapshot": "localStorage",
+      "pdf": "window.print + print.css",
+      "tests": "Vitest + React Testing Library"
+    },
+    "mustImplement": [
+      "메인 + 10페이지 순차 흐름",
+      "기본형/심화형 모드",
+      "거수 입력 컴포넌트",
+      "의견+이유+기대 효과+걱정 입력",
+      "의견 기준 비교",
+      "투표 결과 비율 계산",
+      "결정사항 실천 계획",
+      "자동 회의록",
+      "IndexedDB 저장",
+      "localStorage snapshot",
+      "JSON 백업/복구",
+      "스키마 마이그레이션",
+      "오류 복구 화면",
+      "이미지 fallback",
+      "태블릿 반응형"
+    ],
+    "doNotImplement": [
+      "로그인",
+      "서버 API",
+      "실시간 다중 접속",
+      "개인별 투표 기록 저장",
+      "스프라이트 시트",
+      "이미지 버튼",
+      "과도한 보상형 게임화"
+    ],
+    "components": [
+      "AppShell",
+      "PageShell",
+      "ProgressStepper",
+      "TimerPanel",
+      "HandRaiseCounter",
+      "EditableTextField",
+      "OpinionEditor",
+      "OpinionCard",
+      "CriteriaChecklist",
+      "VoteSummary",
+      "DecisionForm",
+      "ReportRenderer",
+      "BackupRestorePanel",
+      "MeetingArchive",
+      "ErrorBoundary",
+      "RecoveryScreen"
+    ],
+    "qualityGates": [
+      "새로고침 후 현재 페이지와 입력값 복구",
+      "회의 120개 저장 테스트",
+      "JSON 백업/복구 테스트",
+      "PDF 저장 테스트",
+      "스키마 v1/v2/v3 데이터 마이그레이션 테스트",
+      "이미지 로딩 실패 시 기능 유지",
+      "태블릿 세로 1컬럼 레이아웃 확인",
+      "각 페이지 이미지 에셋 10개 이하 확인",
+      "심화형 모드에서 근거 입력 구조 확인"
+    ]
+  },
+  "finalChecklist": {
+    "screenDesign": [
+      "캐릭터보다 회의 정보 카드가 중심인가?",
+      "각 페이지 목적이 겹치지 않는가?",
+      "초등 4~6학년이 보기에 지나치게 유치하지 않은가?",
+      "중요한 텍스트는 이미지가 아니라 코드로 렌더링되는가?"
+    ],
+    "meetingMethod": [
+      "지난 반성에서 원인과 개선안까지 다루는가?",
+      "의견에 이유가 포함되는가?",
+      "토론에서 찬성 이유와 걱정을 모두 다루는가?",
+      "투표 후 결과 해석을 하는가?",
+      "결정사항이 실천 계획으로 이어지는가?"
+    ],
+    "stability": [
+      "IndexedDB를 사용하는가?",
+      "JSON 백업/복구가 있는가?",
+      "스키마 마이그레이션이 있는가?",
+      "오류 복구 화면이 있는가?",
+      "이미지 실패 fallback이 있는가?",
+      "120회 이상 회의 저장 테스트를 통과하는가?"
+    ],
+    "oneYearOperation": [
+      "학기별 보관함이 있는가?",
+      "연말 전체 백업이 가능한가?",
+      "다음 학년도 초기화/복원 시나리오가 있는가?",
+      "교사가 데이터 손상 시 복구할 수 있는가?"
+    ]
+  },
+  "note": "이 JSON은 현재 대화에서 확정한 설계를 기준으로 작성했다. 이전에 업로드한 원본 참고 파일 일부는 세션에서 만료되어 직접 재열람하지 못했다."
+}
