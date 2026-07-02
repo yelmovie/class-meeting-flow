@@ -12,13 +12,13 @@
 
   const ASSETS = {
     backgrounds: [
-      asset("backgrounds", "ChatGPT Image 2026년 6월 11일 오후 11_58_33 (2).png"),
-      asset("backgrounds", "ChatGPT Image 2026년 6월 11일 오후 11_58_50 (1).png"),
-      asset("backgrounds", "ChatGPT Image 2026년 6월 12일 오전 12_01_15 (1).png"),
-      asset("backgrounds", "ChatGPT Image 2026년 6월 12일 오전 12_01_48 (1).png"),
-      asset("backgrounds", "ChatGPT Image 2026년 6월 12일 오전 12_02_33 (1).png"),
-      asset("backgrounds", "ChatGPT Image 2026년 6월 12일 오후 03_41_19 (1).png"),
-      asset("backgrounds", "ChatGPT Image 2026년 6월 12일 오후 03_41_47 (1).png")
+      asset("backgrounds", "bg-1.png"),
+      asset("backgrounds", "bg-2.png"),
+      asset("backgrounds", "bg-3.png"),
+      asset("backgrounds", "bg-4.png"),
+      asset("backgrounds", "bg-5.png"),
+      asset("backgrounds", "bg-6.png"),
+      asset("backgrounds", "bg-7.png")
     ],
     characters: {
       rabbit: asset("icons/discuss", "1.png"),
@@ -42,7 +42,7 @@
       hands: asset("icons/discuss", "22.png"),
       heart: asset("icons/discuss", "35.png"),
       target: asset("icons/discuss", "43.png"),
-      calendar: asset("icons", "ChatGPT Image 2026년 6월 12일 오후 03_41_27 (5).png"),
+      calendar: asset("icons", "calendar.png"),
       report: asset("icons/discuss", "59.png"),
       plane: asset("icons/discuss", "64.png"),
       board: asset("icons/discuss", "75.png")
