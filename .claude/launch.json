@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "discuss-static",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:\\Users\\bongb\\AppData\\Local\\Temp\\claude\\D--isamgpt-10discuss\\64aa73c9-a05f-4e3e-ba2c-9766c15ab58c\\scratchpad\\serve.js", "public", "8317"],
+      "port": 8317
+    }
+  ]
+}

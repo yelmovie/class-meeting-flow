@@ -21,31 +21,31 @@
       asset("backgrounds", "ChatGPT Image 2026년 6월 12일 오후 03_41_47 (1).png")
     ],
     characters: {
-      rabbit: asset("icons", "ChatGPT Image 2026년 6월 11일 오후 11_58_33 (1).png"),
-      plannerRabbit: asset("icons", "ChatGPT Image 2026년 6월 11일 오후 11_58_51 (2).png"),
-      fox: asset("icons", "ChatGPT Image 2026년 6월 11일 오후 11_59_29 (1).png"),
-      squirrel: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_00_15 (1).png"),
-      owl: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_02_44 (9).png"),
-      penguin: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_01_48 (2).png"),
-      koala: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_02_34 (2).png")
+      rabbit: asset("icons/discuss", "1.png"),
+      plannerRabbit: asset("icons/discuss", "6.png"),
+      fox: asset("icons/discuss", "14.png"),
+      squirrel: asset("icons/discuss", "30.png"),
+      owl: asset("icons/discuss", "24.png"),
+      penguin: asset("icons/discuss", "51.png"),
+      koala: asset("icons/discuss", "74.png")
     },
     icons: {
-      clipboard: asset("icons", "ChatGPT Image 2026년 6월 11일 오후 11_58_35 (4).png"),
-      pencil: asset("icons", "ChatGPT Image 2026년 6월 11일 오후 11_58_37 (5).png"),
-      megaphone: asset("icons", "ChatGPT Image 2026년 6월 11일 오후 11_58_54 (4).png"),
-      check: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_01_51 (4).png"),
-      x: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_01_54 (5).png"),
-      pause: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_01_56 (6).png"),
-      chart: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_01_57 (7).png"),
-      lock: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_01_59 (8).png"),
-      question: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_01_19 (3).png"),
-      hands: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_01_25 (6).png"),
-      heart: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_00_27 (6).png"),
-      target: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_00_56 (3).png"),
+      clipboard: asset("icons/discuss", "3.png"),
+      pencil: asset("icons/discuss", "5.png"),
+      megaphone: asset("icons/discuss", "8.png"),
+      check: asset("icons/discuss", "53.png"),
+      x: asset("icons/discuss", "54.png"),
+      pause: asset("icons/discuss", "55.png"),
+      chart: asset("icons/discuss", "56.png"),
+      lock: asset("icons/discuss", "52.png"),
+      question: asset("icons/discuss", "46.png"),
+      hands: asset("icons/discuss", "22.png"),
+      heart: asset("icons/discuss", "35.png"),
+      target: asset("icons/discuss", "43.png"),
       calendar: asset("icons", "ChatGPT Image 2026년 6월 12일 오후 03_41_27 (5).png"),
-      report: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_02_37 (4).png"),
-      plane: asset("icons", "ChatGPT Image 2026년 6월 12일 오전 12_02_43 (8).png"),
-      board: asset("icons", "ChatGPT Image 2026년 6월 12일 오후 03_41_19 (3).png")
+      report: asset("icons/discuss", "59.png"),
+      plane: asset("icons/discuss", "64.png"),
+      board: asset("icons/discuss", "75.png")
     }
   };
 
