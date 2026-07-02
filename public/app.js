@@ -12,13 +12,12 @@
 
   const ASSETS = {
     backgrounds: [
-      asset("backgrounds", "bg-1.png"),
-      asset("backgrounds", "bg-2.png"),
-      asset("backgrounds", "bg-3.png"),
-      asset("backgrounds", "bg-4.png"),
-      asset("backgrounds", "bg-5.png"),
-      asset("backgrounds", "bg-6.png"),
-      asset("backgrounds", "bg-7.png")
+      asset("backgrounds", "bg-1.jpg"),
+      asset("backgrounds", "bg-2.jpg"),
+      asset("backgrounds", "bg-3.jpg"),
+      asset("backgrounds", "bg-4.jpg"),
+      asset("backgrounds", "bg-5.jpg"),
+      asset("backgrounds", "bg-6.jpg")
     ],
     characters: {
       rabbit: asset("icons/discuss", "1.png"),
@@ -51,6 +50,40 @@
     }
   };
 
+  const SOUNDS = {
+    click: { path: asset("sound/sfx", "freesound_community-ui-click-43196.mp3"), volume: 0.5 },
+    open: { path: asset("sound/sfx", "litupsubway-ui-open-sfx-513358.mp3"), volume: 0.55 },
+    reward: { path: asset("sound/sfx", "freesound_community-badge-coin-win-14675.mp3"), volume: 0.6 },
+    success: { path: asset("sound/sfx", "meldix-success-340660.mp3"), volume: 0.7 },
+    fail: { path: asset("sound/sfx", "floraphonic-brass-fail-7-a-207129.mp3"), volume: 0.45 }
+  };
+
+  const ACTION_SOUNDS = {
+    "add-opinion": "reward",
+    "like-opinion": "reward",
+    "save-report": "success",
+    "timer-start": "open",
+    "select-topic": "open",
+    "delete-opinion": "fail"
+  };
+
+  const audioCache = {};
+
+  function playSound(name) {
+    try {
+      if (!state.meeting.soundEnabled || !SOUNDS[name]) return;
+      if (!audioCache[name]) {
+        audioCache[name] = new Audio(SOUNDS[name].path);
+        audioCache[name].preload = "auto";
+      }
+      const node = audioCache[name].cloneNode();
+      node.volume = SOUNDS[name].volume;
+      node.play().catch(() => {});
+    } catch (error) {
+      console.warn("sound skipped", error);
+    }
+  }
+
   const PAGES = [
     { id: "main", title: "학급회의 시간", subtitle: "30분 안에 의견, 토론, 투표, 결정, 회의록까지 이어가는 초등 심화 학급회의 도구", theme: "#19a78d", bg: ASSETS.backgrounds[0] },
     { id: "page_01_meeting_prepare", step: 1, short: "시작", title: "회의 준비 입력", subtitle: "안건과 문제 상황을 초등 심화 수준으로 정리합니다.", theme: "#159f84", bg: ASSETS.backgrounds[0], mascot: ASSETS.characters.rabbit },
@@ -58,11 +91,11 @@
     { id: "page_03_start_guide", step: 3, short: "의견", title: "회의 시작 안내", subtitle: "목표와 규칙을 확인하고 30분 회의를 시작합니다.", theme: "#2372df", bg: ASSETS.backgrounds[2], mascot: ASSETS.characters.fox },
     { id: "page_04_reflection", step: 4, short: "정리", title: "지난 회의 실천 반성", subtitle: "잘했는지보다 왜 그랬는지 분석합니다.", theme: "#e54b79", bg: ASSETS.backgrounds[2], mascot: asset("icons/discuss", "23.png") },
     { id: "page_05_opinion_board", step: 5, short: "의견 게시판", title: "의견 게시판", subtitle: "의견은 이유와 걱정되는 점까지 함께 적습니다.", theme: "#159f84", bg: ASSETS.backgrounds[2], mascot: ASSETS.characters.squirrel },
-    { id: "page_06_opinion_summary", step: 6, short: "의견 모아보기", title: "의견 모아보기", subtitle: "공감순이 아니라 기준 비교로 토론 주제를 정합니다.", theme: "#6d50dc", bg: ASSETS.backgrounds[5], mascot: ASSETS.characters.owl },
+    { id: "page_06_opinion_summary", step: 6, short: "의견 모아보기", title: "의견 모아보기", subtitle: "공감순이 아니라 기준 비교로 토론 주제를 정합니다.", theme: "#6d50dc", bg: ASSETS.backgrounds[1], mascot: ASSETS.characters.owl },
     { id: "page_07_discussion", step: 7, short: "토론", title: "토론 진행", subtitle: "질문, 찬성 이유, 걱정되는 점, 수정 제안을 균형 있게 다룹니다.", theme: "#f28a16", bg: ASSETS.backgrounds[3], mascot: ASSETS.characters.rabbit },
     { id: "page_08_vote", step: 8, short: "투표", title: "투표하기 / 거수 수합", subtitle: "찬성, 반대, 보류를 기록하고 결과를 해석합니다.", theme: "#2f80ed", bg: ASSETS.backgrounds[3], mascot: ASSETS.characters.penguin },
     { id: "page_09_decision", step: 9, short: "결정사항 정리", title: "결정사항 정리", subtitle: "결정을 실천 계획과 다음 회의 확인 기준으로 바꿉니다.", theme: "#159f84", bg: ASSETS.backgrounds[4], mascot: asset("icons/discuss", "66.png") },
-    { id: "page_10_report", step: 10, short: "회의록", title: "결과 공유 / 회의록", subtitle: "과정과 결정 근거를 저장하고 다음 회의로 연결합니다.", theme: "#6d50dc", bg: ASSETS.backgrounds[6], mascot: ASSETS.characters.koala }
+    { id: "page_10_report", step: 10, short: "회의록", title: "결과 공유 / 회의록", subtitle: "과정과 결정 근거를 저장하고 다음 회의로 연결합니다.", theme: "#6d50dc", bg: ASSETS.backgrounds[5], mascot: ASSETS.characters.koala }
   ];
 
   const STEP_COLORS = ["#19b999", "#a78bfa", "#2f80ed", "#f48fb1", "#7ccfff", "#ffb23e", "#14a889", "#7857d9", "#159f84", "#e54b79"];
@@ -204,7 +237,8 @@
     dbReady: false,
     dbFailed: false,
     saveTimer: null,
-    renderTimer: null
+    renderTimer: null,
+    lastRenderedPage: null
   };
 
   const root = document.getElementById("app");
@@ -267,6 +301,16 @@
       const action = button.dataset.action;
       const path = button.dataset.path;
 
+      playSound(ACTION_SOUNDS[action] || "click");
+
+      if (action === "toggle-sound") {
+        state.meeting.soundEnabled = !state.meeting.soundEnabled;
+        queueSave();
+        render();
+        if (state.meeting.soundEnabled) playSound("open");
+        return;
+      }
+
       if (action === "go") goTo(Number(button.dataset.page));
       if (action === "home") goTo(0);
       if (action === "next") goTo(Math.min(10, state.meeting.currentPage + 1));
@@ -297,7 +341,10 @@
   function render() {
     try {
       const page = PAGES[state.meeting.currentPage] || PAGES[1];
+      const pageChanged = state.lastRenderedPage !== state.meeting.currentPage;
+      state.lastRenderedPage = state.meeting.currentPage;
       root.innerHTML = page.id === "main" ? renderLanding(page) : renderPage(page);
+      if (pageChanged) root.firstElementChild?.classList.add("page-enter");
       updateDependentText();
     } catch (error) {
       console.error(error);
@@ -315,6 +362,7 @@
 
     return `
       <main class="app-page landing" style="--bg:url('${page.bg}'); --theme:${page.theme}">
+        <button class="sound-chip" type="button" data-action="toggle-sound" aria-label="${state.meeting.soundEnabled ? "소리 끄기" : "소리 켜기"}">${state.meeting.soundEnabled ? "🔊" : "🔇"}</button>
         <div class="landing-content">
           <section>
             <p class="page-kicker">초등 4~6학년 심화형 회의 진행</p>
@@ -351,6 +399,7 @@
     return `
       <main class="app-page" style="--bg:url('${page.bg}'); --theme:${page.theme}">
         <button class="home-chip" type="button" data-action="home" aria-label="처음으로">⌂</button>
+        <button class="sound-chip" type="button" data-action="toggle-sound" aria-label="${state.meeting.soundEnabled ? "소리 끄기" : "소리 켜기"}">${state.meeting.soundEnabled ? "🔊" : "🔇"}</button>
         <div class="app-shell">
           <header class="topbar">
             <section class="page-heading">
@@ -365,7 +414,7 @@
           </section>
           ${renderNav(page.step)}
         </div>
-        ${renderToolbar()}
+        ${renderToolbar(page.step)}
       </main>
     `;
   }
@@ -824,12 +873,18 @@
     `;
   }
 
-  function renderToolbar() {
+  function renderToolbar(step) {
+    if (step === 10) {
+      return `
+        <div class="toolbar" aria-label="빠른 도구">
+          <button type="button" data-action="copy-report" title="회의록 복사">📋</button>
+        </div>
+      `;
+    }
     return `
       <div class="toolbar" aria-label="빠른 도구">
         <button type="button" data-action="export-json" title="JSON 백업">JS</button>
         <button type="button" data-action="print" title="PDF 저장">PDF</button>
-        <button type="button" data-action="copy-report" title="회의록 복사">📋</button>
       </div>
     `;
   }
@@ -1066,7 +1121,8 @@
   function addOpinion() {
     const draft = state.meeting.opinionDraft;
     if (!draft.text?.trim() || !draft.reason?.trim()) {
-      alert("의견과 이유를 먼저 적어 주세요.");
+      playSound("fail");
+      toast("✏️ 의견과 이유를 먼저 적어 주세요.", "warn");
       return;
     }
     state.meeting.opinions.push({
@@ -1164,7 +1220,44 @@
     state.meeting.updatedAt = new Date().toISOString();
     await saveMeetingNow();
     state.recentMeetings = await getAllMeetings();
-    alert("회의가 저장되었습니다. PDF 또는 JSON으로도 백업해 주세요.");
+    launchConfetti();
+    toast("🎉 회의가 저장되었어요! PDF 또는 JSON으로도 백업해 주세요.");
+  }
+
+  function toast(message, tone = "info") {
+    document.querySelectorAll(".toast").forEach((node) => node.remove());
+    const node = document.createElement("div");
+    node.className = `toast ${tone}`;
+    node.setAttribute("role", "status");
+    node.textContent = message;
+    document.body.appendChild(node);
+    setTimeout(() => node.classList.add("show"), 20);
+    setTimeout(() => {
+      node.classList.remove("show");
+      setTimeout(() => node.remove(), 350);
+    }, 2800);
+  }
+
+  function launchConfetti() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const colors = ["#19b999", "#2f80ed", "#7857d9", "#ef4f85", "#f59e0b", "#7ccfff", "#ffb3cd"];
+    const layer = document.createElement("div");
+    layer.className = "confetti-layer";
+    layer.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < 44; i += 1) {
+      const piece = document.createElement("span");
+      piece.className = "confetti-piece";
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = colors[i % colors.length];
+      piece.style.animationDelay = `${Math.random() * 0.7}s`;
+      piece.style.animationDuration = `${2 + Math.random() * 1.4}s`;
+      piece.style.setProperty("--drift", `${(Math.random() - 0.5) * 220}px`);
+      piece.style.setProperty("--spin", `${540 + Math.random() * 540}deg`);
+      if (i % 3 === 0) piece.style.borderRadius = "50%";
+      layer.appendChild(piece);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 4200);
   }
 
   function exportJson() {
@@ -1208,12 +1301,12 @@
   async function copyReport() {
     const rows = Array.from(document.querySelectorAll(".report-row"));
     if (!rows.length) {
-      alert("회의록(10단계) 화면에서 사용할 수 있어요.");
+      toast("회의록(10단계) 화면에서 사용할 수 있어요.", "warn");
       return;
     }
     const text = rows.map((row) => row.innerText.replace(/\n/g, " ")).join("\n");
     await navigator.clipboard?.writeText(text);
-    alert("회의록 텍스트를 복사했습니다.");
+    toast("📋 회의록 텍스트를 복사했어요.");
   }
 
   function queueSave() {
