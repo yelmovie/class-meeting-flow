@@ -171,6 +171,7 @@ img {
   align-items: flex-start;
   justify-content: flex-end;
   padding-top: 8px;
+  margin-right: 50px;
 }
 
 .progress-item {
@@ -252,7 +253,7 @@ img {
   margin-top: 24px;
 }
 
-@media (min-width: 901px) {
+@media (min-width: 901px) and (orientation: portrait) {
   .page-body {
     min-height: max(440px, calc(100vh - 330px));
   }
@@ -1700,14 +1701,290 @@ h2 {
   }
 }
 
-@media print {
+/* ---------- 16:9 가로 화면(태블릿·전자칠판·데스크톱): 뷰포트 고정 스테이지 ---------- */
+
+@media (min-width: 901px) and (orientation: landscape) {
+  html,
   body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .app-page {
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  @supports (height: 100dvh) {
+    .app-page {
+      height: 100dvh;
+    }
+  }
+
+  .app-shell {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(12px, 2.4vh, 24px) 48px clamp(10px, 1.8vh, 18px);
+  }
+
+  .topbar {
+    flex: 0 0 auto;
+  }
+
+  .page-title {
+    font-size: clamp(24px, 4vh, 38px);
+  }
+
+  .page-subtitle {
+    margin-top: 4px;
+    font-size: clamp(13px, 2vh, 17px);
+  }
+
+  .page-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-top: clamp(8px, 1.6vh, 18px);
+  }
+
+  .workspace,
+  .workspace.wide,
+  .workspace.full {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px 8px 14px 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 87, 217, 0.35) transparent;
+  }
+
+  .workspace::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .workspace::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background: rgba(120, 87, 217, 0.3);
+  }
+
+  .mascot {
+    bottom: -8px;
+    max-height: min(72vh, 560px);
+  }
+
+  .cta-row {
+    flex: 0 0 auto;
+    margin-top: clamp(8px, 1.6vh, 16px);
+    padding-bottom: 0;
+  }
+
+  .cta-row > .btn {
+    min-height: clamp(48px, 7.2vh, 62px);
+    font-size: clamp(16px, 2.5vh, 19px);
+  }
+
+  .btn.xl {
+    min-height: clamp(52px, 7.8vh, 64px);
+    font-size: clamp(17px, 2.7vh, 21px);
+  }
+
+  /* 진행 바 컴팩트 */
+  .progress {
+    padding-top: 4px;
+  }
+
+  .progress-item {
+    width: 64px;
+  }
+
+  .progress-item::before {
+    top: 18px;
+    left: -32px;
+    width: 64px;
+  }
+
+  .step-dot {
+    width: 37px;
+    height: 37px;
+    font-size: 16px;
+    border-width: 3px;
+  }
+
+  .progress-item.done .step-dot::after {
+    font-size: 20px;
+  }
+
+  .progress-label {
+    width: 64px;
+    min-height: 26px;
+    font-size: 11.5px;
+  }
+
+  /* 콘텐츠 리듬 압축 */
+  .panel {
+    padding: clamp(14px, 2.6vh, 26px);
+  }
+
+  .panel-title {
+    margin-bottom: clamp(8px, 1.6vh, 16px);
+    font-size: clamp(19px, 3vh, 24px);
+  }
+
+  .panel-head {
+    margin-bottom: clamp(7px, 1.4vh, 14px);
+  }
+
+  .grid {
+    gap: clamp(10px, 1.9vh, 18px);
+  }
+
+  .stack {
+    gap: clamp(8px, 1.5vh, 14px);
+  }
+
+  .mt {
+    margin-top: clamp(10px, 1.9vh, 20px);
+  }
+
+  .chip {
+    width: clamp(40px, 6.6vh, 52px);
+    height: clamp(40px, 6.6vh, 52px);
+    font-size: clamp(19px, 3.2vh, 25px);
+  }
+
+  .info-row {
+    padding: clamp(8px, 1.7vh, 13px) clamp(12px, 1.6vw, 18px);
+  }
+
+  .row-input {
+    font-size: clamp(15px, 2.4vh, 19px);
+  }
+
+  .row-input.xl {
+    font-size: clamp(18px, 3vh, 27px);
+  }
+
+  .hero-band {
+    padding: clamp(12px, 2.2vh, 20px) clamp(16px, 2.2vw, 28px);
+  }
+
+  .hero-band .hero-img {
+    width: clamp(54px, 10vh, 84px);
+    height: clamp(54px, 10vh, 84px);
+  }
+
+  .hero-input,
+  .hero-static {
+    font-size: clamp(18px, 3.4vh, 30px);
+  }
+
+  .note-band {
+    margin-top: clamp(8px, 1.6vh, 18px);
+    padding: clamp(10px, 1.8vh, 16px) clamp(14px, 1.8vw, 22px);
+  }
+
+  .band-text {
+    font-size: clamp(14px, 2.2vh, 18px);
+  }
+
+  .band-text.big {
+    font-size: clamp(20px, 3.6vh, 30px);
+  }
+
+  .face {
+    width: clamp(50px, 9.4vh, 76px);
+    height: clamp(50px, 9.4vh, 76px);
+    font-size: clamp(26px, 5vh, 40px);
+  }
+
+  .face-card {
+    padding: clamp(12px, 2.2vh, 22px) 14px;
+  }
+
+  .face-card .face-num {
+    font-size: clamp(24px, 4.6vh, 36px);
+  }
+
+  .vote-card .vote-img {
+    width: clamp(64px, 13vh, 104px);
+    height: clamp(64px, 13vh, 104px);
+  }
+
+  .vote-card .vote-title {
+    font-size: clamp(19px, 3.4vh, 26px);
+  }
+
+  .opinion-card {
+    min-height: clamp(150px, 25vh, 200px);
+    padding: clamp(18px, 3.2vh, 26px) 18px 14px;
+  }
+
+  .report-row {
+    padding: clamp(7px, 1.4vh, 11px) 16px;
+  }
+
+  .list {
+    gap: clamp(7px, 1.4vh, 11px);
+  }
+
+  .step-row,
+  .list-row {
+    padding: clamp(7px, 1.5vh, 11px) 14px;
+  }
+
+  /* 랜딩 */
+  .landing {
+    height: 100vh;
+    padding: clamp(18px, 4vh, 60px) clamp(24px, 4vw, 60px);
+  }
+
+  @supports (height: 100dvh) {
+    .landing {
+      height: 100dvh;
+    }
+  }
+
+  .landing h1 {
+    font-size: clamp(40px, 11vh, 88px);
+  }
+
+  .landing p {
+    font-size: clamp(15px, 2.8vh, 22px);
+  }
+
+  .landing .panel {
+    max-height: 84vh;
+    overflow-y: auto;
+  }
+}
+
+@media print {
+  html,
+  body {
+    height: auto;
+    overflow: visible;
     background: #fff;
   }
 
   .app-page {
+    height: auto;
     min-height: auto;
+    overflow: visible;
     background: #fff !important;
+  }
+
+  .app-shell {
+    display: block;
+    height: auto;
+  }
+
+  .workspace,
+  .workspace.wide,
+  .workspace.full {
+    height: auto;
+    overflow: visible;
   }
 
   .app-page::before,

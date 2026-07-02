@@ -641,13 +641,10 @@
             </div>
             <div style="display:grid; gap:10px; justify-items:center; align-content:center; text-align:center">
               <span class="info-label" style="color:var(--blue)">발표 희망 거수</span>
-              ${chip("✋", "#2f80ed")}
-              ${pillCounter("", "opinionPresenterHands", "#2f80ed")}
+              ${pillCounter("✋", "opinionPresenterHands", "#2f80ed", "발표 희망 거수")}
+              <button class="btn mint sm" data-action="add-opinion" style="width:100%">＋ 의견 등록</button>
               <span class="muted small-text">손을 들면 발표 기회가 더 생겨요!</span>
             </div>
-          </div>
-          <div class="cta-row" style="margin-top:16px">
-            <button class="btn mint" data-action="add-opinion">의견 등록</button>
           </div>
         </section>
       </div>
