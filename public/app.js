@@ -45,7 +45,9 @@
       calendar: asset("icons", "calendar.png"),
       report: asset("icons/discuss", "59.png"),
       plane: asset("icons/discuss", "64.png"),
-      board: asset("icons/discuss", "75.png")
+      board: asset("icons/discuss", "75.png"),
+      megaphoneBig: asset("icons/discuss", "44.png"),
+      mail: asset("icons/discuss", "57.png")
     }
   };
 
@@ -54,12 +56,12 @@
     { id: "page_01_meeting_prepare", step: 1, short: "시작", title: "회의 준비 입력", subtitle: "안건과 문제 상황을 초등 심화 수준으로 정리합니다.", theme: "#159f84", bg: ASSETS.backgrounds[0], mascot: ASSETS.characters.rabbit },
     { id: "page_02_flow_setup", step: 2, short: "설정", title: "회의 흐름 설정", subtitle: "회의 단계, 역할, 결정 기준을 먼저 정합니다.", theme: "#6d50dc", bg: ASSETS.backgrounds[1], mascot: ASSETS.characters.plannerRabbit },
     { id: "page_03_start_guide", step: 3, short: "의견", title: "회의 시작 안내", subtitle: "목표와 규칙을 확인하고 30분 회의를 시작합니다.", theme: "#2372df", bg: ASSETS.backgrounds[2], mascot: ASSETS.characters.fox },
-    { id: "page_04_reflection", step: 4, short: "정리", title: "지난 회의 실천 반성", subtitle: "잘했는지보다 왜 그랬는지 분석합니다.", theme: "#e54b79", bg: ASSETS.backgrounds[2], mascot: ASSETS.characters.squirrel },
+    { id: "page_04_reflection", step: 4, short: "정리", title: "지난 회의 실천 반성", subtitle: "잘했는지보다 왜 그랬는지 분석합니다.", theme: "#e54b79", bg: ASSETS.backgrounds[2], mascot: asset("icons/discuss", "23.png") },
     { id: "page_05_opinion_board", step: 5, short: "의견 게시판", title: "의견 게시판", subtitle: "의견은 이유와 걱정되는 점까지 함께 적습니다.", theme: "#159f84", bg: ASSETS.backgrounds[2], mascot: ASSETS.characters.squirrel },
     { id: "page_06_opinion_summary", step: 6, short: "의견 모아보기", title: "의견 모아보기", subtitle: "공감순이 아니라 기준 비교로 토론 주제를 정합니다.", theme: "#6d50dc", bg: ASSETS.backgrounds[5], mascot: ASSETS.characters.owl },
     { id: "page_07_discussion", step: 7, short: "토론", title: "토론 진행", subtitle: "질문, 찬성 이유, 걱정되는 점, 수정 제안을 균형 있게 다룹니다.", theme: "#f28a16", bg: ASSETS.backgrounds[3], mascot: ASSETS.characters.rabbit },
     { id: "page_08_vote", step: 8, short: "투표", title: "투표하기 / 거수 수합", subtitle: "찬성, 반대, 보류를 기록하고 결과를 해석합니다.", theme: "#2f80ed", bg: ASSETS.backgrounds[3], mascot: ASSETS.characters.penguin },
-    { id: "page_09_decision", step: 9, short: "결정사항 정리", title: "결정사항 정리", subtitle: "결정을 실천 계획과 다음 회의 확인 기준으로 바꿉니다.", theme: "#159f84", bg: ASSETS.backgrounds[4], mascot: ASSETS.characters.fox },
+    { id: "page_09_decision", step: 9, short: "결정사항 정리", title: "결정사항 정리", subtitle: "결정을 실천 계획과 다음 회의 확인 기준으로 바꿉니다.", theme: "#159f84", bg: ASSETS.backgrounds[4], mascot: asset("icons/discuss", "66.png") },
     { id: "page_10_report", step: 10, short: "회의록", title: "결과 공유 / 회의록", subtitle: "과정과 결정 근거를 저장하고 다음 회의로 연결합니다.", theme: "#6d50dc", bg: ASSETS.backgrounds[6], mascot: ASSETS.characters.koala }
   ];
 
@@ -281,6 +283,7 @@
       if (action === "delete-opinion") deleteOpinion(button.dataset.id);
       if (action === "like-opinion") likeOpinion(button.dataset.id);
       if (action === "select-topic") selectTopic(button.dataset.label);
+      if (action === "set-criteria") setCriteria(button.dataset.key, Number(button.dataset.score));
       if (action === "timer-start") timerStart();
       if (action === "timer-pause") timerPause();
       if (action === "timer-extend") timerExtend();
@@ -404,20 +407,31 @@
   function renderPrepare() {
     return `
       <div class="workspace">
-        <section class="panel">
+        <section class="panel stack">
           <div class="grid two">
-            ${field("회의 제목", "title")}
-            ${field("날짜", "date", "date")}
-            ${field("학급 인원", "totalStudents", "number", { min: 1, max: 40 })}
-            ${selectField("회의 수준", "depthMode", [["basic", "기본형"], ["advanced", "심화형"]])}
+            ${infoField("회의 제목", "title", "📝", "#19b999")}
+            ${infoField("학급 인원", "totalStudents", "👥", "#2f80ed", { type: "number", attrs: { min: 1, max: 40 } })}
           </div>
-          <div class="grid" style="margin-top:18px">
-            ${field("오늘의 안건", "agenda.title")}
-            ${field("문제 상황 설명", "agenda.problemContext", "textarea")}
-            ${field("기대하는 변화", "agenda.expectedOutcome", "textarea")}
-            ${field("지난 회의 약속", "previous.promise")}
+          ${infoField("오늘의 안건", "agenda.title", "📣", "#ef4f85")}
+          ${infoField("문제 상황", "agenda.problemContext", "⚠️", "#8b5cf6", { type: "textarea" })}
+          ${infoField("기대하는 변화", "agenda.expectedOutcome", "🌈", "#2f80ed", { type: "textarea" })}
+          <div class="grid two">
+            ${infoField("지난 회의 약속", "previous.promise", "🤝", "#f59e0b")}
+            ${infoField("날짜", "date", "📅", "#ef4f85", { type: "date" })}
           </div>
-          <div class="warning">심화형에서는 안건뿐 아니라 문제 상황과 기대하는 변화를 함께 적어야 회의가 깊어집니다.</div>
+          <div class="info-row" style="border-color:#ded4f8; background:#f8f5ff">
+            ${chip("⭐", "#7857d9")}
+            <div class="info-body">
+              <span class="info-label" style="color:#7857d9">회의 수준</span>
+              <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center">
+                <select class="mini-select" data-field="depthMode">
+                  <option value="basic" ${state.meeting.depthMode === "basic" ? "selected" : ""}>기본형</option>
+                  <option value="advanced" ${state.meeting.depthMode === "advanced" ? "selected" : ""}>심화형</option>
+                </select>
+                <span style="font-size:15px; font-weight:800"><b style="color:#7857d9">심화형:</b> 의견에는 이유 · 기대 효과 · 걱정되는 점을 함께 기록합니다.</span>
+              </div>
+            </div>
+          </div>
         </section>
       </div>
     `;
@@ -425,46 +439,48 @@
 
   function renderFlowSetup() {
     const roles = [
-      ["host", "사회자", "순서 진행, 발언권 안내, 다음 단계 이동", "#19b999"],
-      ["recorder", "기록자", "의견, 거수 수, 결정사항 기록", "#49a4f5"],
-      ["timeKeeper", "시간관리자", "타이머 확인과 시간 연장 안내", "#8b5cf6"],
-      ["encourager", "격려자", "존중 표현과 경청 태도 확인", "#f472b6"]
+      ["host", "사회자", "🧑", "#19b999"],
+      ["recorder", "기록자", "✏️", "#2f80ed"],
+      ["timeKeeper", "시간관리자", "🕐", "#7857d9"],
+      ["encourager", "격려자", "❤️", "#ef4f85"]
     ];
     return `
       <div class="workspace wide">
         <div class="grid main">
           <section class="panel">
-            <h2>단계 이름</h2>
+            <h2 class="panel-title" style="color:#7857d9">단계 이름</h2>
             <ul class="list">
               ${state.meeting.flow.stepLabels.map((label, index) => `
-                <li class="list-row">
-                  <span class="badge">${index + 1}</span>
+                <li class="step-row">
+                  <span class="badge" style="--badge:${STEP_COLORS[index] || "#7857d9"}">${index + 1}</span>
                   <input data-field="flow.stepLabels.${index}" value="${escapeAttr(label)}" aria-label="${index + 1}단계 이름" />
-                  <button class="icon-btn minus" data-action="remove-step" data-index="${index}" aria-label="단계 삭제">×</button>
+                  <button class="row-x" data-action="remove-step" data-index="${index}" aria-label="단계 삭제">×</button>
                 </li>
               `).join("")}
             </ul>
-            <div class="actions">
-              <button class="btn secondary" data-action="add-step">단계 추가</button>
-            </div>
+            <button class="add-row" data-action="add-step">＋ 단계 추가</button>
           </section>
           <section class="panel">
-            <h2>오늘의 역할</h2>
-            ${roles.map(([key, label, desc, color]) => `
-              <div class="role-row">
-                <span class="role-dot" style="--role-color:${color}">${label.slice(0, 1)}</span>
-                <div class="field">
-                  <label>${label}</label>
-                  <input data-field="roles.${key}" value="${escapeAttr(state.meeting.roles[key])}" />
-                  <span class="muted small-text">${desc}</span>
+            <h2 class="panel-title" style="color:var(--mint)">오늘의 역할</h2>
+            <div class="stack">
+              ${roles.map(([key, label, emoji, color]) => `
+                <div class="info-row slim">
+                  ${chip(emoji, color)}
+                  <div class="info-body">
+                    <span class="info-label" style="color:${color}">${label}</span>
+                    <input class="row-input" data-field="roles.${key}" value="${escapeAttr(state.meeting.roles[key])}" aria-label="${label} 이름" />
+                  </div>
                 </div>
-              </div>
-            `).join("")}
-            <div class="card compact" style="margin-top:18px; border-color:#ffd36b">
-              <h3 class="card-title" style="color:#e08a00">결정 기준</h3>
-              <div class="grid two">
-                ${field("찬성 기준(%)", "decisionRules.agreeThreshold", "number", { min: 1, max: 100 })}
-                ${field("보류 재논의 기준(%)", "decisionRules.holdThreshold", "number", { min: 1, max: 100 })}
+              `).join("")}
+            </div>
+            <div class="rule-band">
+              ${chip("⭐", "#f59e0b")}
+              <div class="info-body">
+                <span class="info-label" style="color:var(--amber-deep)">결정 기준</span>
+                <div class="rule-line">
+                  찬성 <input class="mini-num" type="number" min="1" max="100" data-field="decisionRules.agreeThreshold" value="${escapeAttr(state.meeting.decisionRules.agreeThreshold)}" aria-label="찬성 기준 퍼센트" />% 이상 채택 후보 ·
+                  보류 <input class="mini-num" type="number" min="1" max="100" data-field="decisionRules.holdThreshold" value="${escapeAttr(state.meeting.decisionRules.holdThreshold)}" aria-label="보류 재논의 기준 퍼센트" />% 이상 재논의
+                </div>
               </div>
             </div>
           </section>
@@ -475,63 +491,80 @@
 
   function renderStartGuide() {
     const rules = [
-      "친구의 말을 끝까지 듣는다.",
-      "의견에는 이유를 함께 말한다.",
-      "반대할 때는 사람보다 의견에 대해 말한다.",
-      "결정 후에는 실천 방법까지 정한다."
+      ["👂", "끝까지 듣고 말해요"],
+      ["💬", "의견에는 이유를 붙여요"],
+      ["👥", "반대는 사람 말고 의견에 해요"],
+      ["✅", "결정 후 실천 방법까지 정해요"]
     ];
+    const timer = state.meeting.timer;
     return `
       <div class="workspace">
         <div class="grid main">
           <section class="panel">
-            <h2>우리 반 회의 약속</h2>
+            <h2 class="panel-title" style="color:var(--mint)">우리 반 회의 약속</h2>
             <ul class="list">
-              ${rules.map((rule, index) => `
-                <li class="list-row"><span class="badge">${index + 1}</span><strong>${rule}</strong></li>
+              ${rules.map(([emoji, rule]) => `
+                <li class="list-row">${chip(emoji, "#19b999")}<strong>${rule}</strong></li>
               `).join("")}
             </ul>
           </section>
           <section class="panel">
-            <div class="with-icon">
-              ${img(ASSETS.icons.megaphone, "안건 아이콘", "asset-icon large")}
-              <div>
-                <p class="page-kicker">오늘의 안건</p>
-                <h2>${escapeHtml(state.meeting.agenda.title)}</h2>
-              </div>
+            <div class="panel-head">
+              ${chip("📣", "#7857d9")}
+              <span style="color:var(--violet)">오늘의 안건</span>
             </div>
-            <p class="big-line">목표: ${escapeHtml(state.meeting.agenda.expectedOutcome)}</p>
-            <div class="card compact" style="margin-top:18px">
-              <strong>진행자 멘트</strong>
-              <p>지금부터 오늘의 학급회의를 시작하겠습니다. 오늘은 ${escapeHtml(state.meeting.agenda.title)}에 대해 이야기하겠습니다.</p>
-            </div>
-            ${renderTimerPanel()}
+            <input class="row-input xl" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘의 안건" />
+            <hr class="soft" />
+            <span class="info-label" style="color:var(--violet)">회의 목표</span>
+            <textarea class="row-input" data-field="agenda.expectedOutcome" rows="2" aria-label="회의 목표">${escapeHtml(state.meeting.agenda.expectedOutcome)}</textarea>
           </section>
+        </div>
+        <div class="note-band">
+          ${chip("💬", "#f59e0b")}
+          <div class="info-body">
+            <span class="info-label" style="color:var(--amber-deep)">진행자 멘트</span>
+            <p class="band-text">지금부터 오늘의 학급회의를 시작하겠습니다. 오늘은 "${escapeHtml(state.meeting.agenda.title)}"에 대해 이야기하겠습니다.</p>
+          </div>
+        </div>
+        <div class="note-band blue">
+          ${chip("⏱️", "#2f80ed")}
+          <div class="info-body">
+            <span class="info-label" style="color:var(--blue)">타이머 · ${timer.durationMinutes}분 회의</span>
+            <p class="band-text big" id="timerDisplay">${formatTime(getRemainingMs())}</p>
+          </div>
+          <div class="timer-actions">
+            <button class="btn primary sm" data-action="timer-start">타이머 시작</button>
+            <button class="btn ghost sm" data-action="timer-pause">${timer.running ? "일시정지" : "재개"}</button>
+            <button class="btn ghost sm" data-action="timer-extend">＋1분</button>
+          </div>
         </div>
       </div>
     `;
   }
 
   function renderReflection() {
-    const total = state.meeting.previous.handRaise.good + state.meeting.previous.handRaise.normal + state.meeting.previous.handRaise.hard;
+    const hr = state.meeting.previous.handRaise;
+    const total = hr.good + hr.normal + hr.hard;
     return `
       <div class="workspace wide">
-        <section class="hero-card with-icon">
-          ${img(ASSETS.icons.clipboard, "지난 약속 아이콘", "asset-icon large")}
-          <div>
-            <p class="page-kicker">지난 회의 약속</p>
-            <p class="big-line">${escapeHtml(state.meeting.previous.promise || "지난 회의에서 정한 약속")}</p>
-          </div>
-        </section>
-        <div class="grid three" style="margin-top:22px">
-          ${metricCard("잘 지켜졌어요", "previous.handRaise.good", ASSETS.icons.check, "#19b999")}
-          ${metricCard("보통이에요", "previous.handRaise.normal", ASSETS.icons.pause, "#f59e0b")}
-          ${metricCard("조금 어려웠어요", "previous.handRaise.hard", ASSETS.icons.x, "#e54b79")}
+        ${heroBand("#ef4f85", img(ASSETS.icons.clipboard, "지난 약속 아이콘", "hero-img"), "지난 회의 약속",
+          `<input class="hero-input" data-field="previous.promise" value="${escapeAttr(state.meeting.previous.promise)}" aria-label="지난 회의 약속" />`)}
+        <div class="grid reflect mt">
+          ${faceCard("잘 지켜졌어요", hr.good, "🙂", "#19b999")}
+          ${faceCard("보통이에요", hr.normal, "😐", "#f59e0b")}
+          ${faceCard("조금 어려웠어요", hr.hard, "😥", "#ef4f85")}
+          <section class="panel side">
+            <div class="panel-head">${chip("✋", "#2f80ed")}<span style="color:var(--blue); font-size:17px">손들기 결과</span></div>
+            ${sideCount("🙂", "잘 지킴", "previous.handRaise.good", "#19b999")}
+            ${sideCount("😐", "보통", "previous.handRaise.normal", "#f59e0b")}
+            ${sideCount("😥", "어려움", "previous.handRaise.hard", "#ef4f85")}
+          </section>
         </div>
         ${total > state.meeting.totalStudents ? `<div class="warning">거수 합계 ${total}명이 학급 인원 ${state.meeting.totalStudents}명을 넘었어요. 수를 다시 확인해 주세요.</div>` : ""}
-        <div class="grid three" style="margin-top:22px">
-          ${textCard("실천 근거", "previous.evidence", ASSETS.icons.question)}
-          ${textCard("어려웠던 원인", "previous.cause", ASSETS.icons.heart)}
-          ${textCard("개선 제안", "previous.improvement", ASSETS.icons.pencil)}
+        <div class="grid three mt">
+          ${noteCard("실천 근거", "previous.evidence", "🔍", "#19b999")}
+          ${noteCard("어려웠던 원인", "previous.cause", "❓", "#ef4f85")}
+          ${noteCard("개선 제안", "previous.improvement", "💡", "#2f80ed")}
         </div>
       </div>
     `;
@@ -540,28 +573,32 @@
   function renderOpinionBoard() {
     return `
       <div class="workspace wide">
-        <section class="hero-card with-icon">
-          ${img(ASSETS.icons.clipboard, "안건 아이콘", "asset-icon large")}
-          <div>
-            <p class="page-kicker">오늘의 안건</p>
-            <p class="big-line">${escapeHtml(state.meeting.agenda.title)}</p>
-          </div>
-        </section>
-        <div class="grid three" style="margin-top:22px">
-          ${state.meeting.opinions.slice(0, 3).map((opinion, index) => renderOpinionCard(opinion, index)).join("")}
+        ${heroBand("#19b999", img(ASSETS.icons.clipboard, "안건 아이콘", "hero-img"), "오늘의 안건",
+          `<input class="hero-input" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘의 안건" />`)}
+        <div class="grid three mt">
+          ${state.meeting.opinions.map((opinion, index) => renderOpinionCard(opinion, index)).join("")}
         </div>
-        <section class="panel" style="margin-top:22px">
-          <h2>내 의견</h2>
-          <div class="grid two">
-            ${field("의견", "opinionDraft.text")}
-            ${field("이유", "opinionDraft.reason")}
-            ${field("기대 효과", "opinionDraft.expectedEffect")}
-            ${field("걱정되는 점", "opinionDraft.concern")}
-            ${field("카테고리", "opinionDraft.category")}
-            ${counter("발표 희망 거수", "opinionPresenterHands")}
+        <section class="panel mt">
+          <div class="split-side">
+            <div>
+              <span class="info-label" style="color:var(--blue)">내 의견</span>
+              <input class="row-input xl" data-field="opinionDraft.text" value="${escapeAttr(state.meeting.opinionDraft.text)}" placeholder="의견을 적어 보세요" aria-label="내 의견" />
+              <input class="row-input" data-field="opinionDraft.reason" value="${escapeAttr(state.meeting.opinionDraft.reason)}" placeholder="이유: 왜 그렇게 생각하나요?" aria-label="이유" style="font-size:16px; font-weight:800" />
+              <div class="grid three" style="gap:10px; margin-top:12px">
+                ${miniField("기대 효과", "opinionDraft.expectedEffect")}
+                ${miniField("걱정되는 점", "opinionDraft.concern")}
+                ${miniField("카테고리", "opinionDraft.category")}
+              </div>
+            </div>
+            <div style="display:grid; gap:10px; justify-items:center; align-content:center; text-align:center">
+              <span class="info-label" style="color:var(--blue)">발표 희망 거수</span>
+              ${chip("✋", "#2f80ed")}
+              ${pillCounter("", "opinionPresenterHands", "#2f80ed")}
+              <span class="muted small-text">손을 들면 발표 기회가 더 생겨요!</span>
+            </div>
           </div>
-          <div class="actions">
-            <button class="btn primary" data-action="add-opinion">의견 등록</button>
+          <div class="cta-row" style="margin-top:16px">
+            <button class="btn mint" data-action="add-opinion">의견 등록</button>
           </div>
         </section>
       </div>
@@ -570,46 +607,52 @@
 
   function renderOpinionSummary() {
     const top = [...state.meeting.opinions].sort((a, b) => b.likes - a.likes).slice(0, 3);
+    const rankColors = ["#ef4f85", "#2f80ed", "#7857d9"];
     const criteria = [
-      ["공정성", "fairness"],
-      ["실현 가능성", "feasibility"],
-      ["안전성", "safety"],
-      ["준비물 필요", "preparation"],
-      ["담당자 부담", "burden"]
+      ["공정성", "fairness", "⚖️", "#19b999"],
+      ["실현 가능성", "feasibility", "🎯", "#2f80ed"],
+      ["안전성", "safety", "🛡️", "#f59e0b"],
+      ["준비물 필요", "preparation", "📦", "#7857d9"],
+      ["담당자 부담", "burden", "🧑", "#ef4f85"]
     ];
     return `
       <div class="workspace wide">
         <div class="grid two">
           <section class="panel">
-            <h2>공감 많은 의견</h2>
+            <div class="panel-head">${chip("❤️", "#ef4f85")}<span style="color:var(--pink)">공감 많은 의견</span></div>
             <ul class="list">
               ${top.map((opinion, index) => `
-                <li class="list-row">
-                  <span class="badge">${index + 1}</span>
-                  <strong>${escapeHtml(opinion.text)}</strong>
-                  <span class="tag">♥ ${opinion.likes}</span>
+                <li class="rank-row" style="--rank:${rankColors[index]}">
+                  <span class="rank-badge">${index + 1}</span>
+                  <span class="rank-text">${escapeHtml(opinion.text)}</span>
+                  <button class="like-pill" data-action="like-opinion" data-id="${opinion.id}" aria-label="공감하기">♥ ${opinion.likes}</button>
                 </li>
               `).join("")}
             </ul>
+            <div class="hint-band">💡 하트를 누르면 의견에 공감을 표현할 수 있어요!</div>
           </section>
           <section class="panel">
-            <h2>기준 비교</h2>
-            ${criteria.map(([label, key]) => criteriaRow(label, state.meeting.topicSelection.criteriaScores[key] || 0)).join("")}
+            <div class="panel-head">${chip("⚖️", "#7857d9")}<span style="color:var(--violet)">기준 비교</span></div>
+            ${criteria.map(([label, key, emoji, color]) => criteriaRow(label, key, emoji, color)).join("")}
+            <div class="hint-band violet">✨ 점을 눌러 기준 점수를 바꿀 수 있어요!</div>
           </section>
         </div>
-        <section class="hero-card" style="margin-top:22px">
-          <p class="page-kicker">선택된 토론 주제</p>
-          <p class="big-line">${escapeHtml(state.meeting.topicSelection.selectedTopic)}</p>
-          <div class="grid three" style="margin-top:20px">
-            ${state.meeting.topicSelection.candidates.map((candidate) => `
-              <div class="card compact">
-                <strong>${escapeHtml(candidate.label)}</strong>
-                ${counter("후보 거수", `topicSelection.candidates.${state.meeting.topicSelection.candidates.indexOf(candidate)}.hands`)}
-                <button class="btn secondary" data-action="select-topic" data-label="${escapeAttr(candidate.label)}" style="width:100%;margin-top:12px">토론 주제로 선택</button>
-              </div>
-            `).join("")}
+        <section class="hero-band mt" style="--band:#f59e0b">
+          <div class="hero-body">
+            <span class="info-label" style="color:var(--amber-deep)">✨ 선택된 토론 주제</span>
+            <input class="hero-input" data-field="topicSelection.selectedTopic" value="${escapeAttr(state.meeting.topicSelection.selectedTopic)}" aria-label="선택된 토론 주제" />
+            <span class="muted small-text">모두가 공정하게 참여하고, 책임감을 키울 수 있는 방법을 함께 찾아봅시다! 💙</span>
           </div>
         </section>
+        <div class="grid three mt">
+          ${state.meeting.topicSelection.candidates.map((candidate, index) => `
+            <div class="card candidate-card">
+              <strong>${escapeHtml(candidate.label)}</strong>
+              ${pillCounter("후보 거수", `topicSelection.candidates.${index}.hands`, "#19b999")}
+              <button class="btn secondary sm" data-action="select-topic" data-label="${escapeAttr(candidate.label)}">토론 주제로 선택</button>
+            </div>
+          `).join("")}
+        </div>
       </div>
     `;
   }
@@ -617,25 +660,24 @@
   function renderDiscussion() {
     return `
       <div class="workspace wide">
-        <section class="hero-card with-icon">
-          ${img(ASSETS.icons.megaphone, "토론 아이콘", "asset-icon large")}
-          <div>
-            <p class="page-kicker">토론 주제</p>
-            <p class="big-line">${escapeHtml(state.meeting.topicSelection.selectedTopic)}</p>
+        ${heroBand("#f59e0b", img(ASSETS.icons.megaphoneBig, "토론 확성기", "hero-img"), "토론 주제",
+          `<input class="hero-input" data-field="topicSelection.selectedTopic" value="${escapeAttr(state.meeting.topicSelection.selectedTopic)}" aria-label="토론 주제" />`)}
+        <div class="split-side mt">
+          <div class="grid two">
+            ${pastelNote("제안 설명", "discussion.proposal", "📄", "#2f80ed")}
+            ${pastelNote("궁금한 점", "discussion.questions", "❓", "#7857d9")}
+            ${pastelNote("찬성 이유", "discussion.agreeReasons", "👍", "#19b999")}
+            ${pastelNote("걱정되는 점", "discussion.concerns", "😟", "#ef4f85")}
+            <div style="grid-column:1 / -1">
+              ${pastelNote("수정 제안", "discussion.revisionSuggestion", "💡", "#f59e0b")}
+            </div>
           </div>
-        </section>
-        <div class="grid two" style="margin-top:22px">
-          ${textCard("제안 설명", "discussion.proposal", ASSETS.icons.report)}
-          ${textCard("궁금한 점", "discussion.questions", ASSETS.icons.question)}
-          ${textCard("찬성 이유", "discussion.agreeReasons", ASSETS.icons.check)}
-          ${textCard("걱정되는 점", "discussion.concerns", ASSETS.icons.x)}
-          ${textCard("수정 제안", "discussion.revisionSuggestion", ASSETS.icons.pencil)}
-          <section class="card">
-            <h3 class="card-title">발언 거수</h3>
-            ${counter("발표 희망", "discussion.handRaise.presenters")}
-            ${counter("질문 있음", "discussion.handRaise.questions")}
-            ${counter("찬성 발언", "discussion.handRaise.agreeSpeakers")}
-            ${counter("걱정 발언", "discussion.handRaise.concernSpeakers")}
+          <section class="panel side">
+            <div class="panel-head">${chip("✋", "#2f80ed")}<span style="color:var(--blue); font-size:17px">발언 거수</span></div>
+            ${sideCount("🧑", "발표 희망", "discussion.handRaise.presenters", "#2f80ed")}
+            ${sideCount("❓", "질문 있음", "discussion.handRaise.questions", "#7857d9")}
+            ${sideCount("👍", "찬성 발언", "discussion.handRaise.agreeSpeakers", "#19b999")}
+            ${sideCount("😟", "걱정 발언", "discussion.handRaise.concernSpeakers", "#ef4f85")}
           </section>
         </div>
       </div>
@@ -656,35 +698,28 @@
 
     return `
       <div class="workspace wide">
-        <section class="hero-card with-icon">
-          ${img(ASSETS.icons.lock, "투표 아이콘", "asset-icon large")}
+        <div class="split-side" style="grid-template-columns:1fr 300px">
           <div>
-            <p class="page-kicker">투표 질문</p>
-            <p class="big-line">${escapeHtml(state.meeting.vote.question || state.meeting.topicSelection.selectedTopic)}</p>
-          </div>
-        </section>
-        <div class="grid three" style="margin-top:22px">
-          ${voteCard("찬성", "좋다고 생각해요", "vote.agree", ASSETS.icons.check, "#19b999")}
-          ${voteCard("반대", "다른 방법이 필요해요", "vote.disagree", ASSETS.icons.x, "#e54b79")}
-          ${voteCard("보류", "조금 더 생각해요", "vote.hold", ASSETS.icons.pause, "#8b5cf6")}
-        </div>
-        ${warning}
-        <div class="grid two" style="margin-top:22px">
-          <section class="panel">
-            <h2>결과 해석</h2>
-            <div class="metric" style="--metric-color:#159f84">
-              <span class="label">찬성률</span>
-              <span class="value">${agreeRate}%</span>
-              <div class="bar" style="--metric-color:#159f84"><span style="--value:${agreeRate}%"></span></div>
+            ${heroBand("#ef4f85", "", "투표 질문",
+              `<input class="hero-input" data-field="vote.question" value="${escapeAttr(state.meeting.vote.question || state.meeting.topicSelection.selectedTopic)}" aria-label="투표 질문" />`)}
+            <div class="grid three mt">
+              ${voteCard("찬성", "좋다고 생각해요", "vote.agree", ASSETS.icons.check, "#19b999")}
+              ${voteCard("반대", "다른 방법이 필요해요", "vote.disagree", ASSETS.icons.x, "#e54b79")}
+              ${voteCard("보류", "조금 더 생각해요", "vote.hold", ASSETS.icons.pause, "#8b5cf6")}
             </div>
-            <p><strong>${interpretation}</strong></p>
-          </section>
-          <section class="panel">
-            <h2>결정 기준</h2>
-            <ul class="list">
-              <li class="list-row"><span class="badge">%</span>찬성 ${state.meeting.decisionRules.agreeThreshold}% 이상이면 채택 후보</li>
-              <li class="list-row"><span class="badge">?</span>보류 ${state.meeting.decisionRules.holdThreshold}% 이상이면 재논의 권장</li>
-              <li class="list-row"><span class="badge">!</span>안전 문제가 있으면 조건 검토</li>
+            ${warning}
+          </div>
+          <section class="panel side result-panel">
+            ${img(ASSETS.icons.mail, "결과 해석 아이콘", "result-img")}
+            <span class="info-label" style="color:var(--blue)">결과 해석</span>
+            <p class="rate-line">찬성률 <b class="rate" style="color:var(--mint-deep)">${agreeRate}%</b></p>
+            <div class="bar"><span style="--value:${agreeRate}%"></span></div>
+            <p class="interp">${interpretation}</p>
+            <hr class="soft" style="width:100%" />
+            <ul class="mini-rules">
+              <li>✅ 찬성 ${state.meeting.decisionRules.agreeThreshold}% 이상이면 채택 후보</li>
+              <li>⏸️ 보류 ${state.meeting.decisionRules.holdThreshold}% 이상이면 재논의 권장</li>
+              <li>⚠️ 안전 문제가 있으면 조건 검토</li>
             </ul>
           </section>
         </div>
@@ -695,24 +730,20 @@
   function renderDecision() {
     return `
       <div class="workspace wide">
-        <section class="hero-card with-icon">
-          ${img(ASSETS.icons.chart, "투표 결과 아이콘", "asset-icon large")}
-          <div>
-            <p class="page-kicker">투표 결과 요약</p>
-            <p class="big-line">찬성 ${state.meeting.vote.agree}명 · 반대 ${state.meeting.vote.disagree}명 · 보류 ${state.meeting.vote.hold}명</p>
-          </div>
-        </section>
-        <div class="grid two" style="margin-top:22px">
-          ${textCard("오늘의 결정", "decision.text", ASSETS.icons.target)}
-          ${textCard("실천 방법", "decision.practiceMethod", ASSETS.icons.check)}
-          ${textCard("담당자", "decision.owner", ASSETS.icons.hands)}
-          ${textCard("실천 기간", "decision.period", ASSETS.icons.calendar)}
-          ${textCard("성공 기준", "decision.successCriteria", ASSETS.icons.heart)}
-          ${textCard("다음 회의 확인", "decision.nextReview", ASSETS.icons.clipboard)}
+        ${heroBand("#19b999", `<span class="chip" style="--chip:#19b999">📊</span>`, "투표 결과 요약",
+          `<p class="hero-static">찬성 ${state.meeting.vote.agree}명 · 반대 ${state.meeting.vote.disagree}명 · 보류 ${state.meeting.vote.hold}명</p>`)}
+        <div class="grid two mt">
+          ${infoField("오늘의 결정", "decision.text", "🎯", "#19b999")}
+          ${infoField("실천 방법", "decision.practiceMethod", "🧹", "#2f80ed")}
+          ${infoField("담당자", "decision.owner", "🧑", "#7857d9")}
+          ${infoField("실천 기간", "decision.period", "📅", "#ef4f85")}
+          ${infoField("성공 기준", "decision.successCriteria", "🏅", "#f59e0b")}
+          ${infoField("다음 회의 확인", "decision.nextReview", "📋", "#19b999")}
         </div>
-        <section class="panel" style="margin-top:22px">
-          ${counter("담당자 지원 거수", "decision.volunteerHands")}
-        </section>
+        <div class="cta-row" style="justify-content:center; margin-top:20px">
+          ${pillCounter("담당자 지원 거수", "decision.volunteerHands", "#19b999")}
+          <span class="muted small-text" style="max-width:260px">ℹ️ 담당자를 응원하는 친구들의 거수를 확인하고 기록해요.</span>
+        </div>
       </div>
     `;
   }
@@ -720,64 +751,74 @@
   function renderReport() {
     const rows = [
       ["회의 제목", state.meeting.title],
-      ["날짜", state.meeting.date],
-      ["학급 인원", `${state.meeting.totalStudents}명`],
+      ["날짜", `${state.meeting.date} · ${state.meeting.totalStudents}명`],
       ["오늘의 역할", `사회자 ${state.meeting.roles.host}, 기록자 ${state.meeting.roles.recorder}, 시간관리자 ${state.meeting.roles.timeKeeper}, 격려자 ${state.meeting.roles.encourager}`],
-      ["지난 약속 반성", `${state.meeting.previous.promise} · 잘 지킴 ${state.meeting.previous.handRaise.good}명 / 보통 ${state.meeting.previous.handRaise.normal}명 / 어려움 ${state.meeting.previous.handRaise.hard}명`],
-      ["주요 의견", state.meeting.opinions.slice(0, 3).map((op) => `${op.text} (${op.reason})`).join(" / ")],
-      ["토론 주제", state.meeting.topicSelection.selectedTopic],
+      ["지난 약속 반성", `${state.meeting.previous.promise} · 잘 지킴 ${state.meeting.previous.handRaise.good} / 보통 ${state.meeting.previous.handRaise.normal} / 어려움 ${state.meeting.previous.handRaise.hard}`],
+      ["주요 의견", state.meeting.opinions.slice(0, 3).map((op) => op.text).join(" / ")],
       ["토론 요약", `제안: ${state.meeting.discussion.proposal} / 걱정: ${state.meeting.discussion.concerns} / 수정: ${state.meeting.discussion.revisionSuggestion}`],
-      ["거수 기록", `발표 ${state.meeting.discussion.handRaise.presenters}명, 질문 ${state.meeting.discussion.handRaise.questions}명, 찬성 발언 ${state.meeting.discussion.handRaise.agreeSpeakers}명, 걱정 발언 ${state.meeting.discussion.handRaise.concernSpeakers}명`],
-      ["투표 결과", `찬성 ${state.meeting.vote.agree}명 / 반대 ${state.meeting.vote.disagree}명 / 보류 ${state.meeting.vote.hold}명`],
+      ["투표 결과", `찬성 ${state.meeting.vote.agree} / 반대 ${state.meeting.vote.disagree} / 보류 ${state.meeting.vote.hold}`],
       ["오늘의 결정", state.meeting.decision.text],
       ["실천 방법", state.meeting.decision.practiceMethod],
-      ["담당자", state.meeting.decision.owner],
-      ["실천 기간", state.meeting.decision.period],
-      ["성공 기준", state.meeting.decision.successCriteria],
-      ["다음 회의 확인", state.meeting.decision.nextReview],
-      ["선생님 한마디", state.meeting.teacherComment]
+      ["담당자", `${state.meeting.decision.owner} · ${state.meeting.decision.period}`],
+      ["다음 확인", state.meeting.decision.nextReview]
     ];
 
     return `
       <div class="workspace wide">
         <div class="grid main">
           <section class="panel">
-            <div class="with-icon">
-              ${img(ASSETS.icons.report, "회의록 아이콘", "asset-icon large")}
-              <div>
-                <p class="page-kicker">오늘의 회의록</p>
-                <h2>${escapeHtml(state.meeting.title)}</h2>
-              </div>
+            <div class="panel-head">
+              ${chip("📒", "#19b999")}
+              <span style="color:var(--mint-deep); font-size:24px">오늘의 회의록</span>
             </div>
-            <div id="reportText" class="report-table" style="margin-top:18px">
+            <div id="reportText" class="report-list">
               ${rows.map(([label, value]) => `
-                <div class="report-row"><b>${escapeHtml(label)}</b><span>${escapeHtml(value || "아직 입력하지 않았어요.")}</span></div>
+                <div class="report-row"><b class="report-key">${escapeHtml(label)}</b><span>${escapeHtml(value || "아직 입력하지 않았어요.")}</span></div>
               `).join("")}
             </div>
           </section>
-          <section class="panel">
-            <h2>오늘의 결정</h2>
-            <p class="big-line">${escapeHtml(state.meeting.decision.text)}</p>
-            <div class="card compact" style="margin-top:18px">
-              <h3 class="card-title">다음 회의에서 확인</h3>
-              <p>${escapeHtml(state.meeting.decision.nextReview)}</p>
-            </div>
-            ${field("선생님 한마디", "teacherComment", "textarea")}
-          </section>
+          <div class="stack">
+            <section class="card decision-card">
+              ${img(ASSETS.icons.report, "오늘의 결정 아이콘", "decision-img")}
+              <div class="info-body">
+                <span class="info-label" style="color:var(--pink)">오늘의 결정</span>
+                <p class="band-text big" style="font-size:clamp(20px, 2vw, 26px)">${escapeHtml(state.meeting.decision.text)}</p>
+                <p class="muted small-text">다음 회의에서 "${escapeHtml(state.meeting.decision.nextReview)}"를 확인해요.</p>
+              </div>
+            </section>
+            <section class="card">
+              <div class="panel-head">
+                ${chip("💬", "#7857d9")}
+                <span style="color:var(--violet)">선생님 한마디</span>
+              </div>
+              <textarea class="row-input" data-field="teacherComment" rows="3" aria-label="선생님 한마디">${escapeHtml(state.meeting.teacherComment)}</textarea>
+            </section>
+          </div>
         </div>
       </div>
     `;
   }
 
   function renderNav(step) {
+    const nextLabels = {
+      1: "흐름 설정으로",
+      2: "회의 시작으로",
+      3: "지난 약속 반성으로",
+      4: "의견 게시로 이동",
+      5: "의견 모아보기",
+      6: "토론으로 이동",
+      7: "투표로 이동",
+      8: "결정사항 정리",
+      9: "결과 공유하기"
+    };
     return `
-      <div class="bottom-actions">
-        ${step > 1 ? `<button class="btn secondary" data-action="prev">이전 단계</button>` : ""}
-        ${step < 10 ? `<button class="btn primary" data-action="next">다음 단계 →</button>` : `
-          <button class="btn primary" data-action="save-report">회의 저장</button>
-          <button class="btn secondary" data-action="print">PDF 저장</button>
-          <button class="btn mint" data-action="export-json">JSON 백업</button>
-          <button class="btn dark" data-action="copy-report">회의록 복사</button>
+      <div class="cta-row">
+        ${step > 1 ? `<button class="btn ghost" data-action="prev">← 이전</button>` : ""}
+        ${step < 10 ? `<button class="btn primary xl" data-action="next">${nextLabels[step] || "다음 단계"} →</button>` : `
+          <button class="btn primary" data-action="save-report">💾 회의 저장</button>
+          <button class="btn secondary" data-action="print">📄 PDF 저장</button>
+          <button class="btn mint" data-action="export-json">{ } JSON 백업</button>
+          <button class="btn dark" data-action="home">⌂ 처음으로</button>
         `}
       </div>
     `;
@@ -788,124 +829,156 @@
       <div class="toolbar" aria-label="빠른 도구">
         <button type="button" data-action="export-json" title="JSON 백업">JS</button>
         <button type="button" data-action="print" title="PDF 저장">PDF</button>
+        <button type="button" data-action="copy-report" title="회의록 복사">📋</button>
       </div>
     `;
   }
 
-  function field(label, path, type = "text", attrs = {}) {
+  function chip(emoji, color) {
+    return `<span class="chip" style="--chip:${color}">${emoji}</span>`;
+  }
+
+  function infoField(label, path, emoji, color, opts = {}) {
     const value = getPath(state.meeting, path) ?? "";
-    if (type === "textarea") {
-      return `<div class="field"><label>${label}</label><textarea data-field="${path}">${escapeHtml(value)}</textarea></div>`;
-    }
-    const attrText = Object.entries(attrs).map(([key, val]) => `${key}="${escapeAttr(val)}"`).join(" ");
-    return `<div class="field"><label>${label}</label><input type="${type}" data-field="${path}" value="${escapeAttr(value)}" ${attrText} /></div>`;
-  }
-
-  function selectField(label, path, options) {
-    const value = getPath(state.meeting, path);
+    const attrText = Object.entries(opts.attrs || {}).map(([key, val]) => `${key}="${escapeAttr(val)}"`).join(" ");
+    const control = opts.type === "textarea"
+      ? `<textarea class="row-input" data-field="${path}" rows="2" aria-label="${escapeAttr(label)}">${escapeHtml(value)}</textarea>`
+      : `<input class="row-input" type="${opts.type || "text"}" data-field="${path}" value="${escapeAttr(value)}" aria-label="${escapeAttr(label)}" ${attrText} />`;
     return `
-      <div class="field">
-        <label>${label}</label>
-        <select data-field="${path}">
-          ${options.map(([optionValue, text]) => `<option value="${optionValue}" ${optionValue === value ? "selected" : ""}>${text}</option>`).join("")}
-        </select>
-      </div>
-    `;
-  }
-
-  function counter(label, path) {
-    const value = Number(getPath(state.meeting, path) || 0);
-    return `
-      <div class="counter" style="margin-top:10px">
-        <span class="counter-label">${label}</span>
-        <div class="counter-controls">
-          <button class="icon-btn minus" type="button" data-action="counter-minus" data-path="${path}" aria-label="${label} 줄이기">−</button>
-          <input type="number" min="0" data-field="${path}" value="${value}" aria-label="${label}" />
-          <button class="icon-btn" type="button" data-action="counter-plus" data-path="${path}" aria-label="${label} 늘리기">+</button>
+      <div class="info-row">
+        ${chip(emoji, color)}
+        <div class="info-body">
+          <span class="info-label" style="color:${color}">${label}</span>
+          ${control}
         </div>
       </div>
     `;
   }
 
-  function metricCard(label, path, icon, color) {
+  function miniField(label, path) {
+    const value = getPath(state.meeting, path) ?? "";
+    return `
+      <div class="info-body">
+        <span class="info-label" style="color:var(--muted)">${label}</span>
+        <input class="row-input" data-field="${path}" value="${escapeAttr(value)}" aria-label="${escapeAttr(label)}" style="font-size:15px; font-weight:800" />
+      </div>
+    `;
+  }
+
+  function heroBand(color, media, label, contentHtml) {
+    return `
+      <section class="hero-band" style="--band:${color}">
+        ${media}
+        <div class="hero-body">
+          <span class="info-label" style="color:${color}">${label}</span>
+          ${contentHtml}
+        </div>
+      </section>
+    `;
+  }
+
+  function pillCounter(label, path, color, ariaLabel) {
     const value = Number(getPath(state.meeting, path) || 0);
+    const aria = ariaLabel || label || "인원";
+    return `
+      <div class="pill-counter" style="--pc:${color || "var(--blue)"}">
+        ${label ? `<span class="pc-label">${label}</span>` : ""}
+        <button class="pc-btn" type="button" data-action="counter-minus" data-path="${path}" aria-label="${escapeAttr(aria)} 줄이기">−</button>
+        <input class="pc-input" type="number" min="0" data-field="${path}" value="${value}" aria-label="${escapeAttr(aria)}" /><span class="pc-unit">명</span>
+        <button class="pc-btn plus" type="button" data-action="counter-plus" data-path="${path}" aria-label="${escapeAttr(aria)} 늘리기">＋</button>
+      </div>
+    `;
+  }
+
+  function sideCount(emoji, label, path, color) {
+    const value = Number(getPath(state.meeting, path) || 0);
+    return `
+      <div class="side-count" style="--sc:${color}">
+        <span class="sc-emoji">${emoji}</span>
+        <span class="sc-label">${label}</span>
+        <button class="sc-btn" type="button" data-action="counter-minus" data-path="${path}" aria-label="${escapeAttr(label)} 줄이기">−</button>
+        <span class="sc-value">${value}명</span>
+        <button class="sc-btn plus" type="button" data-action="counter-plus" data-path="${path}" aria-label="${escapeAttr(label)} 늘리기">＋</button>
+      </div>
+    `;
+  }
+
+  function faceCard(label, value, emoji, color) {
+    return `
+      <section class="card face-card" style="--fc:${color}">
+        <span class="face">${emoji}</span>
+        <span class="face-label">${label}</span>
+        <span class="face-num">${Number(value) || 0}명</span>
+      </section>
+    `;
+  }
+
+  function noteCard(title, path, emoji, color) {
+    const value = getPath(state.meeting, path) ?? "";
     return `
       <section class="card">
-        <div class="with-icon">
-          ${img(icon, `${label} 아이콘`, "asset-icon")}
-          <div class="metric" style="--metric-color:${color};flex:1">
-            <strong>${label}</strong>
-            <span class="value">${value}명</span>
-          </div>
+        <div class="panel-head" style="margin-bottom:8px">
+          ${chip(emoji, color)}
+          <span style="color:${color}; font-size:18px">${title}</span>
         </div>
-        ${counter(label, path)}
+        <textarea class="row-input" data-field="${path}" rows="3" aria-label="${escapeAttr(title)}">${escapeHtml(value)}</textarea>
+      </section>
+    `;
+  }
+
+  function pastelNote(title, path, emoji, color) {
+    const value = getPath(state.meeting, path) ?? "";
+    return `
+      <section class="pastel-note" style="--note:${color}">
+        <div class="panel-head">
+          ${chip(emoji, color)}
+          <span class="head-title">${title}</span>
+        </div>
+        <textarea class="row-input" data-field="${path}" rows="2" aria-label="${escapeAttr(title)}">${escapeHtml(value)}</textarea>
       </section>
     `;
   }
 
   function voteCard(title, subtitle, path, icon, color) {
     return `
-      <section class="card" style="--theme:${color}">
-        <div class="with-icon">
-          ${img(icon, `${title} 아이콘`, "asset-icon large")}
-          <div>
-            <h3 class="card-title" style="color:${color}">${title}</h3>
-            <p class="muted"><strong>${subtitle}</strong></p>
-          </div>
-        </div>
-        ${counter(title, path)}
-      </section>
-    `;
-  }
-
-  function textCard(title, path, icon) {
-    return `
-      <section class="card">
-        <div class="with-icon">
-          ${img(icon, `${title} 아이콘`, "asset-icon")}
-          <h3 class="card-title">${title}</h3>
-        </div>
-        ${field(title, path, "textarea")}
+      <section class="card vote-card" style="--vc:${color}">
+        ${img(icon, `${title} 아이콘`, "vote-img")}
+        <h3 class="vote-title">${title}</h3>
+        <p class="vote-sub">${subtitle}</p>
+        ${pillCounter("", path, color, title)}
       </section>
     `;
   }
 
   function renderOpinionCard(opinion, index) {
-    const notes = ["#ef4f85", "#49a4f5", "#8b5cf6"];
+    const notes = ["#ef4f85", "#2f80ed", "#7857d9"];
+    const note = notes[index % notes.length];
     return `
-      <article class="opinion-card" style="--note:${notes[index % notes.length]}">
-        <span class="tag">${escapeHtml(opinion.category)}</span>
-        <strong>${escapeHtml(opinion.text)}</strong>
-        <span>이유: ${escapeHtml(opinion.reason)}</span>
-        <span class="muted">기대 효과: ${escapeHtml(opinion.expectedEffect || "함께 더 생각해요.")}</span>
-        <div class="with-icon" style="justify-content:space-between">
-          <button class="btn secondary" data-action="like-opinion" data-id="${opinion.id}" style="min-height:44px;font-size:16px">♥ ${opinion.likes}</button>
-          <button class="icon-btn minus" data-action="delete-opinion" data-id="${opinion.id}" aria-label="의견 삭제">×</button>
+      <article class="opinion-card" style="--note:${note}">
+        <span class="op-label">의견 · ${escapeHtml(opinion.category)}</span>
+        <span class="op-text">${escapeHtml(opinion.text)}</span>
+        <span class="op-sub"><b>이유</b> ${escapeHtml(opinion.reason)}</span>
+        <span class="op-sub muted"><b>기대 효과</b> ${escapeHtml(opinion.expectedEffect || "함께 더 생각해요.")}</span>
+        <div class="op-foot">
+          <button class="like-pill" data-action="like-opinion" data-id="${opinion.id}" aria-label="공감하기">♥ ${opinion.likes}</button>
+          <button class="row-x" data-action="delete-opinion" data-id="${opinion.id}" aria-label="의견 삭제">×</button>
         </div>
       </article>
     `;
   }
 
-  function criteriaRow(label, score) {
+  function criteriaRow(label, key, emoji, color) {
+    const score = Number(state.meeting.topicSelection.criteriaScores[key] || 0);
     return `
-      <div class="criteria-row">
-        <span>${label}</span>
-        <div class="score-dots">${Array.from({ length: 5 }, (_, index) => `<span class="${index < score ? "on" : ""}"></span>`).join("")}</div>
-        <strong>${score >= 4 ? "높음" : score >= 3 ? "보통" : "낮음"}</strong>
-      </div>
-    `;
-  }
-
-  function renderTimerPanel() {
-    return `
-      <div class="card compact" style="margin-top:18px">
-        <h3 class="card-title">타이머</h3>
-        <p class="big-line" id="timerDisplay">${formatTime(getRemainingMs())}</p>
-        <div class="actions">
-          <button class="btn primary" data-action="timer-start">${state.meeting.timer.running ? "다시 시작" : "타이머 시작"}</button>
-          <button class="btn secondary" data-action="timer-pause">${state.meeting.timer.running ? "일시정지" : "재개"}</button>
-          <button class="btn secondary" data-action="timer-extend">1분 연장</button>
+      <div class="criteria-row" style="--cr:${color}">
+        <span class="chip sm" style="--chip:${color}">${emoji}</span>
+        <span class="criteria-name">${label}</span>
+        <div class="score-dots">
+          ${Array.from({ length: 5 }, (_, index) => `
+            <button type="button" class="${index < score ? "on" : ""}" data-action="set-criteria" data-key="${key}" data-score="${index + 1}" aria-label="${label} ${index + 1}점"></button>
+          `).join("")}
         </div>
+        <strong class="criteria-verdict">${score >= 4 ? "높음" : score >= 3 ? "보통" : "낮음"}</strong>
       </div>
     `;
   }
@@ -1030,6 +1103,13 @@
     render();
   }
 
+  function setCriteria(key, score) {
+    if (!key || !score) return;
+    state.meeting.topicSelection.criteriaScores[key] = score;
+    queueSave();
+    render();
+  }
+
   function timerStart() {
     state.meeting.timer.running = true;
     state.meeting.timer.startedAt = Date.now();
@@ -1126,9 +1206,12 @@
   }
 
   async function copyReport() {
-    const text = Array.from(document.querySelectorAll(".report-row"))
-      .map((row) => row.innerText)
-      .join("\n");
+    const rows = Array.from(document.querySelectorAll(".report-row"));
+    if (!rows.length) {
+      alert("회의록(10단계) 화면에서 사용할 수 있어요.");
+      return;
+    }
+    const text = rows.map((row) => row.innerText.replace(/\n/g, " ")).join("\n");
     await navigator.clipboard?.writeText(text);
     alert("회의록 텍스트를 복사했습니다.");
   }
@@ -1271,12 +1354,14 @@
   }
 
   function updateDependentText() {
-    const voteTotal = state.meeting.vote.agree + state.meeting.vote.disagree + state.meeting.vote.hold;
-    const agreeRate = voteTotal ? Math.round((state.meeting.vote.agree / voteTotal) * 100) : 0;
+    const voteTotal = Number(state.meeting.vote.agree) + Number(state.meeting.vote.disagree) + Number(state.meeting.vote.hold);
+    const agreeRate = voteTotal ? Math.round((Number(state.meeting.vote.agree) / voteTotal) * 100) : 0;
     const page = PAGES[state.meeting.currentPage];
     if (page?.id === "page_08_vote") {
-      const display = document.querySelector(".metric .value");
+      const display = document.querySelector(".rate");
       if (display) display.textContent = `${agreeRate}%`;
+      const bar = document.querySelector(".result-panel .bar span");
+      if (bar) bar.style.setProperty("--value", `${agreeRate}%`);
     }
   }
 
