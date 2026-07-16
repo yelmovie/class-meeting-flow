@@ -8,3 +8,11 @@ dist/
 # OS/편집기
 Thumbs.db
 .DS_Store
+
+# 에이전트/도구 설정
+.claude/
+.codex/
+.agents/
+
+# og 썸네일 원본 (public/og.jpg만 커밋)
+/og.png

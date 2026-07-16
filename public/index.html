@@ -3,11 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>학급회의 시간</title>
-    <meta property="og:title" content="학급회의 시간" />
-    <meta property="og:description" content="의견 모으기부터 투표, 회의록까지 30분 학급회의 진행 도구" />
+    <title>우리반 학급회의</title>
+    <meta name="description" content="말하고 듣고 함께 정해요. 초등 학급회의를 처음부터 끝까지 안내하는 수업용 웹앱." />
+    <meta name="theme-color" content="#a7d8f5" />
+    <meta property="og:title" content="우리반 학급회의 — 학급회의 시간" />
+    <meta property="og:description" content="말하고 듣고 함께 정해요. 초등 학급회의를 처음부터 끝까지 안내하는 수업용 웹앱." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://class-meeting-flow.vercel.app" />
+    <meta property="og:image" content="https://class-meeting-flow.vercel.app/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="우리반 학급회의 — 학급회의 시간" />
+    <meta name="twitter:description" content="말하고 듣고 함께 정해요. 초등 학급회의를 처음부터 끝까지 안내하는 수업용 웹앱." />
+    <meta name="twitter:image" content="https://class-meeting-flow.vercel.app/og.jpg" />
+    <link rel="icon" type="image/png" href="./favicon.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260717-landing1" />
   </head>
   <body>
     <div id="app" aria-live="polite"></div>
@@ -16,14 +28,14 @@
         <section class="panel">
           <p class="eyebrow">복구 안내</p>
           <h1>화면을 다시 불러오지 못했어요</h1>
-          <p>저장된 회의 자료는 브라우저 안에 남아 있습니다. 새로고침하거나 JSON 백업을 내려받아 복구할 수 있어요.</p>
+          <p>적어 둔 우리 반 이야기는 이 기기에 남아 있어요. 새로고침하거나 이야기 기록 파일을 받아 두면 다시 볼 수 있어요.</p>
           <div class="actions">
             <button class="btn primary" data-reload>새로고침</button>
-            <button class="btn secondary" data-export-fallback>현재 자료 JSON 저장</button>
+            <button class="btn secondary" data-export-fallback>기록 파일 내려받기</button>
           </div>
         </section>
       </main>
     </template>
-    <script src="./app.js"></script>
+    <script src="./app.js?v=20260717-landing1"></script>
   </body>
 </html>
