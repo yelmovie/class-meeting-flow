@@ -459,6 +459,7 @@
     try {
       const snapshot = loadSnapshot();
       state.meeting = snapshot ? migrate(snapshot) : createEmptyMeeting();
+      if (!snapshot) state.meeting.currentPage = 0;
       const rawPageParam = new URLSearchParams(location.search).get("page");
       if (rawPageParam !== null) {
         const requestedPage = Number(rawPageParam);
