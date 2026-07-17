@@ -865,31 +865,52 @@
         state.recordsModalOpen = false;
       }
       updateDependentText();
-      updateHandPointer();
     } catch (error) {
       console.error(error);
       showRecovery(error);
     }
   }
 
+  function getOpinionBoardPointerTarget() {
+    const meeting = state.meeting;
+    const hasNames = meeting.students.some((name) => String(name || "").trim());
+    if (!hasNames) return document.querySelector("[data-student-name-bulk]");
+    if (getSpeakerOrder().length < 1) {
+      return document.querySelector(".student-roster-chip:not(.is-ordered)")
+        || document.querySelector('[data-action="add-all-speakers"]');
+    }
+    if (!meeting.opinions.some((opinion) => String(opinion.text || "").trim())) {
+      return String(meeting.opinionDraft.text || "").trim()
+        ? document.querySelector('[data-action="add-opinion"]')
+        : document.querySelector('textarea[data-field="opinionDraft.text"]');
+    }
+    return document.querySelector('[data-action="complete-next"]');
+  }
+
+  function getOpinionSummaryPointerTarget() {
+    const opinions = state.meeting.opinions;
+    const tallied = state.meeting.topicSelection.talliedOpinionIds;
+    const nextIndex = opinions.findIndex((opinion) => !tallied.includes(opinion.id));
+    if (nextIndex >= 0) {
+      return Number(opinions[nextIndex].likes || 0) === 0
+        ? document.querySelector(`[data-action="counter-plus"][data-path="opinions.${nextIndex}.likes"]`)
+        : document.querySelectorAll(".opinion-tally-card .tally-toggle")[nextIndex];
+    }
+    if (opinions.length && !state.meeting.topicSelection.selectedTopic) {
+      const bestIndex = opinions.reduce((best, opinion, index) => (Number(opinion.likes || 0) > Number(opinions[best].likes || 0) ? index : best), 0);
+      return document.querySelectorAll(".opinion-tally-card .opinion-pick")[bestIndex];
+    }
+    if (opinions.length) return document.querySelector('[data-action="complete-next"]');
+    return null;
+  }
+
   function updateHandPointer() {
     const existing = document.querySelector(".ux-hand-pointer");
     const blocked = state.settingsOpen || state.recordsModalOpen || state.posterPrintOpen || document.querySelector(".confirm-overlay");
     let target = null;
-    if (state.meeting.currentPage === 6 && !blocked) {
-      const opinions = state.meeting.opinions;
-      const tallied = state.meeting.topicSelection.talliedOpinionIds;
-      const nextIndex = opinions.findIndex((opinion) => !tallied.includes(opinion.id));
-      if (nextIndex >= 0) {
-        target = Number(opinions[nextIndex].likes || 0) === 0
-          ? document.querySelector(`[data-action="counter-plus"][data-path="opinions.${nextIndex}.likes"]`)
-          : document.querySelectorAll(".opinion-tally-card .tally-toggle")[nextIndex];
-      } else if (opinions.length && !state.meeting.topicSelection.selectedTopic) {
-        const bestIndex = opinions.reduce((best, opinion, index) => (Number(opinion.likes || 0) > Number(opinions[best].likes || 0) ? index : best), 0);
-        target = document.querySelectorAll(".opinion-tally-card .opinion-pick")[bestIndex];
-      } else if (opinions.length) {
-        target = document.querySelector('[data-action="complete-next"]');
-      }
+    if (!blocked) {
+      if (state.meeting.currentPage === 5) target = getOpinionBoardPointerTarget();
+      if (state.meeting.currentPage === 6) target = getOpinionSummaryPointerTarget();
     }
     if (!target || target.disabled) {
       existing?.remove();
@@ -3693,6 +3714,7 @@
       document.querySelectorAll(".vote-equation").forEach((node) => { node.className = `vote-equation ${countState}`; });
     }
     updateStageCompletionUi();
+    updateHandPointer();
   }
 
   function updateStageCompletionUi() {
