@@ -9646,3 +9646,26 @@ button:disabled {
     will-change: auto;
   }
 }
+
+/* ---------- 다음 행동 손가락 안내 (6페이지) ---------- */
+
+.ux-hand-pointer {
+  position: fixed;
+  z-index: 980;
+  transform: translate(-50%, 0);
+  font-size: 32px;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 3px 6px rgba(40, 50, 70, 0.3));
+  animation: hand-pointer-bob 1.15s ease-in-out infinite;
+}
+
+@keyframes hand-pointer-bob {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -7px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ux-hand-pointer { animation: none; }
+}

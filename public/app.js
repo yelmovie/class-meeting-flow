@@ -487,6 +487,9 @@
   }
 
   function bindGlobalEvents() {
+    window.addEventListener("resize", () => updateHandPointer());
+    window.addEventListener("scroll", () => updateHandPointer(), { passive: true, capture: true });
+
     document.addEventListener("input", (event) => {
       const bulkStudentInput = event.target.closest("[data-student-name-bulk]");
       if (bulkStudentInput) {
@@ -862,10 +865,43 @@
         state.recordsModalOpen = false;
       }
       updateDependentText();
+      updateHandPointer();
     } catch (error) {
       console.error(error);
       showRecovery(error);
     }
+  }
+
+  function updateHandPointer() {
+    const existing = document.querySelector(".ux-hand-pointer");
+    const blocked = state.settingsOpen || state.recordsModalOpen || state.posterPrintOpen || document.querySelector(".confirm-overlay");
+    let target = null;
+    if (state.meeting.currentPage === 6 && !blocked) {
+      const opinions = state.meeting.opinions;
+      const tallied = state.meeting.topicSelection.talliedOpinionIds;
+      const nextIndex = opinions.findIndex((opinion) => !tallied.includes(opinion.id));
+      if (nextIndex >= 0) {
+        target = Number(opinions[nextIndex].likes || 0) === 0
+          ? document.querySelector(`[data-action="counter-plus"][data-path="opinions.${nextIndex}.likes"]`)
+          : document.querySelectorAll(".opinion-tally-card .tally-toggle")[nextIndex];
+      } else if (opinions.length && !state.meeting.topicSelection.selectedTopic) {
+        const bestIndex = opinions.reduce((best, opinion, index) => (Number(opinion.likes || 0) > Number(opinions[best].likes || 0) ? index : best), 0);
+        target = document.querySelectorAll(".opinion-tally-card .opinion-pick")[bestIndex];
+      } else if (opinions.length) {
+        target = document.querySelector('[data-action="complete-next"]');
+      }
+    }
+    if (!target || target.disabled) {
+      existing?.remove();
+      return;
+    }
+    const pointer = existing || document.body.appendChild(Object.assign(document.createElement("div"), { className: "ux-hand-pointer" }));
+    pointer.setAttribute("aria-hidden", "true");
+    const rect = target.getBoundingClientRect();
+    const placeAbove = rect.bottom + 48 > window.innerHeight;
+    pointer.textContent = placeAbove ? "👇" : "👆";
+    pointer.style.left = `${Math.round(rect.left + rect.width / 2)}px`;
+    pointer.style.top = placeAbove ? `${Math.round(rect.top - 40)}px` : `${Math.round(rect.bottom + 2)}px`;
   }
 
   function renderLandingRecordCard(meeting, index) {
