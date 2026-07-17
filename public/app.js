@@ -150,17 +150,17 @@
   ];
 
   const PAGES = [
-    { id: "main", title: "우리반 학급회의", subtitle: "친구들과 함께 정하는 시간", theme: "#19a78d", bg: ASSETS.backgrounds[0], mascot: ASSETS.characters.rabbit, titleArt: ASSETS.titles.main },
+    { id: "main", title: "우리반 학급회의", subtitle: "우리 반의 일을 우리 손으로 정하는 회의 시간", theme: "#19a78d", bg: ASSETS.backgrounds[0], mascot: ASSETS.characters.rabbit, titleArt: ASSETS.titles.main },
     { id: "page_01_meeting_prepare", step: 1, short: "준비", title: "회의 준비", subtitle: "", theme: "#159f84", bg: ASSETS.backgrounds[0], mascot: ASSETS.characters.rabbit, titleArt: ASSETS.titles.prepare },
     { id: "page_02_flow_setup", step: 2, short: "순서", title: "우리 회의 순서 고르기", subtitle: "", theme: "#6d50dc", bg: ASSETS.backgrounds[1], mascot: ASSETS.characters.plannerRabbit },
     { id: "page_03_start_guide", step: 3, short: "시작", title: "학급회의를 위한 우리의 약속", subtitle: "", theme: "#2372df", bg: ASSETS.backgrounds[2], mascot: ASSETS.characters.fox },
     { id: "page_04_reflection", step: 4, short: "지난번 보기", title: "지난번 약속 돌아보기", subtitle: "", theme: "#e54b79", bg: ASSETS.backgrounds[2], mascot: asset("icons/discuss", "23.png"), titleArt: ASSETS.titles.reflection },
     { id: "page_05_opinion_board", step: 5, short: "생각 적기", title: "우리 생각 적기", subtitle: "내 생각과 이유, 좋아질 점, 걱정되는 점을 함께 적어요.", theme: "#159f84", bg: ASSETS.backgrounds[2], mascot: ASSETS.characters.squirrel, titleArt: ASSETS.titles.opinionBoard },
     { id: "page_06_opinion_summary", step: 6, short: "생각 모아 손들기", title: "생각 모아 손들기", subtitle: "앞에서 나온 생각과 이유를 모아 보고, 같은 생각에 손든 친구 수를 적어요.", theme: "#6d50dc", bg: ASSETS.backgrounds[1], mascot: ASSETS.characters.owl, titleArt: ASSETS.titles.opinionSummary },
-    { id: "page_07_discussion", step: 7, short: "함께 말하기", title: "함께 이야기하기", subtitle: "좋은 점과 걱정되는 점을 듣고 더 좋은 방법을 찾아봐요.", theme: "#f28a16", bg: ASSETS.backgrounds[3], mascot: ASSETS.characters.rabbit, titleArt: ASSETS.titles.discussion },
+    { id: "page_07_discussion", step: 7, short: "함께 토의", title: "함께 토의하기", subtitle: "좋은 점과 걱정되는 점을 듣고 더 좋은 방법을 찾아봐요.", theme: "#f28a16", bg: ASSETS.backgrounds[3], mascot: ASSETS.characters.rabbit, titleArt: ASSETS.titles.discussion },
     { id: "page_08_vote", step: 8, short: "손들기", title: "손들어 정하기", subtitle: "좋아요와 다른 생각으로 나누어 손든 친구 수와 비율을 확인해요.", theme: "#2f80ed", bg: ASSETS.backgrounds[3], mascot: ASSETS.characters.penguin, titleArt: ASSETS.titles.vote },
     { id: "page_09_decision", step: 9, short: "정한 일", title: "함께 정한 일 적기", subtitle: "무엇을, 누가, 언제까지 할지 쉽게 적어요.", theme: "#159f84", bg: ASSETS.backgrounds[4], mascot: asset("icons/discuss", "66.png"), titleArt: ASSETS.titles.decision },
-    { id: "page_10_report", step: 10, short: "마무리", title: "오늘 이야기 모아보기", subtitle: "오늘 나눈 생각과 함께 정한 일을 한눈에 봐요.", theme: "#6d50dc", bg: ASSETS.backgrounds[5], mascot: ASSETS.characters.koala, titleArt: ASSETS.titles.report }
+    { id: "page_10_report", step: 10, short: "마무리", title: "오늘 회의 한눈에 보기", subtitle: "오늘 나눈 의견과 결정한 일을 회의록으로 확인해요.", theme: "#6d50dc", bg: ASSETS.backgrounds[5], mascot: ASSETS.characters.koala, titleArt: ASSETS.titles.report }
   ];
 
   const STEP_COLORS = ["#19b999", "#a78bfa", "#2f80ed", "#f48fb1", "#7ccfff", "#ffb23e", "#14a889", "#7857d9", "#159f84", "#e54b79"];
@@ -168,7 +168,7 @@
   const CORE_PHASES = [
     { label: "준비", pages: [1, 2, 3, 4], startPage: 1, color: "#19b999" },
     { label: "생각 모으기", pages: [5, 6], startPage: 5, color: "#6d50dc" },
-    { label: "함께 이야기", pages: [7], startPage: 7, color: "#f28a16" },
+    { label: "함께 토의", pages: [7], startPage: 7, color: "#f28a16" },
     { label: "손들어 정하기", pages: [8], startPage: 8, color: "#2f80ed" },
     { label: "정한 일 확인", pages: [9, 10], startPage: 9, color: "#159f84" }
   ];
@@ -216,7 +216,7 @@
     schemaVersion: SCHEMA_VERSION,
     appVersion: APP_VERSION,
     currentPage: 1,
-    title: "6월 1주 우리 반 이야기",
+    title: "6월 1주 학급회의",
     date: new Date().toISOString().slice(0, 10),
     totalStudents: 25,
     depthMode: "advanced",
@@ -232,7 +232,7 @@
       ]
     },
     flow: {
-      stepLabels: ["준비", "순서", "시작", "지난번 보기", "생각 적기", "생각 모아 손들기", "함께 말하기", "손들기", "정한 일", "마무리"],
+      stepLabels: ["준비", "순서", "시작", "지난번 보기", "생각 적기", "생각 모아 손들기", "함께 토의", "손들기", "정한 일", "마무리"],
       durationMinutes: 30,
       stageMinutes: [2, 2, 2, 3, 5, 8, 5, 3, 3, 2],
       completedPages: [],
@@ -941,12 +941,12 @@
 
   function renderLandingRecordCard(meeting, index) {
     const iconSrc = index % 2 === 0 ? ASSETS.icons.heart : ASSETS.icons.hands;
-    const summary = meeting.decision?.text || meeting.agenda?.title || "이야기 이어하기";
+    const summary = meeting.decision?.text || meeting.agenda?.title || "회의 이어하기";
     return `
       <button class="landing-record-card" type="button" data-action="load-meeting" data-id="${escapeAttr(meeting.id)}">
         <img class="record-card-icon" src="${iconSrc}" alt="" loading="eager" />
         <span class="record-card-body">
-          <strong>${escapeHtml(friendlyMeetingTitle(meeting.title) || "저장된 이야기")}</strong>
+          <strong>${escapeHtml(friendlyMeetingTitle(meeting.title) || "저장된 회의")}</strong>
           <small>${escapeHtml(meeting.date || "")} · ${escapeHtml(summary)}</small>
         </span>
         <i class="record-card-arrow" aria-hidden="true">›</i>
@@ -955,7 +955,7 @@
   }
 
   function renderLandingRecordEmpty() {
-    return `<div class="landing-record-empty">저장된 이야기가 아직 없어요.<br/>연습용 이야기로 바로 시작할 수 있어요.</div>`;
+    return `<div class="landing-record-empty">저장된 회의가 아직 없어요.<br/>연습용 회의로 바로 시작할 수 있어요.</div>`;
   }
 
   function renderLanding(page) {
@@ -974,26 +974,26 @@
                 ${img(page.titleArt, page.title, "landing-title-art")}
               </h1>
             </div>
-            <p class="landing-subtitle">친구들과 함께 정하는 시간</p>
-            <p class="landing-description">친구들의 생각을 모으고, 쉬운 질문으로 살펴보고, 함께 정한 일을 적어요.</p>
+            <p class="landing-subtitle">우리 반의 일을 우리 손으로 정하는 회의 시간</p>
+            <p class="landing-description">안건을 정하고 의견을 나눈 뒤, 손들어 결정하고 실천 약속까지 회의록에 남겨요.</p>
             <div class="actions landing-actions">
-              <button class="btn primary landing-cta-main" data-action="new">📖 새 이야기 시작</button>
-              <button class="btn secondary landing-cta-sub" data-action="continue">💬 이야기 이어가기</button>
-              <button class="btn mint landing-cta-sub" data-action="sample">✏️ 연습용 이야기</button>
+              <button class="btn primary landing-cta-main" data-action="new">📋 새 회의 시작</button>
+              <button class="btn secondary landing-cta-sub" data-action="continue">💬 회의 이어하기</button>
+              <button class="btn mint landing-cta-sub" data-action="sample">✏️ 연습용 회의</button>
             </div>
             <div class="landing-feature-strip" aria-label="이 앱으로 할 수 있는 일">
-              <article>${img(ASSETS.icons.speech, "", "feature-icon")}<b>함께 이야기해요</b><span>친구들과 의견을 나눠요</span></article>
-              <article>${img(ASSETS.icons.search, "", "feature-icon")}<b>생각을 살펴봐요</b><span>질문으로 더 깊이 살펴봐요</span></article>
-              <article>${img(ASSETS.icons.check, "", "feature-icon")}<b>함께 결정해요</b><span>의견을 모아 함께 정해요</span></article>
-              <article>${img(ASSETS.icons.badge, "", "feature-icon")}<b>기록으로 남겨요</b><span>우리 반의 선택을 기록해요</span></article>
+              <article>${img(ASSETS.icons.speech, "", "feature-icon")}<b>의견을 말해요</b><span>안건에 대한 생각을 발표해요</span></article>
+              <article>${img(ASSETS.icons.search, "", "feature-icon")}<b>생각을 살펴봐요</b><span>좋은 점과 걱정되는 점을 따져 봐요</span></article>
+              <article>${img(ASSETS.icons.check, "", "feature-icon")}<b>함께 결정해요</b><span>손들어 공정하게 정해요</span></article>
+              <article>${img(ASSETS.icons.badge, "", "feature-icon")}<b>회의록을 남겨요</b><span>우리 반의 결정을 기록해요</span></article>
             </div>
           </section>
           <section class="panel landing-records">
             <div class="with-icon">
-              ${img(ASSETS.icons.board, "이야기 기록 아이콘", "asset-icon large")}
+              ${img(ASSETS.icons.board, "회의 기록 아이콘", "asset-icon large")}
               <div>
-                <p class="page-kicker">이야기 기록 보관</p>
-                <h2>지난 이야기 다시 보기</h2>
+                <p class="page-kicker">회의 기록 보관</p>
+                <h2>지난 회의 다시 보기</h2>
               </div>
             </div>
             <div class="landing-record-list">${recent}</div>
@@ -1014,9 +1014,9 @@
       || renderLandingRecordEmpty();
     return `
       <div class="records-overlay" role="presentation" data-records-backdrop>
-        <div class="records-modal" role="dialog" aria-modal="true" aria-label="전체 이야기 기록">
+        <div class="records-modal" role="dialog" aria-modal="true" aria-label="전체 회의 기록">
           <div class="records-modal-head">
-            <h2>📚 전체 이야기 기록</h2>
+            <h2>📚 전체 회의 기록</h2>
             <button class="records-modal-close" type="button" data-action="close-records-modal" aria-label="닫기">×</button>
           </div>
           <div class="records-modal-list">${cards}</div>
@@ -1055,7 +1055,7 @@
     const currentPhase = getCorePhase(currentStep);
     const routePages = getFlowRoutePages();
     return `
-      <nav class="progress" aria-label="우리 반 이야기 순서">
+      <nav class="progress" aria-label="학급회의 순서">
         ${CORE_PHASES.map((phase, index) => {
           const phaseNumber = index + 1;
           const phaseRoute = routePages.filter((step) => phase.pages.includes(step));
@@ -1130,11 +1130,11 @@
               ${infoField("날짜", "date", ASSETS.icons.calendar, "#ef4f85", { type: "date", className: "prepare-date-card" })}
               ${infoField("함께하는 친구", "totalStudents", ASSETS.icons.group, "#2f80ed", { type: "number", attrs: { min: 1, max: 30 } })}
             </div>
-            ${infoField("오늘 함께 정할 것", "agenda.title", ASSETS.icons.megaphone, "#ef4f85", { type: "textarea", rows: 2, className: "prepare-main-topic" })}
+            ${infoField("오늘의 안건", "agenda.title", ASSETS.icons.megaphone, "#ef4f85", { type: "textarea", rows: 2, className: "prepare-main-topic" })}
           </div>
           <section class="prepare-expanded-section" aria-labelledby="prepare-story-title">
             <div class="prepare-expanded-head">
-              <strong id="prepare-story-title">왜 이야기할까요?</strong>
+              <strong id="prepare-story-title">왜 회의가 필요할까요?</strong>
               <span>문제와 바라는 모습을 한 칸씩 채워요.</span>
             </div>
             <div class="prepare-story-grid">
@@ -1145,7 +1145,7 @@
           <div class="redesign-readiness" role="status" aria-label="회의 준비 입력 상태">
             <span class="${hasTopic ? "ready" : "needs-attention"}" data-prepare-topic-status><b>${hasTopic ? "✓" : "1"}</b><em>${hasTopic ? "주제를 적었어요" : "주제를 먼저 적어요"}</em></span>
             <i aria-hidden="true">→</i>
-            <span class="${hasStory ? "ready" : "needs-attention"}" data-prepare-story-status><b>${hasStory ? "✓" : "2"}</b><em>${hasStory ? "이야기할 까닭을 적었어요" : "문제나 바라는 모습을 적어요"}</em></span>
+            <span class="${hasStory ? "ready" : "needs-attention"}" data-prepare-story-status><b>${hasStory ? "✓" : "2"}</b><em>${hasStory ? "회의가 필요한 까닭을 적었어요" : "문제나 바라는 모습을 적어요"}</em></span>
             <i aria-hidden="true">→</i>
             <span class="time"><b>3</b><em>다음에서 회의 순서를 골라요</em></span>
           </div>
@@ -1287,13 +1287,13 @@
       <div class="workspace wide">
         <section class="panel redesign-board promise-redesign">
           <div class="redesign-board-head">
-            <div><h2>약속을 읽고 회의를 시작해요</h2><p>오늘 이야기할 것을 확인하고, 친구들과 지킬 약속을 소리 내어 읽어요.</p></div>
+            <div><h2>약속을 읽고 회의를 시작해요</h2><p>오늘의 안건을 확인하고, 친구들과 지킬 약속을 소리 내어 읽어요.</p></div>
             <button class="btn mint sm" data-action="sample-meeting-rules">✨ 약속 예시 넣기</button>
           </div>
           <label class="promise-topic-band">
-            ${chip(ASSETS.icons.megaphone, "#7857d9", "오늘 함께 정할 것")}
-            <span><b>오늘 함께 정할 것</b><small>앞에서 정한 주제가 그대로 이어져요.</small></span>
-            <input class="row-input xl" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘 함께 정할 것" placeholder="오늘 함께 정할 주제를 적어요" />
+            ${chip(ASSETS.icons.megaphone, "#7857d9", "오늘의 안건")}
+            <span><b>오늘의 안건</b><small>앞에서 정한 주제가 그대로 이어져요.</small></span>
+            <input class="row-input xl" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘의 안건" placeholder="오늘의 안건을 적어요" />
           </label>
           <div class="promise-section-head"><strong>우리 반 약속</strong><span>모두 읽은 뒤 필요한 약속만 고쳐요.</span></div>
           <ol class="meeting-rule-list promise-card-grid">
@@ -1368,7 +1368,7 @@
         </div>
         <details class="compact-details reflection-legacy-note">
           <summary>자유 메모 보기</summary>
-          <div class="details-content"><textarea class="row-input" data-field="previous.reflectionNotes" rows="2" aria-label="지난 약속 자유 메모" placeholder="더 남길 이야기가 있으면 적어요">${escapeHtml(state.meeting.previous.reflectionNotes)}</textarea></div>
+          <div class="details-content"><textarea class="row-input" data-field="previous.reflectionNotes" rows="2" aria-label="지난 약속 자유 메모" placeholder="더 남길 내용이 있으면 적어요">${escapeHtml(state.meeting.previous.reflectionNotes)}</textarea></div>
         </details>
         <div class="redesign-readiness"><span class="${state.meeting.previous.promise ? "ready" : "needs-attention"}"><b>${state.meeting.previous.promise ? "✓" : "1"}</b><em>지난 약속 고르기</em></span><i>→</i><span class="${countState === "complete" ? "ready" : "needs-attention"}"><b>${countState === "complete" ? "✓" : "2"}</b><em>${countMessage}</em></span><i>→</i><span class="time"><b>3</b><em>다음에 생각을 모아요</em></span></div>
         </section>
@@ -1427,7 +1427,7 @@
             <div><h2 class="panel-title" style="color:var(--blue)">생각과 이유를 차례로 적어요</h2><p>왼쪽에는 친구의 생각을 기록하고, 오른쪽에서는 발표 순서만 간단히 정해요.</p></div>
             <span class="speaker-count-badge">생각 ${state.meeting.opinions.length}개 · 발표 ${speakerOrder.length}명</span>
           </div>
-          <label class="opinion-topic-context">${chip(ASSETS.icons.clipboard, "#19b999", "오늘 함께 정할 것")}<span><b>오늘 함께 정할 것</b><small>앞 단계의 주제가 이어졌어요.</small></span><input class="row-input" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘 함께 정할 것" /></label>
+          <label class="opinion-topic-context">${chip(ASSETS.icons.clipboard, "#19b999", "오늘의 안건")}<span><b>오늘의 안건</b><small>앞 단계의 주제가 이어졌어요.</small></span><input class="row-input" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘의 안건" /></label>
           <div class="opinion-speaking-layout">
             <div class="opinion-compose">
               <label><span class="info-label" style="color:var(--blue)">생각</span><textarea class="row-input" data-field="opinionDraft.text" rows="3" placeholder="발표한 생각을 적어요" aria-label="발표한 생각">${escapeHtml(state.meeting.opinionDraft.text)}</textarea></label>
@@ -1492,7 +1492,7 @@
             <div><h2 class="panel-title" style="color:var(--violet)">앞에서 나온 생각 모아보기</h2><p>생각과 이유를 읽고, 같은 생각에 손든 친구 수를 적어요.</p></div>
             <span class="tally-status ${opinionCount && talliedCount === opinionCount ? "is-complete" : ""}"><b>${talliedCount} / ${opinionCount}</b> 확인</span>
           </div>
-          <div class="summary-topic-band"><span>오늘 함께 정할 것</span><strong>${escapeHtml(state.meeting.agenda.title || "앞 단계에서 주제를 적어 주세요.")}</strong></div>
+          <div class="summary-topic-band"><span>오늘의 안건</span><strong>${escapeHtml(state.meeting.agenda.title || "앞 단계에서 주제를 적어 주세요.")}</strong></div>
           <div class="opinion-tally-list">
             ${state.meeting.opinions.map((opinion, index) => `
               <article class="opinion-tally-card ${state.meeting.topicSelection.selectedTopic === opinion.text ? "is-selected" : ""}" style="--rank:${rankColors[index % rankColors.length]}">
@@ -1500,11 +1500,11 @@
                 <span class="rank-badge">${index + 1}</span>
                 <div class="opinion-tally-copy"><strong>${escapeHtml(opinion.text)}</strong><p>${escapeHtml(opinion.reason || "이유를 아직 적지 않았어요.")}</p></div>
                 ${handVoteControl(`opinions.${index}.likes`, opinion.id)}
-                <button class="btn ${state.meeting.topicSelection.selectedTopic === opinion.text ? "mint" : "secondary"} sm opinion-pick" type="button" data-action="select-topic" data-label="${escapeAttr(opinion.text)}">${state.meeting.topicSelection.selectedTopic === opinion.text ? "✓ 함께 이야기할 생각" : "이 생각으로 이야기하기"}</button>
+                <button class="btn ${state.meeting.topicSelection.selectedTopic === opinion.text ? "mint" : "secondary"} sm opinion-pick" type="button" data-action="select-topic" data-label="${escapeAttr(opinion.text)}">${state.meeting.topicSelection.selectedTopic === opinion.text ? "✓ 함께 토의할 생각" : "이 생각으로 토의하기"}</button>
               </article>
             `).join("") || `<div class="empty-shared-state">앞 순서에서 생각과 이유를 먼저 기록해 주세요.</div>`}
           </div>
-          <div class="selected-opinion-banner ${state.meeting.topicSelection.selectedTopic ? "is-selected" : ""}"><span>함께 이야기할 생각</span><strong>${escapeHtml(state.meeting.topicSelection.selectedTopic || "위 생각 중 하나를 골라 주세요.")}</strong></div>
+          <div class="selected-opinion-banner ${state.meeting.topicSelection.selectedTopic ? "is-selected" : ""}"><span>함께 토의할 생각</span><strong>${escapeHtml(state.meeting.topicSelection.selectedTopic || "위 생각 중 하나를 골라 주세요.")}</strong></div>
           <div class="redesign-readiness"><span class="${opinionCount ? "ready" : "needs-attention"}"><b>${opinionCount ? "✓" : "1"}</b><em>생각 ${opinionCount}개 모음</em></span><i>→</i><span class="${opinionCount && talliedCount === opinionCount ? "ready" : "needs-attention"}"><b>${opinionCount && talliedCount === opinionCount ? "✓" : "2"}</b><em>손든 수 ${talliedCount}/${opinionCount} 확인</em></span><i>→</i><span class="${state.meeting.topicSelection.selectedTopic ? "ready" : "needs-attention"}"><b>${state.meeting.topicSelection.selectedTopic ? "✓" : "3"}</b><em>이어갈 생각 고르기</em></span></div>
         </section>
       </div>
@@ -1540,10 +1540,10 @@
     return `
       <div class="workspace wide">
         <section class="panel redesign-board discussion-redesign">
-          <div class="redesign-board-head"><div><h2>세 가지 질문으로 더 좋은 방법을 찾아요</h2><p>한 칸씩 차례로 이야기하면 친구들의 생각을 놓치지 않아요.</p></div><span class="board-step-chip orange">함께 이야기</span></div>
-          <label class="discussion-topic-band">${chip(ASSETS.icons.megaphoneBig, "#f59e0b", "함께 말해 볼 것")}<span><b>함께 이야기할 생각</b><small>앞에서 고른 생각이 이어져요.</small></span><input class="row-input" data-field="topicSelection.selectedTopic" value="${escapeAttr(state.meeting.topicSelection.selectedTopic)}" aria-label="함께 이야기할 생각" /></label>
+          <div class="redesign-board-head"><div><h2>세 가지 질문으로 더 좋은 방법을 찾아요</h2><p>한 칸씩 차례로 이야기하면 친구들의 생각을 놓치지 않아요.</p></div><span class="board-step-chip orange">함께 토의</span></div>
+          <label class="discussion-topic-band">${chip(ASSETS.icons.megaphoneBig, "#f59e0b", "함께 말해 볼 것")}<span><b>함께 토의할 생각</b><small>앞에서 고른 생각이 이어져요.</small></span><input class="row-input" data-field="topicSelection.selectedTopic" value="${escapeAttr(state.meeting.topicSelection.selectedTopic)}" aria-label="함께 토의할 생각" /></label>
           ${renderDiscussionFields()}
-          <div class="redesign-readiness"><span class="${state.meeting.topicSelection.selectedTopic ? "ready" : "needs-attention"}"><b>${state.meeting.topicSelection.selectedTopic ? "✓" : "1"}</b><em>이야기할 생각 확인</em></span><i>→</i><span class="${hasDiscussion ? "ready" : "needs-attention"}"><b>${hasDiscussion ? "✓" : "2"}</b><em>세 가지 관점으로 이야기</em></span><i>→</i><span class="time"><b>3</b><em>다음에서 손들어 정해요</em></span></div>
+          <div class="redesign-readiness"><span class="${state.meeting.topicSelection.selectedTopic ? "ready" : "needs-attention"}"><b>${state.meeting.topicSelection.selectedTopic ? "✓" : "1"}</b><em>토의할 생각 확인</em></span><i>→</i><span class="${hasDiscussion ? "ready" : "needs-attention"}"><b>${hasDiscussion ? "✓" : "2"}</b><em>세 가지 관점으로 토의</em></span><i>→</i><span class="time"><b>3</b><em>다음에서 손들어 정해요</em></span></div>
         </section>
       </div>
     `;
@@ -1633,7 +1633,7 @@
     const speakerOrder = getSpeakerOrder().map((index, orderIndex) => `${orderIndex + 1}. ${state.meeting.students[index]}`).join(" → ");
     const rows = [
       ["날짜", `${state.meeting.date} · ${state.meeting.totalStudents}명`],
-      ["오늘의 주제", state.meeting.agenda.title],
+      ["오늘의 안건", state.meeting.agenda.title],
       ["지금 우리의 문제점", formatPrepareOpinions("problem")],
       ["어떻게 바꾸면 좋을까요?", formatPrepareOpinions("outcome")],
       ["오늘 맡은 일", formatRolesForReport()],
@@ -1642,7 +1642,7 @@
       ["지난 약속 돌아보기", `잘된 점: ${state.meeting.previous.evidence} / 어려웠던 점: ${state.meeting.previous.cause} / 다음에 바꿀 점: ${state.meeting.previous.improvement}`],
       ["발표 순서", speakerOrder],
       ["나온 생각", state.meeting.opinions.map((op) => `${op.text}${op.reason ? ` (${op.reason})` : ""}`).join(" / ")],
-      ["함께 나눈 이야기", `생각한 방법: ${state.meeting.discussion.proposal} / 걱정되는 점: ${state.meeting.discussion.concerns} / 더 좋은 방법: ${state.meeting.discussion.revisionSuggestion}`],
+      ["함께 토의한 내용", `생각한 방법: ${state.meeting.discussion.proposal} / 걱정되는 점: ${state.meeting.discussion.concerns} / 더 좋은 방법: ${state.meeting.discussion.revisionSuggestion}`],
       ["손든 수", `좋아요 ${state.meeting.vote.agree} / 다른 생각 ${state.meeting.vote.disagree}`],
       ["오늘 함께 정한 일", state.meeting.decision.text],
       ["어떻게 해 볼까요?", state.meeting.decision.practiceMethod],
@@ -1659,8 +1659,8 @@
         <section class="panel redesign-board report-redesign">
           <div class="redesign-board-head"><div><h2>오늘 회의를 한눈에 확인해요</h2><p>처음 주제부터 실천 약속까지 차례로 읽고 회의를 마쳐요.</p></div><span class="board-step-chip violet">마무리</span></div>
           <div class="report-summary-grid">
-            <article><span>1 · 오늘의 주제</span><strong>${escapeHtml(state.meeting.agenda.title || "아직 적지 않았어요.")}</strong></article>
-            <article><span>2 · 함께 이야기한 생각</span><strong>${escapeHtml(representativeIdea)}</strong></article>
+            <article><span>1 · 오늘의 안건</span><strong>${escapeHtml(state.meeting.agenda.title || "아직 적지 않았어요.")}</strong></article>
+            <article><span>2 · 함께 토의한 생각</span><strong>${escapeHtml(representativeIdea)}</strong></article>
             <article><span>3 · 손든 결과</span><strong>좋아요 ${state.meeting.vote.agree}명 · ${agreeRate}%</strong></article>
             <article><span>4 · 함께 정한 일</span><strong>${escapeHtml(state.meeting.decision.text || "아직 정하지 않았어요.")}</strong></article>
           </div>
@@ -1681,7 +1681,7 @@
                 `).join("")}
               </div>
               <button class="btn primary poster-print-open" type="button" data-action="open-poster-print">🖨️ 크게 보고 인쇄하기</button>
-              <details class="compact-details report-details"><summary>오늘 이야기 전체 ${rows.length}개 보기</summary><div id="reportText" class="details-content report-list">${rows.map(([label, value]) => `<div class="report-row"><b class="report-key">${escapeHtml(label)}</b><span>${escapeHtml(value || "아직 입력하지 않았어요.")}</span></div>`).join("")}</div></details>
+              <details class="compact-details report-details"><summary>오늘 회의 기록 전체 ${rows.length}개 보기</summary><div id="reportText" class="details-content report-list">${rows.map(([label, value]) => `<div class="report-row"><b class="report-key">${escapeHtml(label)}</b><span>${escapeHtml(value || "아직 입력하지 않았어요.")}</span></div>`).join("")}</div></details>
             </section>
             <section class="report-closing-card">
               <div class="panel-head"><div class="closing-comment-title">${chip(ASSETS.icons.speech, "#7857d9", "우리 반 마무리 한마디")}<span>우리 반 마무리 한마디</span></div><button class="btn secondary sm" type="button" data-action="refresh-closing-comment">↻ 문장 바꾸기</button></div>
@@ -1702,7 +1702,7 @@
     const disagree = Number(meeting.vote.disagree || 0);
     const voteTotal = agree + disagree;
     const agreeRate = voteTotal ? Math.round((agree / voteTotal) * 100) : 0;
-    const question = blank(meeting.vote.question || meeting.topicSelection.selectedTopic, "함께 이야기한 질문");
+    const question = blank(meeting.vote.question || meeting.topicSelection.selectedTopic, "함께 토의한 질문");
     const hostName = meeting.roles?.entries?.find((entry) => entry.id === "role-host")?.name || "";
     const footerNames = hostName ? `회장 ${hostName}` : "우리 반 모두";
     return `
@@ -1712,7 +1712,7 @@
         <header class="a4-head">
           <img class="a4-head-icon" src="${style.icons.head}" alt="" />
           <div class="a4-head-copy">
-            <span class="a4-kicker">${escapeHtml(blank(meeting.title, "우리 반 이야기"))} · ${escapeHtml(meeting.date)} · ${escapeHtml(meeting.totalStudents)}명</span>
+            <span class="a4-kicker">${escapeHtml(blank(meeting.title, "우리 반 학급회의"))} · ${escapeHtml(meeting.date)} · ${escapeHtml(meeting.totalStudents)}명</span>
             <h1 class="a4-title">${escapeHtml(blank(meeting.agenda.title, "우리 반이 함께 정했어요"))}</h1>
           </div>
           <img class="a4-mascot" src="${style.mascot}" alt="" />
@@ -1727,7 +1727,7 @@
           <article><img src="${style.icons.when}" alt="" /><b>언제까지?</b><p>${escapeHtml(blank(meeting.decision.period, "다음 회의 때까지"))}</p></article>
         </section>
         <section class="a4-vote">
-          <div class="a4-vote-question"><img src="${style.icons.talk}" alt="" /><div><b>함께 이야기한 질문</b><p>${escapeHtml(question)}</p></div></div>
+          <div class="a4-vote-question"><img src="${style.icons.talk}" alt="" /><div><b>함께 토의한 질문</b><p>${escapeHtml(question)}</p></div></div>
           <div class="a4-vote-result">
             <img src="${style.icons.vote}" alt="" />
             <div class="a4-vote-nums">
@@ -1800,10 +1800,10 @@
       4: "지난번 약속 돌아보기",
       5: "우리 생각 적기",
       6: "생각 모아 손들기",
-      7: "함께 이야기하기",
+      7: "함께 토의하기",
       8: "손들어 정하기",
       9: "함께 정한 일 적기",
-      10: "오늘 이야기 모아보기"
+      10: "오늘 회의 한눈에 보기"
     };
     const isRouteEnd = step > 2 && nextPage == null;
     const isFinalSaved = isRouteEnd
@@ -1811,14 +1811,14 @@
       && state.meeting.flow.completedPages.includes(PAGES[step]?.id);
     return `
       <div class="nav-area">
-        <p class="nav-requirement ${validation.valid ? "ready" : "needs-attention"}" id="${navHintId}" data-nav-requirement>${escapeHtml(isFinalSaved ? "🎉 오늘 이야기를 저장했어요. 회의가 끝났어요!" : navHint)}</p>
+        <p class="nav-requirement ${validation.valid ? "ready" : "needs-attention"}" id="${navHintId}" data-nav-requirement>${escapeHtml(isFinalSaved ? "🎉 회의록을 저장했어요. 이상으로 오늘 학급회의를 마칩니다!" : navHint)}</p>
         <div class="cta-row">
           ${step > 1 ? `<button class="btn ghost" data-action="prev">← 이전</button>` : ""}
           ${renderSaveStatus()}
           ${isFinalSaved ? `
             <button class="btn primary xl" data-action="home" data-primary-next>🎉 저장 완료 · 처음으로</button>
           ` : isRouteEnd ? `
-            <button class="btn primary xl" data-action="complete-save" data-primary-next ${disabledAttrs}>✓ 이 활동 마치고 오늘 이야기 저장</button>
+            <button class="btn primary xl" data-action="complete-save" data-primary-next ${disabledAttrs}>✓ 이 활동 마치고 회의록 저장</button>
             <button class="btn dark" data-action="home">⌂ 처음으로</button>
           ` : `<button class="btn primary xl" data-action="complete-next" data-primary-next ${disabledAttrs}>${step === 2 ? "이 순서로 시작하기 →" : `✓ 이 순서 마치고 ${nextPage ? destinationLabels[nextPage] || "다음 순서" : "활동을 한 개 이상 고르기"} →`}</button>`}
         </div>
@@ -1840,7 +1840,7 @@
     return ({
       1: "오늘 무엇을 함께 정할지 한 문장으로 적어 볼게요.",
       2: "오늘 할 활동을 고르고, 맡을 친구를 정할게요.",
-      3: "지금부터 우리 반 이야기 시간을 시작할게요. 친구의 말을 끝까지 들어요.",
+      3: "지금부터 우리 반 학급회의를 시작하겠습니다. 친구의 말을 끝까지 들어 주세요.",
       4: "지난번 약속을 잘 지켰는지 손들어 볼게요.",
       5: "내 생각과 그 이유를 차례로 말해요. 부회장이 화면에 짧게 적을게요.",
       6: "나온 생각과 이유를 함께 읽고, 같은 생각에 손든 친구 수를 세어 볼게요.",
@@ -1848,12 +1848,12 @@
       8: "좋아요와 다른 생각, 두 가지로 손을 들어요. 숫자를 보고 함께 정할게요.",
       9: "함께 정한 일을 누가 언제까지 할지 분명하게 적을게요.",
       10: "오늘 함께 정한 일을 읽고 회의를 마칠게요."
-    })[step] || "우리 반 이야기 순서대로 해요.";
+    })[step] || "학급회의 순서대로 진행해요.";
   }
 
   function stageGuide(step) {
     return ({
-      1: { children: "어떤 일이 있었는지, 어떻게 되면 좋을지 말해요.", recorder: "주제와 의견을 낸 친구 이름을 적어요.", done: "'오늘 함께 정할 것' 칸이 채워졌으면 다 한 거예요." },
+      1: { children: "어떤 일이 있었는지, 어떻게 되면 좋을지 말해요.", recorder: "주제와 의견을 낸 친구 이름을 적어요.", done: "'오늘의 안건' 칸이 채워졌으면 다 한 거예요." },
       2: {
         children: "오늘 할 활동을 골라 눌러요.",
         recorder: "역할 이름과 맡을 친구 이름을 적어요. 나중에 바꿔도 돼요.",
@@ -1866,12 +1866,12 @@
       3: { children: "약속을 다 같이 소리 내어 읽어요.", recorder: "바꿀 약속이 있으면 칸을 눌러 고쳐요.", done: "우리 반 약속을 모두 읽었으면 다 한 거예요." },
       4: { children: "잘 지켰는지 손을 들어 보여요.", recorder: "손든 친구가 몇 명인지 세어 적고, 왜 그런지 한 줄 적어요.", done: "잘된 점과 어려웠던 점을 한 가지씩 적었으면 다 한 거예요." },
       5: { children: "내 생각과 이유를 한 사람씩 말해요.", recorder: "발표한 생각과 이유를 짧게 적고 '기록하기'를 눌러요.", done: "나온 생각이 아래 목록에 다 모였으면 끝난 거예요." },
-      6: { children: "나온 생각과 이유를 읽고 같은 생각에 손을 들어요.", recorder: "생각마다 손든 수를 적고 '다 세었어요'를 눌러요. 그다음 이야기할 생각 하나를 골라요.", done: "모든 생각의 손든 수를 세고, 이야기할 생각을 골랐으면 다 한 거예요." },
+      6: { children: "나온 생각과 이유를 읽고 같은 생각에 손을 들어요.", recorder: "생각마다 손든 수를 적고 '다 세었어요'를 눌러요. 그다음 토의할 생각 하나를 골라요.", done: "모든 생각의 손든 수를 세고, 토의할 생각을 골랐으면 다 한 거예요." },
       7: { children: "좋은 점, 걱정되는 점, 새 방법을 차례로 말해요.", recorder: "중요한 말만 짧게 화면에 적어요.", done: "'더 좋은 방법' 칸에 한 가지라도 적었으면 다 한 거예요." },
       8: { children: "한 사람씩 손들어 좋아요 또는 다른 생각을 보여요.", recorder: "두 가지 손든 수를 적고, 우리 반 친구 수와 맞는지 확인해요.", done: "손든 수를 다 세고 '다 세었어요'를 눌렀으면 다 한 거예요." },
       9: { children: "무엇을 누가 언제까지 할지 함께 정해요.", recorder: "무엇을·어떻게·누가·언제까지, 네 칸을 채워요.", done: "네 칸이 다 채워졌으면 다 한 거예요." },
       10: { children: "함께 정한 일을 소리 내어 읽어요.", recorder: "아래 저장 버튼을 누르면 오늘 회의가 기록으로 남아요.", done: "'저장 완료'가 보이면 회의 끝!" }
-    })[step] || { children: "함께 이야기해요.", recorder: "중요한 말을 적어요.", done: "다음 순서로 갈 준비가 됐어요." };
+    })[step] || { children: "함께 토의해요.", recorder: "중요한 말을 적어요.", done: "다음 순서로 갈 준비가 됐어요." };
   }
 
   function getMeetingDurationMinutes() {
@@ -1979,7 +1979,7 @@
         items: [meetingNoteItem("발표 순서", speakerOrder), ...opinions].filter(Boolean)
       },
       {
-        title: "함께 이야기",
+        title: "함께 토의",
         icon: "🗣️",
         items: [
           meetingNoteItem("함께 말해 볼 것", meeting.topicSelection?.selectedTopic),
@@ -2024,7 +2024,7 @@
     const voteTotal = Number(state.meeting.vote?.agree || 0) + Number(state.meeting.vote?.disagree || 0);
     const summaryItems = [
       meetingNoteItem("오늘의 주제", state.meeting.agenda?.title),
-      meetingNoteItem("함께 이야기할 생각", state.meeting.topicSelection?.selectedTopic),
+      meetingNoteItem("함께 토의할 생각", state.meeting.topicSelection?.selectedTopic),
       meetingNoteItem("손든 결과", voteTotal ? `좋아요 ${state.meeting.vote.agree || 0}명 · 다른 생각 ${state.meeting.vote.disagree || 0}명` : ""),
       meetingNoteItem("함께 정한 일", state.meeting.decision?.text)
     ].filter(Boolean);
@@ -2178,10 +2178,10 @@
           <section class="settings-section" aria-labelledby="record-settings-title">
             <div class="settings-section-head">
               <span class="settings-section-icon" aria-hidden="true">💾</span>
-              <div><h3 id="record-settings-title">이야기 기록 관리</h3><p>기록 파일을 불러오거나 따로 보관해요.</p></div>
+              <div><h3 id="record-settings-title">회의 기록 관리</h3><p>기록 파일을 불러오거나 따로 보관해요.</p></div>
             </div>
             <div class="settings-actions">
-              <label class="btn secondary" for="jsonImport">이야기 기록 불러오기</label>
+              <label class="btn secondary" for="jsonImport">회의 기록 불러오기</label>
               <input id="jsonImport" class="hidden-input" type="file" accept="application/json" data-import-json />
               <button class="btn secondary" type="button" data-action="export-json">기록 파일 내려받기</button>
             </div>
@@ -2191,9 +2191,9 @@
           <details class="compact-details settings-details">
             <summary>우리 반 사용 도움말 보기</summary>
             <div class="details-content guide-grid">
-              <article><b>1. 준비</b><p>오늘 함께 정할 것과 어떤 문제가 있는지 적어요. 연습용 예시는 연습할 때만 사용해요.</p></article>
+              <article><b>1. 준비</b><p>오늘의 안건과 어떤 문제가 있는지 적어요. 연습용 예시는 연습할 때만 사용해요.</p></article>
               <article><b>2. 진행</b><p>회장은 진행 문장을 읽고, 부회장은 필요한 수와 중요한 내용을 화면에 적어요.</p></article>
-              <article><b>3. 기록</b><p>화면 내용은 자동으로 저장돼요. 서기는 자세한 이야기를 공책에 적어요.</p></article>
+              <article><b>3. 기록</b><p>화면 내용은 자동으로 저장돼요. 서기는 자세한 내용을 공책에 적어요.</p></article>
               <article><b>4. 이동</b><p>화면 위쪽 번호를 눌러 필요한 순서로 직접 이동해요.</p></article>
             </div>
           </details>
@@ -2468,7 +2468,7 @@
       const untallied = opinions.find((opinion) => !talliedIds.includes(opinion.id));
       if (untallied) return missing(`‘${untallied.text}’에 손든 수를 세고 ‘다 세었어요’를 눌러 주세요.`);
       if (!filled(meeting.topicSelection.selectedTopic)) {
-        return missing("함께 이야기할 생각을 하나 골라 주세요.", "topicSelection.selectedTopic");
+        return missing("함께 토의할 생각을 하나 골라 주세요.", "topicSelection.selectedTopic");
       }
     }
 
@@ -2545,7 +2545,7 @@
       return;
     }
     queueSave();
-    toast("🎉 모든 순서를 마쳤어요. 아래에서 오늘 이야기를 저장해요.");
+    toast("🎉 모든 순서를 마쳤어요. 아래에서 회의록을 저장해요.");
   }
 
   async function completeAndFinalize() {
@@ -2564,7 +2564,7 @@
   }
 
   async function newMeeting() {
-    const ok = await askConfirm("새 이야기를 시작할까요? 지금 쓰던 이야기는 저장한 뒤 시작해요.", { confirmLabel: "새로 시작", cancelLabel: "그대로 두기" });
+    const ok = await askConfirm("새 회의를 시작할까요? 진행하던 회의는 저장한 뒤 시작해요.", { confirmLabel: "새로 시작", cancelLabel: "그대로 두기" });
     if (!ok) return;
     await saveMeetingNow();
     state.recentMeetings = await getAllMeetings();
@@ -2575,7 +2575,7 @@
   }
 
   async function loadSample() {
-    const ok = await askConfirm("연습용 이야기를 불러올까요? 지금 쓰던 이야기는 '지난 이야기 보관함'에 그대로 남아요.", { confirmLabel: "불러오기", cancelLabel: "그대로 두기" });
+    const ok = await askConfirm("연습용 회의를 불러올까요? 진행하던 회의는 '지난 회의 보관함'에 그대로 남아요.", { confirmLabel: "불러오기", cancelLabel: "그대로 두기" });
     if (!ok) return;
     try {
       await saveMeetingNow();
@@ -3118,7 +3118,7 @@
     timer.lastFiveMinuteAlertBlock = block;
     playSound("success");
     queueSave();
-    toast(`🔔 ${block * 5}분이 지났어요. 다음 이야기를 확인해요!`);
+    toast(`🔔 ${block * 5}분이 지났어요. 다음 순서를 확인해요!`);
   }
 
   function getRemainingMs() {
@@ -3146,7 +3146,7 @@
     state.recentMeetings = await getAllMeetings();
     render();
     launchConfetti();
-    toast("🎉 오늘 이야기가 이 기기에 안전하게 남았어요!");
+    toast("🎉 오늘 회의가 이 기기에 안전하게 저장됐어요!");
   }
 
   function askConfirm(message, { confirmLabel = "네, 할게요", cancelLabel = "아니요" } = {}) {
@@ -3240,7 +3240,7 @@
       render();
     } catch (error) {
       console.warn(error);
-      alert("이야기 기록 파일을 열지 못했어요. 다른 파일인지 확인해 주세요.");
+      alert("회의 기록 파일을 열지 못했어요. 다른 파일인지 확인해 주세요.");
     }
   }
 
@@ -3544,10 +3544,11 @@
     const previousDefaultSteps = ["준비", "순서", "시작", "돌아보기", "의견 적기", "의견 모으기", "함께 이야기", "투표", "정한 내용", "마무리"];
     const latestPreviousDefaultSteps = ["준비", "순서", "시작", "지난번 보기", "생각 적기", "생각 모으기", "함께 말하기", "손들기", "정한 일", "마무리"];
     const talkDefaultSteps = ["준비", "순서", "시작", "지난번 보기", "생각 적기", "생각 모아 말하기", "함께 말하기", "손들기", "정한 일", "마무리"];
+    const raiseDefaultSteps = ["준비", "순서", "시작", "지난번 보기", "생각 적기", "생각 모아 손들기", "함께 말하기", "손들기", "정한 일", "마무리"];
     const savedSteps = Array.isArray(meeting.flow.stepLabels)
       ? meeting.flow.stepLabels.map((label) => String(label || ""))
       : [...DEFAULT_MEETING.flow.stepLabels];
-    const legacyDefaultPatterns = [oldDefaultSteps, previousDefaultSteps, latestPreviousDefaultSteps, talkDefaultSteps].map((steps) => steps.join("|"));
+    const legacyDefaultPatterns = [oldDefaultSteps, previousDefaultSteps, latestPreviousDefaultSteps, talkDefaultSteps, raiseDefaultSteps].map((steps) => steps.join("|"));
     meeting.flow.stepLabels = legacyDefaultPatterns.includes(savedSteps.join("|"))
       ? [...DEFAULT_MEETING.flow.stepLabels]
       : savedSteps.slice(0, 10);
@@ -3579,7 +3580,7 @@
   }
 
   function friendlyMeetingTitle(title) {
-    return String(title || "") === "6월 1주 학급회의" ? "6월 1주 우리 반 이야기" : String(title || "");
+    return String(title || "");
   }
 
   function getPath(object, path) {
@@ -3623,7 +3624,7 @@
       const badge = node.querySelector("b");
       const text = node.querySelector("em");
       if (badge) badge.textContent = hasPrepareStory ? "✓" : "2";
-      if (text) text.textContent = hasPrepareStory ? "이야기할 까닭을 적었어요" : "문제나 바라는 모습을 적어요";
+      if (text) text.textContent = hasPrepareStory ? "회의가 필요한 까닭을 적었어요" : "문제나 바라는 모습을 적어요";
     });
     const roles = state.meeting.roles.entries || [];
     const assignedRoleCount = roles.filter((role) => String(role.name || "").trim()).length;
@@ -3746,7 +3747,7 @@
     document.querySelectorAll("[data-nav-requirement]").forEach((node) => {
       node.className = `nav-requirement ${validation.valid ? "ready" : "needs-attention"}`;
       node.textContent = isFinalSaved
-        ? "🎉 오늘 이야기를 저장했어요. 회의가 끝났어요!"
+        ? "🎉 회의록을 저장했어요. 이상으로 오늘 학급회의를 마칩니다!"
         : validation.valid
         ? "✓ 이 순서를 마칠 준비가 됐어요."
         : `다음으로 가려면: ${validation.message}`;
