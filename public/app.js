@@ -975,7 +975,7 @@
               </h1>
             </div>
             <p class="landing-subtitle">우리 반의 일을 우리 손으로 정하는 회의 시간</p>
-            <p class="landing-description">안건을 정하고 의견을 나눈 뒤, 손들어 결정하고 실천 약속까지 회의록에 남겨요.</p>
+            <p class="landing-description"><span>안건을 정하고 의견을 나눈 뒤,</span> <span>손들어 결정하고 실천 약속까지 회의록에 남겨요.</span></p>
             <div class="actions landing-actions">
               <button class="btn primary landing-cta-main" data-action="new">📋 새 회의 시작</button>
               <button class="btn secondary landing-cta-sub" data-action="continue">💬 회의 이어하기</button>

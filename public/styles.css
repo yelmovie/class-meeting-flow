@@ -9685,3 +9685,6 @@ button:disabled {
   height: 20px;
   margin-left: 2px;
 }
+
+/* 랜딩 설명문: 두 절이 각각 한 줄씩 자연스럽게 떨어지게 */
+.landing.landing-v2 .landing-description span { display: inline-block; }
