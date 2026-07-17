@@ -904,6 +904,19 @@
     return null;
   }
 
+  function getVotePointerTarget() {
+    const vote = state.meeting.vote;
+    const agree = Number(vote.agree || 0);
+    const disagree = Number(vote.disagree || 0);
+    const expected = Number(state.meeting.totalStudents || 0);
+    const total = agree + disagree;
+    if (agree === 0) return document.querySelector('[data-action="counter-plus"][data-path="vote.agree"]');
+    if (disagree === 0 && total < expected) return document.querySelector('[data-action="counter-plus"][data-path="vote.disagree"]');
+    if (total === expected && !vote.confirmed) return document.querySelector("[data-vote-confirm]");
+    if (vote.confirmed) return document.querySelector('[data-action="complete-next"]');
+    return null;
+  }
+
   function updateHandPointer() {
     const existing = document.querySelector(".ux-hand-pointer");
     const blocked = state.settingsOpen || state.recordsModalOpen || state.posterPrintOpen || document.querySelector(".confirm-overlay");
@@ -911,6 +924,7 @@
     if (!blocked) {
       if (state.meeting.currentPage === 5) target = getOpinionBoardPointerTarget();
       if (state.meeting.currentPage === 6) target = getOpinionSummaryPointerTarget();
+      if (state.meeting.currentPage === 8) target = getVotePointerTarget();
     }
     if (!target || target.disabled) {
       existing?.remove();

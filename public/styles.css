@@ -9669,3 +9669,19 @@ button:disabled {
 @media (prefers-reduced-motion: reduce) {
   .ux-hand-pointer { animation: none; }
 }
+
+/* ---------- 1페이지 날짜 입력 잘림 방지 ---------- */
+
+.page-step-1 .prepare-redesign .prepare-top-grid input[data-field="date"] {
+  min-width: 0;
+  padding-inline: 8px 6px;
+  font-size: clamp(15px, 1.9cqh, 18px);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.page-step-1 .prepare-redesign .prepare-top-grid input[data-field="date"]::-webkit-calendar-picker-indicator {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+}
