@@ -17,4 +17,9 @@ Thumbs.db
 # og 썸네일 원본 (public/og.jpg만 커밋)
 /og.png
 
+# 로컬 환경/로그
+.env
+.env.*
+*.log
+
 .vercel

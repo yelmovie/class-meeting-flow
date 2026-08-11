@@ -18,11 +18,19 @@
     <meta name="twitter:description" content="말하고 듣고 함께 정해요. 초등 학급회의를 처음부터 끝까지 안내하는 수업용 웹앱." />
     <meta name="twitter:image" content="https://class-meeting-flow.vercel.app/og.jpg" />
     <link rel="icon" type="image/png" href="./favicon.png" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-    <link rel="stylesheet" href="./styles.css?v=20260718-notefix1" />
+    <!-- 학교망에서 CDN 이 막히면 글꼴이 폴백되고 자폭이 달라져 16:9 화면이 밀린다. 그래서 셀프호스팅. -->
+    <link rel="stylesheet" href="./assets/fonts/pretendard.css?v=20260718-jua1" />
+    <link rel="stylesheet" href="./styles.css?v=20260812-fit35" />
   </head>
   <body>
-    <div id="app" aria-live="polite"></div>
+    <div id="app"></div>
+    <!-- #app 전체가 라이브 영역이면 페이지를 옮길 때마다 화면 전체를 다시 읽는다. 바뀐 쪽 이름만 알린다. -->
+    <p id="page-announce" class="sr-only" role="status"></p>
+    <noscript>
+      <p style="margin:2rem;font-size:1.25rem;line-height:1.6;text-align:center">
+        이 앱은 자바스크립트가 있어야 열려요. 브라우저 설정에서 자바스크립트를 켜고 새로고침해 주세요.
+      </p>
+    </noscript>
     <template id="recovery-template">
       <main class="recovery-screen">
         <section class="panel">
@@ -32,10 +40,12 @@
           <div class="actions">
             <button class="btn primary" data-reload>새로고침</button>
             <button class="btn secondary" data-export-fallback>기록 파일 내려받기</button>
+            <!-- 같은 기록 때문에 새로고침해도 계속 이 화면이 뜰 때 빠져나가는 길 -->
+            <button class="btn ghost" data-discard-restart>이 기록을 버리고 새로 시작</button>
           </div>
         </section>
       </main>
     </template>
-    <script src="./app.js?v=20260717-word2"></script>
+    <script src="./app.js?v=20260812-fit35"></script>
   </body>
 </html>

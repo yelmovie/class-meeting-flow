@@ -87,7 +87,7 @@
 
   const ACTION_SOUNDS = {
     "add-opinion": "reward",
-    "save-report": "success",
+    "complete-save": "success",
     "timer-start": "open",
     "select-topic": "open",
     "delete-opinion": "fail"
@@ -149,6 +149,15 @@
     }
   ];
 
+  // 상시 노출 아이콘은 글리프 대신 SVG로 그린다. ⌂·⚙·Ⅱ 같은 글자는 기기에 따라 빈 네모로 나온다.
+  const ICON = {
+    home: `<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.1 2.6 11.2h2.5v9.7h5.1v-5.6h3.6v5.6h5.1v-9.7h2.5z"/></svg>`,
+    // 슬라이더 모양은 "설정"으로 안 읽힌다. 아이들이 아는 톱니바퀴로.
+    settings: `<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.6l1.9.55.95 1.75 1.98.16 1.4 1.4.16 1.98 1.75.95L21.4 12l-.55 1.9-1.75.95-.16 1.98-1.4 1.4-1.98.16-.95 1.75L12 21.4l-1.9-.55-.95-1.75-1.98-.16-1.4-1.4-.16-1.98-1.75-.95L2.6 12l.55-1.9 1.75-.95.16-1.98 1.4-1.4 1.98-.16.95-1.75z" fill="currentColor"/><circle cx="12" cy="12" r="3.6" fill="#fff"/></svg>`,
+    play: `<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.4 4.6 19.2 12 7.4 19.4z"/></svg>`,
+    pause: `<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6.4" y="4.8" width="4.3" height="14.4" rx="1.3"/><rect x="13.3" y="4.8" width="4.3" height="14.4" rx="1.3"/></svg>`
+  };
+
   const PAGES = [
     { id: "main", title: "우리반 학급회의", subtitle: "우리 반의 일을 우리 손으로 정하는 회의 시간", theme: "#19a78d", bg: ASSETS.backgrounds[0], mascot: ASSETS.characters.rabbit, titleArt: ASSETS.titles.main },
     { id: "page_01_meeting_prepare", step: 1, short: "준비", title: "회의 준비", subtitle: "", theme: "#159f84", bg: ASSETS.backgrounds[0], mascot: ASSETS.characters.rabbit, titleArt: ASSETS.titles.prepare },
@@ -160,7 +169,7 @@
     { id: "page_07_discussion", step: 7, short: "함께 토의", title: "함께 토의하기", subtitle: "좋은 점과 걱정되는 점을 듣고 더 좋은 방법을 찾아봐요.", theme: "#f28a16", bg: ASSETS.backgrounds[3], mascot: ASSETS.characters.rabbit, titleArt: ASSETS.titles.discussion },
     { id: "page_08_vote", step: 8, short: "손들기", title: "손들어 정하기", subtitle: "좋아요와 다른 생각으로 나누어 손든 친구 수와 비율을 확인해요.", theme: "#2f80ed", bg: ASSETS.backgrounds[3], mascot: ASSETS.characters.penguin, titleArt: ASSETS.titles.vote },
     { id: "page_09_decision", step: 9, short: "정한 일", title: "함께 정한 일 적기", subtitle: "무엇을, 누가, 언제까지 할지 쉽게 적어요.", theme: "#159f84", bg: ASSETS.backgrounds[4], mascot: asset("icons/discuss", "66.png"), titleArt: ASSETS.titles.decision },
-    { id: "page_10_report", step: 10, short: "마무리", title: "오늘 회의 한눈에 보기", subtitle: "오늘 나눈 의견과 결정한 일을 회의록으로 확인해요.", theme: "#6d50dc", bg: ASSETS.backgrounds[5], mascot: ASSETS.characters.koala, titleArt: ASSETS.titles.report }
+    { id: "page_10_report", step: 10, short: "마무리", title: "오늘 회의 한눈에 보기", subtitle: "오늘 나눈 생각과 결정한 일을 회의 기록으로 확인해요.", theme: "#6d50dc", bg: ASSETS.backgrounds[5], mascot: ASSETS.characters.koala, titleArt: ASSETS.titles.report }
   ];
 
   const STEP_COLORS = ["#19b999", "#a78bfa", "#2f80ed", "#f48fb1", "#7ccfff", "#ffb23e", "#14a889", "#7857d9", "#159f84", "#e54b79"];
@@ -219,6 +228,8 @@
     title: "6월 1주 학급회의",
     date: new Date().toISOString().slice(0, 10),
     totalStudents: 25,
+    // 결석생이 있으면 손든 수 합계가 등록 인원과 영영 안 맞아 회의가 멈춘다. 오늘 빠진 인원을 따로 센다.
+    absentCount: 0,
     depthMode: "advanced",
     soundEnabled: true,
     bgmEnabled: false,
@@ -239,12 +250,13 @@
       selectedPages: [3, 4, 5, 6, 7, 8, 9, 10],
       studentNavigation: true
     },
+    // 5개면 3페이지에서 두 줄 반이 되어 오른쪽 스크롤바가 생겼다.
+    // 회의 중에 지킬 것 4개만 남기고, "정한 약속 지키기"는 9페이지 실천 약속이 맡는다.
     meetingRules: [
       "친구의 말을 끝까지 들어요.",
       "생각을 말할 때 왜 그런지도 함께 말해요.",
       "사람이 아니라 생각에 대해 이야기해요.",
-      "말할 기회를 골고루 나누어요.",
-      "함께 정한 약속은 같이 지켜요."
+      "말할 기회를 골고루 나누어요."
     ],
     decisionRules: {
       agreeThreshold: 60,
@@ -424,7 +436,8 @@
   }
 
   const state = {
-    meeting: structuredClone(DEFAULT_MEETING),
+    // 시작 상태도 빈 회의여야 한다. 샘플 회의는 '연습용 불러오기'에서만 쓴다.
+    meeting: createEmptyMeeting(),
     recentMeetings: [],
     dbReady: false,
     dbFailed: false,
@@ -439,26 +452,50 @@
     clockCollapseTimer: null,
     noteExpanded: false,
     helpExpanded: false,
-    rosterExpanded: false,
-    recordsModalOpen: false
+    recordsModalOpen: false,
+    // 저장을 눌렀을 때 앞 페이지로 튕기지 않고, 10쪽에 머문 채 안 적은 곳을 보여 주기 위한 목록.
+    finalizeGaps: [],
+    opinionListOpen: false,
+    // 10쪽 마무리 한마디는 팝업이라, 문장 바꾸기로 다시 그려도 열린 채여야 한다.
+    closingCommentOpen: false
   };
 
   const root = document.getElementById("app");
 
-  window.addEventListener("error", showRecovery);
+  // 오류 하나로 화면을 통째로 복구화면으로 바꾸면 적어 둔 회의가 사라진 것처럼 보여서, 알림만 띄우고 회의는 그대로 둔다.
+  let lastErrorNoticeAt = 0;
+  let discardOnUnload = false;
+
+  window.addEventListener("error", (event) => {
+    console.warn("script error", event?.error || event?.message || event);
+    if (Date.now() - lastErrorNoticeAt < 8000) return;
+    lastErrorNoticeAt = Date.now();
+    toast("잠깐 문제가 생겼어요. 적은 내용은 그대로 있으니 회의를 이어가도 괜찮아요.", "warn");
+  });
   window.addEventListener("unhandledrejection", (event) => {
     console.warn("unhandled rejection", event.reason);
     setSaveStatus("error");
     toast("저장에 잠깐 문제가 있었어요. 회의는 계속해도 괜찮아요.", "warn");
   });
-  window.addEventListener("beforeunload", () => saveSnapshot());
+  // '버리고 새로 시작'을 누른 뒤에는 방금 지운 기록을 다시 써 넣지 않는다.
+  window.addEventListener("beforeunload", () => {
+    if (!discardOnUnload) saveSnapshot();
+  });
 
   init();
 
   async function init() {
     try {
+      // 이벤트부터 붙여야 뒤에서 실패해도 버튼이 안 먹는 먹통 화면이 되지 않는다.
+      bindGlobalEvents();
       const snapshot = loadSnapshot();
-      state.meeting = snapshot ? migrate(snapshot) : createEmptyMeeting();
+      try {
+        state.meeting = snapshot ? migrate(snapshot) : createEmptyMeeting();
+      } catch (error) {
+        console.warn("migrate failed", error);
+        state.meeting = createEmptyMeeting();
+        toast("지난 기록을 여는 데 문제가 있어서 새 회의로 시작해요.", "warn");
+      }
       if (!snapshot) state.meeting.currentPage = 0;
       const rawPageParam = new URLSearchParams(location.search).get("page");
       if (rawPageParam !== null) {
@@ -469,11 +506,11 @@
           }
         }
       }
-      bindGlobalEvents();
       render();
       startTimerLoop();
       const db = await openDb();
       state.dbReady = Boolean(db);
+      state.dbFailed = !db; // 기기 저장함을 못 쓰면 시작할 때부터 정직하게 표시한다.
       if (db) {
         if (state.meeting.currentPage !== 0) await saveMeetingNow();
         state.recentMeetings = await getAllMeetings();
@@ -488,7 +525,16 @@
 
   function bindGlobalEvents() {
     window.addEventListener("resize", () => updateHandPointer());
-    window.addEventListener("scroll", () => updateHandPointer(), { passive: true, capture: true });
+    // 스크롤마다 위치를 재는 대신 한 프레임에 한 번만 잰다. 저사양 태블릿에서 스크롤이 끊기지 않는다.
+    let handPointerFrame = 0;
+    const queueHandPointer = () => {
+      if (handPointerFrame) return;
+      handPointerFrame = requestAnimationFrame(() => {
+        handPointerFrame = 0;
+        updateHandPointer();
+      });
+    };
+    window.addEventListener("scroll", queueHandPointer, { passive: true, capture: true });
 
     document.addEventListener("input", (event) => {
       const bulkStudentInput = event.target.closest("[data-student-name-bulk]");
@@ -498,18 +544,8 @@
       }
       const field = event.target.closest("[data-field]");
       if (!field) return;
-      if (field.dataset.field === "flow.durationMinutes") {
-        const minutes = Number(field.value);
-        if (Number.isFinite(minutes) && minutes >= 10 && minutes <= 60) {
-          setMeetingDuration(minutes);
-          queueSave();
-          updateDependentText();
-        }
-        return;
-      }
       const value = normalizeInputValue(field);
       setPath(state.meeting, field.dataset.field, value);
-      if (/^flow\.stageMinutes\.\d+$/.test(field.dataset.field)) syncTimerDurationToStages();
       if (/^vote\.(agree|disagree|hold)$/.test(field.dataset.field)) state.meeting.vote.confirmed = false;
       state.meeting.updatedAt = new Date().toISOString();
       queueSave();
@@ -526,13 +562,6 @@
         const value = normalizeInputValue(field);
         if (field.type === "number" && field.value !== String(value)) field.value = String(value);
         setPath(state.meeting, field.dataset.field, value);
-        if (field.dataset.field === "flow.durationMinutes") {
-          setMeetingDuration(value);
-          queueSave();
-          render();
-          return;
-        }
-        if (/^flow\.stageMinutes\.\d+$/.test(field.dataset.field)) syncTimerDurationToStages();
         if (/^vote\.(agree|disagree|hold)$/.test(field.dataset.field)) state.meeting.vote.confirmed = false;
         queueSave();
       }
@@ -544,6 +573,13 @@
     });
 
     document.addEventListener("click", async (event) => {
+      // 보드 안 펼침 토글은 가운데 팝업으로 뜬다. 팝업 밖(흐린 배경)을 누르면 닫는다.
+      const openPopup = document.querySelector(".redesign-board details.compact-details[open], .flow-setup-board details.compact-details[open]");
+      if (openPopup && !openPopup.contains(event.target)) {
+        openPopup.open = false;
+        return;
+      }
+
       const noteBackdrop = event.target.closest("[data-note-backdrop]");
       if (noteBackdrop && event.target === noteBackdrop) {
         closeMeetingNote();
@@ -564,15 +600,25 @@
 
       const recordsBackdrop = event.target.closest("[data-records-backdrop]");
       if (recordsBackdrop && event.target === recordsBackdrop) {
-        state.recordsModalOpen = false;
-        render();
+        closeRecordsModal();
         return;
       }
 
       if (event.target.closest("[data-clock-control]")) expandMeetingClock();
 
       const button = event.target.closest("[data-action]");
-      if (!button || button.disabled) return;
+      if (!button) return;
+
+      // 회색 버튼을 눌러도 아무 일이 없으면 아이들은 고장으로 여긴다. 왜 못 넘어가는지 알려준다.
+      if (button.hasAttribute("data-blocked")) {
+        playSound("fail");
+        const validation = validateStage(state.meeting.currentPage);
+        if (!validation.valid) showValidationError(validation);
+        return;
+      }
+      if (button.disabled) return;
+      if (isRepeatTap(button)) return;
+
       const action = button.dataset.action;
       const path = button.dataset.path;
 
@@ -604,6 +650,14 @@
         return;
       }
 
+      // 기록한 생각 목록은 자리를 많이 먹어 입력칸을 밀어낸다. 눌렀을 때만 가운데 팝업으로 보여 준다.
+      if (action === "open-opinion-list") {
+        state.opinionListOpen = true;
+        render();
+        requestAnimationFrame(() => document.querySelector("[data-opinion-list] summary")?.focus());
+        return;
+      }
+
       if (action === "open-meeting-help") {
         openMeetingHelp();
         return;
@@ -629,10 +683,11 @@
       if (action === "complete-next") completeCurrentStage();
       if (action === "complete-save") await completeAndFinalize();
       if (action === "prev") goTo(getPreviousRoutePage(state.meeting.currentPage));
+      // 이미 마쳤다고 표시된 페이지라도 다시 열어야 하므로 잠금 검사를 건너뛴다.
+      if (action === "fix-gap") goTo(Number(button.dataset.page), true);
       if (action === "toggle-flow-page") toggleFlowPage(Number(button.dataset.page));
       if (action === "sample") loadSample();
       if (action === "clear-prepare") clearPreparation();
-      if (action === "save-now") await saveWithNotice();
       if (action === "open-settings") openSettingsModal(button);
       if (action === "close-settings") closeSettingsModal();
       if (action === "new") await newMeeting();
@@ -651,11 +706,6 @@
       if (action === "delete-opinion") deleteOpinion(button.dataset.id);
       if (action === "toggle-speaker-order") toggleSpeakerOrder(Number(button.dataset.index));
       if (action === "clear-speaker-order") clearSpeakerOrder();
-      if (action === "close-student-roster") {
-        state.rosterExpanded = false;
-        render();
-        return;
-      }
       if (action === "add-all-speakers") setAllSpeakers();
       if (action === "shuffle-speakers") shuffleSpeakers();
       if (action === "select-topic") selectTopic(button.dataset.label);
@@ -670,28 +720,22 @@
       if (action === "open-records-modal") {
         state.recordsModalOpen = true;
         render();
-        requestAnimationFrame(() => document.querySelector(".records-modal-close")?.focus());
       }
-      if (action === "close-records-modal") {
-        state.recordsModalOpen = false;
-        render();
-      }
-      if (action === "save-report") await finalizeMeeting();
+      if (action === "close-records-modal") closeRecordsModal();
       if (action === "refresh-closing-comment") refreshClosingComment();
       if (action === "set-poster-style") {
         state.meeting.posterStyle = POSTER_STYLES.some((style) => style.id === button.dataset.style) ? button.dataset.style : "mint";
         state.meeting.updatedAt = new Date().toISOString();
         queueSave();
         render();
+        // 다시 그리면 접힘이 닫혀서, 모양을 두세 개 비교하려면 매번 다시 열어야 한다. 그 자리에 다시 펴 준다.
+        document.querySelector(".report-share-card details.compact-details:not(.report-details)")?.setAttribute("open", "");
       }
       if (action === "open-poster-print") {
         state.posterPrintOpen = true;
         render();
       }
-      if (action === "close-poster-print") {
-        state.posterPrintOpen = false;
-        render();
-      }
+      if (action === "close-poster-print") closePosterPrint();
       if (action === "print-poster") window.print();
       } catch (error) {
         console.warn("action failed", action, error);
@@ -725,12 +769,6 @@
       updateMeetingDurationFromDial(event, dial);
     });
 
-    document.addEventListener("toggle", (event) => {
-      if (event.target.matches?.("[data-student-roster-details]")) {
-        state.rosterExpanded = event.target.open;
-      }
-    }, true);
-
     document.addEventListener("pointermove", (event) => {
       if (state.clockPointerId !== event.pointerId) return;
       const dial = document.querySelector("[data-clock-dial]");
@@ -759,16 +797,24 @@
         updateDependentText();
         return;
       }
+      // 보드 안의 펼침 토글은 화면 가운데 팝업으로 뜬다. ESC 로 닫는다.
+      if (event.key === "Escape") {
+        const openPopup = document.querySelector(".redesign-board details.compact-details[open], .flow-setup-board details.compact-details[open]");
+        if (openPopup) {
+          event.preventDefault();
+          openPopup.open = false;
+          openPopup.querySelector("summary")?.focus();
+          return;
+        }
+      }
       if (event.key === "Escape" && state.posterPrintOpen) {
         event.preventDefault();
-        state.posterPrintOpen = false;
-        render();
+        closePosterPrint();
         return;
       }
       if (event.key === "Escape" && state.recordsModalOpen) {
         event.preventDefault();
-        state.recordsModalOpen = false;
-        render();
+        closeRecordsModal();
         return;
       }
       if (event.key === "Escape" && state.clockExpanded) {
@@ -786,16 +832,18 @@
         closeMeetingHelp();
         return;
       }
-      if (!state.settingsOpen) return;
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && state.settingsOpen) {
         event.preventDefault();
         closeSettingsModal();
         return;
       }
-      if (event.key === "Tab") trapSettingsFocus(event);
+      // 열린 모달이 없으면 trapModalFocus 가 바로 빠져나오므로 평소 Tab 이동은 그대로다.
+      if (event.key === "Tab") trapModalFocus(event);
     });
 
     document.addEventListener("toggle", (event) => {
+      if (event.target.matches?.("[data-opinion-list]")) state.opinionListOpen = event.target.open;
+      if (event.target.matches?.(".closing-comment-details")) state.closingCommentOpen = event.target.open;
       const current = event.target;
       if (!(current instanceof HTMLDetailsElement) || !current.open || !current.matches("details.compact-details")) return;
       if (current.matches(".start-guide-details")) return;
@@ -815,16 +863,59 @@
   function closeSettingsModal() {
     state.settingsOpen = false;
     render();
+    focusAfterClose(`[data-action="${state.settingsReturnAction}"]`);
+  }
+
+  function closeRecordsModal() {
+    state.recordsModalOpen = false;
+    render();
+    focusAfterClose('[data-action="open-records-modal"]');
+  }
+
+  function closePosterPrint() {
+    state.posterPrintOpen = false;
+    render();
+    focusAfterClose('[data-action="open-poster-print"]');
+  }
+
+  // 모달을 닫으면 그 모달을 열었던 버튼으로 포커스를 돌려준다.
+  function focusAfterClose(selector) {
+    requestAnimationFrame(() => document.querySelector(selector)?.focus());
+  }
+
+  // 열려 있는 모달은 언제나 하나뿐이다. 설정·기록 보관함·인쇄 미리보기·회의 기록/도움말이 모두 같은 규칙을 쓴다.
+  function getOpenModal() {
+    return document.querySelector(".guide-modal, .records-modal, .poster-print-panel, .meeting-note-dialog");
+  }
+
+  function getModalFocusables(modal) {
+    return Array.from(modal.querySelectorAll("button, summary, input, select, textarea, [href], [tabindex]:not([tabindex='-1'])"))
+      .filter((node) => !node.disabled && node.getClientRects().length > 0);
+  }
+
+  // 모달이 열리면 뒤 화면은 Tab·스크린리더에서 빼고, 첫 포커스를 모달 안에 둔다.
+  function applyModalLock() {
+    // 회의 기록·도움말 창은 페이지 안에서 그려져서, 뒤 화면을 잠그기 전에 밖으로 옮겨야 같이 잠기지 않는다.
+    const inlineOverlay = root.querySelector("main .meeting-note-overlay");
+    if (inlineOverlay) root.appendChild(inlineOverlay);
+    const modal = getOpenModal();
+    const pageRoot = root.querySelector(":scope > main");
+    if (pageRoot) {
+      pageRoot.toggleAttribute("inert", Boolean(modal));
+      if (modal) pageRoot.setAttribute("aria-hidden", "true");
+      else pageRoot.removeAttribute("aria-hidden");
+    }
+    if (!modal) return;
     requestAnimationFrame(() => {
-      document.querySelector(`[data-action="${state.settingsReturnAction}"]`)?.focus();
+      if (modal.contains(document.activeElement)) return;
+      getModalFocusables(modal)[0]?.focus();
     });
   }
 
-  function trapSettingsFocus(event) {
-    const modal = document.querySelector(".guide-modal");
+  function trapModalFocus(event) {
+    const modal = getOpenModal();
     if (!modal) return;
-    const focusable = Array.from(modal.querySelectorAll("button, summary, input, select, textarea, [href], [tabindex]:not([tabindex='-1'])"))
-      .filter((node) => !node.disabled && node.getClientRects().length > 0);
+    const focusable = getModalFocusables(modal);
     if (!focusable.length) return;
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
@@ -843,17 +934,14 @@
       const pageChanged = state.lastRenderedPage !== state.meeting.currentPage;
       state.lastRenderedPage = state.meeting.currentPage;
       root.innerHTML = page.id === "main" ? renderLanding(page) : renderPage(page);
-      if (state.settingsOpen) {
-        root.insertAdjacentHTML("beforeend", renderSettingsModal());
-        const pageRoot = root.querySelector(":scope > main");
-        if (pageRoot) {
-          pageRoot.inert = true;
-          pageRoot.setAttribute("inert", "");
-          pageRoot.setAttribute("aria-hidden", "true");
-        }
-        requestAnimationFrame(() => root.querySelector(".guide-modal .modal-close")?.focus());
+      if (state.settingsOpen) root.insertAdjacentHTML("beforeend", renderSettingsModal());
+      if (pageChanged) {
+        const entered = root.firstElementChild;
+        entered?.classList.add("page-enter");
+        // 클래스를 남겨 두면 fill-mode:both 때문에 scale(1.028) 이 계속 걸린 채로 굳는다.
+        // 화면 전체가 2.8% 커진 상태가 되어 아래쪽 요소가 잘린다. 끝나면 반드시 뗀다.
+        window.setTimeout(() => entered?.classList.remove("page-enter"), 700);
       }
-      if (pageChanged) root.firstElementChild?.classList.add("page-enter");
       if (state.posterPrintOpen && PAGES[state.meeting.currentPage]?.id === "page_10_report") {
         root.insertAdjacentHTML("beforeend", renderPosterPrintOverlay());
       } else {
@@ -864,6 +952,12 @@
       } else {
         state.recordsModalOpen = false;
       }
+      applyModalLock();
+      // 페이지가 바뀔 때마다 화면 전체를 읽지 않도록, 바뀐 쪽 이름만 짧게 알린다.
+      if (pageChanged) {
+        const announcer = document.getElementById("page-announce");
+        if (announcer) announcer.textContent = page.title;
+      }
       updateDependentText();
     } catch (error) {
       console.error(error);
@@ -871,14 +965,9 @@
     }
   }
 
+  // 이 페이지에서 할 일이 '기록' 하나로 줄어서, 손가락도 기록 흐름만 가리킨다.
   function getOpinionBoardPointerTarget() {
     const meeting = state.meeting;
-    const hasNames = meeting.students.some((name) => String(name || "").trim());
-    if (!hasNames) return document.querySelector("[data-student-name-bulk]");
-    if (getSpeakerOrder().length < 1) {
-      return document.querySelector(".student-roster-chip:not(.is-ordered)")
-        || document.querySelector('[data-action="add-all-speakers"]');
-    }
     if (!meeting.opinions.some((opinion) => String(opinion.text || "").trim())) {
       return String(meeting.opinionDraft.text || "").trim()
         ? document.querySelector('[data-action="add-opinion"]')
@@ -919,9 +1008,15 @@
 
   function updateHandPointer() {
     const existing = document.querySelector(".ux-hand-pointer");
-    const blocked = state.settingsOpen || state.recordsModalOpen || state.posterPrintOpen || document.querySelector(".confirm-overlay");
+    // 모달이 떠 있으면 뒤 화면 손가락은 가린다. 회의 기록·도움말 창도 이제 같이 막힌다.
+    const blocked = getOpenModal() || document.querySelector(".confirm-overlay");
+    // 가운데 팝업이 떠 있으면 그 안에서 다음에 누를 곳을 가리킨다.
+    const popup = document.querySelector(".redesign-board details.compact-details[open], .flow-setup-board details.compact-details[open]");
     let target = null;
-    if (!blocked) {
+    if (!blocked && popup) {
+      target = popup.querySelector(".details-content input:not([disabled]), .details-content textarea, .details-content button:not([disabled]), .details-content select")
+        || popup.querySelector("summary");
+    } else if (!blocked) {
       if (state.meeting.currentPage === 5) target = getOpinionBoardPointerTarget();
       if (state.meeting.currentPage === 6) target = getOpinionSummaryPointerTarget();
       if (state.meeting.currentPage === 8) target = getVotePointerTarget();
@@ -964,28 +1059,30 @@
 
     return `
       <main class="app-page landing landing-v2" style="--bg:url('${page.bg}'); --theme:${page.theme}">
-        <button class="settings-chip" type="button" data-action="open-settings" aria-label="설정 열기" title="설정">⚙</button>
+        <button class="settings-chip" type="button" data-action="open-settings" aria-label="설정 열기" title="설정">${ICON.settings}</button>
         <div class="landing-sparkles" aria-hidden="true">${"<i></i>".repeat(20)}</div>
         <div class="landing-content">
+          <!-- 히어로는 두 칸을 가로지른다. 왼쪽 칸(785px) 안에 두면 제목이 529px 로 눌려
+               첫인상이 약했고, 오른쪽 기록 패널 위아래로 빈 공간이 남았다. -->
+          <div class="landing-hero-row">
+            ${page.mascot ? img(page.mascot, "학급회의를 안내하는 토끼", "landing-mascot") : ""}
+            <h1 class="meeting-wordmark art-wordmark">
+              ${img(page.titleArt, page.title, "landing-title-art")}
+            </h1>
+          </div>
           <section class="landing-intro">
-            <div class="landing-hero-row">
-              ${page.mascot ? img(page.mascot, "학급회의를 안내하는 토끼", "landing-mascot") : ""}
-              <h1 class="meeting-wordmark art-wordmark">
-                ${img(page.titleArt, page.title, "landing-title-art")}
-              </h1>
-            </div>
             <p class="landing-subtitle">우리 반의 일을 우리 손으로 정하는 회의 시간</p>
-            <p class="landing-description"><span>안건을 정하고 의견을 나눈 뒤,</span> <span>손들어 결정하고 실천 약속까지 회의록에 남겨요.</span></p>
+            <p class="landing-description"><span>오늘의 주제를 정하고 생각을 나눈 뒤,</span> <span>손들어 결정하고 실천 약속까지 회의 기록에 남겨요.</span></p>
             <div class="actions landing-actions">
               <button class="btn primary landing-cta-main" data-action="new">📋 새 회의 시작</button>
               <button class="btn secondary landing-cta-sub" data-action="continue">💬 회의 이어하기</button>
               <button class="btn mint landing-cta-sub" data-action="sample">✏️ 연습용 회의</button>
             </div>
             <div class="landing-feature-strip" aria-label="이 앱으로 할 수 있는 일">
-              <article>${img(ASSETS.icons.speech, "", "feature-icon")}<b>의견을 말해요</b><span>안건에 대한 생각을 발표해요</span></article>
+              <article>${img(ASSETS.icons.speech, "", "feature-icon")}<b>생각을 말해요</b><span>오늘의 주제에 대한 생각을 발표해요</span></article>
               <article>${img(ASSETS.icons.search, "", "feature-icon")}<b>생각을 살펴봐요</b><span>좋은 점과 걱정되는 점을 따져 봐요</span></article>
               <article>${img(ASSETS.icons.check, "", "feature-icon")}<b>함께 결정해요</b><span>손들어 공정하게 정해요</span></article>
-              <article>${img(ASSETS.icons.badge, "", "feature-icon")}<b>회의록을 남겨요</b><span>우리 반의 결정을 기록해요</span></article>
+              <article>${img(ASSETS.icons.badge, "", "feature-icon")}<b>회의 기록을 남겨요</b><span>우리 반의 결정을 기록해요</span></article>
             </div>
           </section>
           <section class="panel landing-records">
@@ -1000,7 +1097,7 @@
             <div class="landing-record-tools">
               <button class="record-tool-btn" type="button" data-action="open-records-modal">📚 전체 기록 보기</button>
               <button class="record-tool-btn" type="button" data-action="import-json">📂 기록 불러오기</button>
-              <button class="record-tool-btn" type="button" data-action="export-json">💾 기록 파일로 보관</button>
+              <button class="record-tool-btn" type="button" data-action="export-json">💾 기록 파일 내려받기</button>
             </div>
             ${state.dbFailed ? `<div class="warning">지금은 이 브라우저에만 기록을 남기고 있어요.</div>` : ""}
           </section>
@@ -1028,8 +1125,8 @@
   function renderPage(page) {
     return `
       <main class="app-page page-step-${page.step}" data-page-step="${page.step}" style="--bg:url('${page.bg}'); --theme:${page.theme}">
-        <button class="home-chip" type="button" data-action="home" aria-label="처음으로">⌂</button>
-        <button class="settings-chip" type="button" data-action="open-settings" aria-label="설정 열기" title="설정">⚙</button>
+        <button class="home-chip" type="button" data-action="home" aria-label="처음으로">${ICON.home}</button>
+        <button class="settings-chip" type="button" data-action="open-settings" aria-label="설정 열기" title="설정">${ICON.settings}</button>
         <div class="app-shell">
           <header class="topbar">
             <section class="page-heading">
@@ -1128,9 +1225,9 @@
           <div class="prepare-foundation-grid">
             <div class="prepare-top-grid">
               ${infoField("날짜", "date", ASSETS.icons.calendar, "#ef4f85", { type: "date", className: "prepare-date-card" })}
-              ${infoField("함께하는 친구", "totalStudents", ASSETS.icons.group, "#2f80ed", { type: "number", attrs: { min: 1, max: 30 } })}
+              ${infoField("우리 반 친구", "totalStudents", ASSETS.icons.group, "#2f80ed", { type: "number", attrs: { min: 1, max: 30 } })}
             </div>
-            ${infoField("오늘의 안건", "agenda.title", ASSETS.icons.megaphone, "#ef4f85", { type: "textarea", rows: 2, className: "prepare-main-topic" })}
+            ${infoField("오늘의 주제", "agenda.title", ASSETS.icons.megaphone, "#ef4f85", { type: "textarea", rows: 2, className: "prepare-main-topic" })}
           </div>
           <section class="prepare-expanded-section" aria-labelledby="prepare-story-title">
             <div class="prepare-expanded-head">
@@ -1143,7 +1240,7 @@
             </div>
           </section>
           <div class="redesign-readiness" role="status" aria-label="회의 준비 입력 상태">
-            <span class="${hasTopic ? "ready" : "needs-attention"}" data-prepare-topic-status><b>${hasTopic ? "✓" : "1"}</b><em>${hasTopic ? "주제를 적었어요" : "주제를 먼저 적어요"}</em></span>
+            <span class="${hasTopic ? "ready" : "needs-attention"}" data-prepare-topic-status><b>${hasTopic ? "✓" : "1"}</b><em>${hasTopic ? "오늘의 주제를 적었어요" : "오늘의 주제를 먼저 적어요"}</em></span>
             <i aria-hidden="true">→</i>
             <span class="${hasStory ? "ready" : "needs-attention"}" data-prepare-story-status><b>${hasStory ? "✓" : "2"}</b><em>${hasStory ? "회의가 필요한 까닭을 적었어요" : "문제나 바라는 모습을 적어요"}</em></span>
             <i aria-hidden="true">→</i>
@@ -1166,7 +1263,7 @@
         <div class="info-body">
           <div class="prepare-opinion-title-row">
             <span class="info-label" style="color:${color}">${escapeHtml(label)}</span>
-            <button class="prepare-add-opinion" type="button" data-action="add-prepare-opinion" data-kind="${kind}">＋ 의견 더하기</button>
+            <button class="prepare-add-opinion" type="button" data-action="add-prepare-opinion" data-kind="${kind}">＋ 생각 더하기</button>
           </div>
           <div class="prepare-opinion-list">
             ${opinions.map((opinion, index) => {
@@ -1176,19 +1273,21 @@
               const text = String(opinion?.text || "");
               const preview = text.trim() || "내용을 적어 주세요";
               return `
-                <details class="prepare-opinion-toggle" ${index === opinions.length - 1 ? "open" : ""}>
+                <!-- compact-details 를 붙이면 열었을 때 화면 가운데 팝업으로 뜬다.
+                     펼친 채로 두면 161px 짜리 편집칸이 57px 목록 창에 갇혀 잘려 보였다. -->
+                <details class="prepare-opinion-toggle compact-details">
                   <summary>
-                    <b>${escapeHtml(proposer.trim() || `${index + 1}번째 의견`)}</b>
+                    <b>${escapeHtml(proposer.trim() || `${index + 1}번째 생각`)}</b>
                     <span>${escapeHtml(preview)}</span>
                   </summary>
                   <div class="prepare-opinion-editor">
-                    <textarea class="row-input" data-field="${opinionTextPath}" rows="2" wrap="soft" aria-label="${escapeAttr(`${label} ${index + 1}번째 의견`)}" placeholder="의견을 적어요">${escapeHtml(text)}</textarea>
+                    <textarea class="row-input" data-field="${opinionTextPath}" rows="2" wrap="soft" aria-label="${escapeAttr(`${label} ${index + 1}번째 생각`)}" placeholder="생각을 적어요">${escapeHtml(text)}</textarea>
                     <div class="prepare-opinion-person-row">
                       <label class="prepare-proposer-field">
-                        <span>의견을 낸 사람</span>
-                        <input class="row-input" data-field="${opinionProposerPath}" value="${escapeAttr(proposer)}" aria-label="${escapeAttr(`${label} ${index + 1}번째 의견을 낸 사람`)}" placeholder="이름을 적어요" />
+                        <span>생각을 낸 사람</span>
+                        <input class="row-input" data-field="${opinionProposerPath}" value="${escapeAttr(proposer)}" aria-label="${escapeAttr(`${label} ${index + 1}번째 생각을 낸 사람`)}" placeholder="이름을 적어요" />
                       </label>
-                      ${index > 0 ? `<button class="prepare-opinion-remove" type="button" data-action="remove-prepare-opinion" data-kind="${kind}" data-index="${index - 1}" aria-label="${index + 1}번째 의견 삭제">×</button>` : ""}
+                      ${index > 0 ? `<button class="prepare-opinion-remove" type="button" data-action="remove-prepare-opinion" data-kind="${kind}" data-index="${index - 1}" aria-label="${index + 1}번째 생각 지우기">×</button>` : ""}
                     </div>
                   </div>
                 </details>
@@ -1242,27 +1341,30 @@
             <div class="flow-section-head role-section-head">
               <div>
                 <h2 class="panel-title">맡을 친구 정하기</h2>
-                <p>역할 이름은 바로 고칠 수 있고, 친구 이름은 크게 적을 수 있어요.</p>
+                <p>맡은 일 이름은 바로 고칠 수 있고, 친구 이름은 크게 적을 수 있어요.</p>
               </div>
               <div class="role-head-actions">
                 <span data-role-progress>${assignedRoleCount}/${roles.length}명 입력</span>
-                <button class="add-row" data-action="add-role">＋ 맡을 일 추가</button>
+                <button class="add-row" data-action="add-role">＋ 맡은 일 추가</button>
               </div>
             </div>
-            <div class="role-editor" aria-label="회의 역할 정하기">
+            <div class="role-editor" aria-label="맡은 일 정하기">
               ${roles.map((role, index) => `
                 <article class="role-row">
                   <div class="role-card-head">
                     ${chip(index === 0 ? ASSETS.icons.podium : ASSETS.icons.pencil, index === 0 ? "#19b999" : "#2f80ed", role.label)}
                     <label class="role-field role-title-field">
-                      <span class="sr-only">맡을 일</span>
-                      <input class="role-title-input" data-field="roles.entries.${index}.label" value="${escapeAttr(role.label)}" aria-label="${index + 1}번째 맡을 일" placeholder="예: 회장" />
+                      <span class="sr-only">맡은 일</span>
+                      <input class="role-title-input" data-field="roles.entries.${index}.label" value="${escapeAttr(role.label)}" aria-label="${index + 1}번째 맡은 일" placeholder="예: 회장" />
                     </label>
-                    <button class="row-x" data-action="remove-role" data-index="${index}" aria-label="${escapeAttr(role.label || "맡을 일")} 삭제">×</button>
+                    <button class="row-x" data-action="remove-role" data-index="${index}" aria-label="${escapeAttr(role.label || "맡은 일")} 지우기">×</button>
                   </div>
                   <label class="role-field person">
-                    <span>맡은 친구</span>
-                    <input class="row-input" data-field="roles.entries.${index}.name" value="${escapeAttr(role.name)}" aria-label="${escapeAttr(role.label || `${index + 1}번째 맡을 일`)}을 맡은 친구" placeholder="이름 적기" />
+                    <!-- 카드가 좁아 이 라벨이 위 줄(아이콘·맡은 일)과 겹쳐 보였다.
+                         바로 아래 입력칸에 "이름 적기" 안내가 있으므로 화면에서는 빼고
+                         읽기 도구용으로만 남긴다. 위 "맡은 일" 라벨과 같은 방식. -->
+                    <span class="sr-only">맡은 친구</span>
+                    <input class="row-input" data-field="roles.entries.${index}.name" value="${escapeAttr(role.name)}" aria-label="${escapeAttr(role.label || `${index + 1}번째 맡은 일`)}을 맡은 친구" placeholder="이름 적기" />
                   </label>
                 </article>
               `).join("")}
@@ -1274,26 +1376,73 @@
             <i aria-hidden="true">·</i>
             <span class="${missingRoleCount ? "needs-attention" : "ready"}" data-role-readiness><b aria-hidden="true" data-role-readiness-icon>${missingRoleCount ? "!" : "✓"}</b><em data-role-readiness-text>${missingRoleCount ? `맡을 친구 ${missingRoleCount}명 미입력` : "맡을 친구 입력 완료"}</em></span>
             <i aria-hidden="true">·</i>
-            <span class="time"><b aria-hidden="true">◷</b>예상 시간 ${durationMinutes}분</span>
+            <span class="time"><b aria-hidden="true" class="clock-dot"></b>예상 시간 ${durationMinutes}분</span>
           </div>
         </section>
       </div>
     `;
   }
 
+  // 준비도 칩은 글자를 치는 도중에도 바뀌어야 해서 한곳에서 만든다. updateDependentText 가 같은 함수로 다시 그린다.
+  function readinessChip(status, badge, text) {
+    return `<span class="${status}"><b>${badge}</b><em>${escapeHtml(text)}</em></span>`;
+  }
+
+  function readinessChips(step) {
+    const meeting = state.meeting;
+    const filled = (value) => String(value || "").trim().length > 0;
+    const chips = [];
+    if (Number(step) === 3) {
+      const hasTopic = filled(meeting.agenda.title);
+      const ruleCount = meeting.meetingRules.filter((rule) => filled(rule)).length;
+      chips.push(readinessChip(hasTopic ? "ready" : "needs-attention", hasTopic ? "✓" : "!", "오늘의 주제 확인"));
+      chips.push(readinessChip(ruleCount ? "ready" : "needs-attention", ruleCount ? "✓" : "!", `약속 ${ruleCount}개 준비`));
+      chips.push(readinessChip("time", "▶", "이제 지난 약속을 돌아봐요"));
+    } else if (Number(step) === 6) {
+      const opinionCount = meeting.opinions.length;
+      const talliedCount = meeting.topicSelection.talliedOpinionIds.filter((id) => meeting.opinions.some((opinion) => opinion.id === id)).length;
+      const allTallied = Boolean(opinionCount) && talliedCount === opinionCount;
+      chips.push(readinessChip(opinionCount ? "ready" : "needs-attention", opinionCount ? "✓" : "1", `생각 ${opinionCount}개 모음`));
+      chips.push(readinessChip(allTallied ? "ready" : "needs-attention", allTallied ? "✓" : "2", `손든 수 ${talliedCount}/${opinionCount} 확인`));
+      chips.push(readinessChip(filled(meeting.topicSelection.selectedTopic) ? "ready" : "needs-attention", filled(meeting.topicSelection.selectedTopic) ? "✓" : "3", "이어갈 생각 고르기"));
+    } else if (Number(step) === 7) {
+      const hasTopic = filled(meeting.topicSelection.selectedTopic);
+      const hasDiscussion = [meeting.discussion.agreeReasons, meeting.discussion.concerns, meeting.discussion.revisionSuggestion].some(filled);
+      chips.push(readinessChip(hasTopic ? "ready" : "needs-attention", hasTopic ? "✓" : "1", "토의할 생각 확인"));
+      chips.push(readinessChip(hasDiscussion ? "ready" : "needs-attention", hasDiscussion ? "✓" : "2", "세 가지 관점으로 토의"));
+      chips.push(readinessChip("time", "3", "다음에서 손들어 정해요"));
+    } else if (Number(step) === 9) {
+      const decision = meeting.decision;
+      const hasWho = filled(decision.practiceMethod) && filled(decision.owner);
+      chips.push(readinessChip(filled(decision.text) ? "ready" : "needs-attention", filled(decision.text) ? "✓" : "1", "정한 일"));
+      chips.push(readinessChip(hasWho ? "ready" : "needs-attention", hasWho ? "✓" : "2", "방법과 맡을 친구"));
+      chips.push(readinessChip(filled(decision.period) ? "ready" : "needs-attention", filled(decision.period) ? "✓" : "3", "기간 확인"));
+    } else if (Number(step) === 10) {
+      const hasTopic = filled(meeting.agenda.title);
+      const hasDecision = filled(meeting.decision.text);
+      chips.push(readinessChip(hasTopic ? "ready" : "needs-attention", hasTopic ? "✓" : "!", "주제 확인"));
+      chips.push(readinessChip(hasDecision ? "ready" : "needs-attention", hasDecision ? "✓" : "!", "실천 약속 확인"));
+      chips.push(readinessChip("time", "★", "저장하면 오늘 회의가 끝나요"));
+    }
+    return chips.join("<i>→</i>");
+  }
+
+  function readinessStrip(step) {
+    return `<div class="redesign-readiness" data-readiness-strip="${step}">${readinessChips(step)}</div>`;
+  }
+
   function renderStartGuide() {
-    const activeRules = state.meeting.meetingRules.filter((rule) => String(rule || "").trim());
     return `
       <div class="workspace wide">
         <section class="panel redesign-board promise-redesign">
           <div class="redesign-board-head">
-            <div><h2>약속을 읽고 회의를 시작해요</h2><p>오늘의 안건을 확인하고, 친구들과 지킬 약속을 소리 내어 읽어요.</p></div>
+            <div><h2>약속을 읽고 회의를 시작해요</h2><p>오늘의 주제를 확인하고, 친구들과 지킬 약속을 소리 내어 읽어요.</p></div>
             <button class="btn mint sm" data-action="sample-meeting-rules">✨ 약속 예시 넣기</button>
           </div>
           <label class="promise-topic-band">
-            ${chip(ASSETS.icons.megaphone, "#7857d9", "오늘의 안건")}
-            <span><b>오늘의 안건</b><small>앞에서 정한 주제가 그대로 이어져요.</small></span>
-            <input class="row-input xl" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘의 안건" placeholder="오늘의 안건을 적어요" />
+            ${chip(ASSETS.icons.megaphone, "#7857d9", "오늘의 주제")}
+            <span><b>오늘의 주제</b><small>앞에서 정한 주제가 그대로 이어져요.</small></span>
+            <input class="row-input xl" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘의 주제" placeholder="오늘의 주제를 적어요" />
           </label>
           <div class="promise-section-head"><strong>우리 반 약속</strong><span>모두 읽은 뒤 필요한 약속만 고쳐요.</span></div>
           <ol class="meeting-rule-list promise-card-grid">
@@ -1306,7 +1455,7 @@
             `).join("")}
           </ol>
           <div class="promise-add-row"><button class="add-row" data-action="add-meeting-rule">＋ 약속 한 가지 더하기</button></div>
-          <div class="redesign-readiness"><span class="ready"><b>✓</b><em>오늘의 주제 확인</em></span><i>→</i><span class="${activeRules.length ? "ready" : "needs-attention"}"><b>${activeRules.length ? "✓" : "!"}</b><em>약속 ${activeRules.length}개 준비</em></span><i>→</i><span class="time"><b>▶</b><em>이제 지난 약속을 돌아봐요</em></span></div>
+          ${readinessStrip(3)}
         </section>
       </div>
     `;
@@ -1329,7 +1478,7 @@
   function renderReflection() {
     const hr = state.meeting.previous.handRaise;
     const total = Number(hr.good || 0) + Number(hr.normal || 0) + Number(hr.hard || 0);
-    const expected = Number(state.meeting.totalStudents || 0);
+    const expected = getPresentCount();
     const countState = total === expected && expected > 0 ? "complete" : total > expected ? "over" : "pending";
     const countMessage = countState === "complete"
       ? "모두 손들었어요"
@@ -1353,9 +1502,10 @@
             </select>
           </label>
           <div class="reflection-count-status ${countState}" data-reflection-status>
-            <span>손든 수 모두</span><strong><b data-reflection-total>${total}</b> / ${expected}명</strong><small data-reflection-message>${countMessage}</small>
+            <span>손든 수 모두</span><strong><b data-reflection-total>${total}</b> / <b data-present-count>${expected}</b>명</strong><small data-reflection-message>${countMessage}</small>
           </div>
         </section>
+        ${renderAbsentControl()}
         <div class="grid reflect reflection-large-cards">
           ${faceCard("잘 지켰어요", "previous.handRaise.good", ASSETS.icons.happy, "#19b999")}
           ${faceCard("조금 지켰어요", "previous.handRaise.normal", ASSETS.icons.neutral, "#f59e0b")}
@@ -1390,9 +1540,6 @@
       .filter((index, position, all) => index >= 0 && all.indexOf(index) === position);
     state.meeting.updatedAt = new Date().toISOString();
 
-    document.querySelectorAll(".student-name-row input[data-field]").forEach((input, index) => {
-      input.value = state.meeting.students[index] || "";
-    });
     document.querySelectorAll("[data-student-bulk-count]").forEach((node) => {
       node.textContent = `${names.length}명`;
     });
@@ -1424,25 +1571,31 @@
       <div class="workspace wide">
         <section class="panel redesign-board opinion-entry-panel opinion-entry-redesign">
           <div class="panel-head opinion-entry-head">
-            <div><h2 class="panel-title" style="color:var(--blue)">생각과 이유를 차례로 적어요</h2><p>왼쪽에는 친구의 생각을 기록하고, 오른쪽에서는 발표 순서만 간단히 정해요.</p></div>
-            <span class="speaker-count-badge">생각 ${state.meeting.opinions.length}개 · 발표 ${speakerOrder.length}명</span>
+            <div><h2 class="panel-title" style="color:var(--blue)">생각과 이유를 차례로 적어요</h2><p>친구가 말한 생각과 이유를 적고 ‘기록하기’를 눌러요.</p></div>
+            <span class="speaker-count-badge">생각 ${state.meeting.opinions.length}개</span>
           </div>
-          <label class="opinion-topic-context">${chip(ASSETS.icons.clipboard, "#19b999", "오늘의 안건")}<span><b>오늘의 안건</b><small>앞 단계의 주제가 이어졌어요.</small></span><input class="row-input" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘의 안건" /></label>
-          <div class="opinion-speaking-layout">
+          <label class="opinion-topic-context">${chip(ASSETS.icons.clipboard, "#19b999", "오늘의 주제")}<span><b>오늘의 주제</b><small>앞 단계의 주제가 이어졌어요.</small></span><input class="row-input" data-field="agenda.title" value="${escapeAttr(state.meeting.agenda.title)}" aria-label="오늘의 주제" /></label>
+          <!-- 이 순서에 꼭 필요한 건 '기록' 하나뿐이라 한 칸으로 펴고, 발표 순서는 아래 토글로 내렸다. -->
+          <div class="opinion-speaking-layout" style="grid-template-columns:minmax(0,1fr)">
             <div class="opinion-compose">
               <label><span class="info-label" style="color:var(--blue)">생각</span><textarea class="row-input" data-field="opinionDraft.text" rows="3" placeholder="발표한 생각을 적어요" aria-label="발표한 생각">${escapeHtml(state.meeting.opinionDraft.text)}</textarea></label>
               <label><span class="info-label" style="color:var(--violet)">이유</span><textarea class="row-input" data-field="opinionDraft.reason" rows="3" placeholder="그렇게 생각한 이유를 적어요" aria-label="발표한 이유">${escapeHtml(state.meeting.opinionDraft.reason)}</textarea></label>
               <button class="btn mint" data-action="add-opinion">＋ 생각과 이유 기록하기</button>
-              <div class="recorded-opinion-strip" aria-label="기록된 생각 목록">
-                <strong>기록한 생각 <b data-opinion-count>${state.meeting.opinions.length}</b>개</strong>
-                <div class="recorded-opinion-items">
-                  ${state.meeting.opinions.map((opinion, index) => `
-                    <span class="recorded-opinion-chip"><b>${index + 1}</b><span>${escapeHtml(opinion.text)}</span><button type="button" data-action="delete-opinion" data-id="${escapeAttr(opinion.id)}" aria-label="${index + 1}번째 생각 지우기">×</button></span>
-                  `).join("") || `<span class="recorded-opinion-empty">기록하기를 누르면 여기에 생각이 쌓여요. 잘못 적으면 ×로 지울 수 있어요.</span>`}
+              <details class="compact-details" data-opinion-list ${state.opinionListOpen ? "open" : ""}>
+                <summary>기록한 생각 <b data-opinion-count>${state.meeting.opinions.length}</b>개 보기</summary>
+                <div class="details-content">
+                  <div class="recorded-opinion-items">
+                    ${state.meeting.opinions.map((opinion, index) => `
+                      <span class="recorded-opinion-chip"><b>${index + 1}</b><span>${escapeHtml(opinion.text)}</span><button type="button" data-action="delete-opinion" data-id="${escapeAttr(opinion.id)}" aria-label="${index + 1}번째 생각 지우기">×</button></span>
+                    `).join("") || `<span class="recorded-opinion-empty">‘기록하기’를 누르면 여기에 생각이 쌓여요. 잘못 적으면 ×로 지울 수 있어요.</span>`}
+                  </div>
                 </div>
-              </div>
+              </details>
             </div>
-            <section class="student-order-panel" aria-label="우리 반 발표 순서 정하기">
+          </div>
+          <details class="compact-details">
+            <summary>발표 순서 정하기 · 친구 이름 적기 <span data-student-readiness>${namedStudents ? `친구 ${namedStudents}명 입력` : "이름을 한 번에 입력해요"}</span></summary>
+            <div class="details-content speaker-order-content" aria-label="우리 반 발표 순서 정하기">
               <label class="student-bulk-entry">
                 <span><b>발표할 친구 이름</b><small>쉼표로 나누어 한 번에 적어요.</small></span>
                 <input class="row-input" data-student-name-bulk value="${escapeAttr(state.meeting.students.filter((name) => String(name || "").trim()).join(", "))}" placeholder="예: 김민준, 이서윤, 박지우" aria-label="학생 이름 쉼표로 한 번에 입력" />
@@ -1463,19 +1616,10 @@
                 <div>${speakerOrder.map((studentIndex, orderIndex) => `<button type="button" data-action="toggle-speaker-order" data-index="${studentIndex}" aria-label="${orderIndex + 1}번째 ${escapeAttr(state.meeting.students[studentIndex])} 순서에서 빼기"><b>${orderIndex + 1}</b>${escapeHtml(state.meeting.students[studentIndex])}</button>`).join("") || `<span class="speaker-empty-guide"><b>1 · 친구 이름 입력</b><i>→</i><b>2 · 이름표 누르기</b></span>`}</div>
                 ${speakerOrder.length ? `<button class="speaker-order-clear" type="button" data-action="clear-speaker-order">순서 초기화</button>` : ""}
               </div>
-              <details class="compact-details student-roster-details" data-student-roster-details ${state.rosterExpanded ? "open" : ""}>
-                <summary>이름을 한 명씩 고치기 <span>${namedStudents}/30명</span></summary>
-                <button class="student-roster-close" type="button" data-action="close-student-roster" aria-label="이름 입력 화면 닫기">× 닫기</button>
-                <div class="details-content student-name-grid">
-                  ${state.meeting.students.map((name, index) => {
-                    const orderIndex = speakerOrder.indexOf(index);
-                    return `<label class="student-name-row ${orderIndex >= 0 ? "is-ordered" : ""}"><b>${index + 1}</b><input data-field="students.${index}" value="${escapeAttr(name)}" aria-label="${index + 1}번 학생 이름" placeholder="이름" /><button type="button" data-action="toggle-speaker-order" data-index="${index}" aria-label="${escapeAttr(name || `${index + 1}번 학생`)} 발표 순서 ${orderIndex >= 0 ? "빼기" : "추가"}">${orderIndex >= 0 ? orderIndex + 1 : "＋"}</button></label>`;
-                  }).join("")}
-                </div>
-              </details>
-            </section>
-          </div>
-          <div class="redesign-readiness"><span class="ready"><b>✓</b><em>주제 확인</em></span><i>→</i><span class="${namedStudents ? "ready" : "needs-attention"}" data-student-readiness-status><b data-student-readiness-icon>${namedStudents ? "✓" : "2"}</b><em data-student-readiness>${namedStudents ? `친구 ${namedStudents}명 입력` : "이름을 한 번에 입력해요"}</em></span><i>→</i><span class="${speakerOrder.length ? "ready" : "needs-attention"}"><b>${speakerOrder.length ? "✓" : "3"}</b><em>발표 순서 ${speakerOrder.length}명</em></span></div>
+              <!-- 30칸 이름 입력은 위 쉼표 입력으로 같은 일을 할 수 있어서 뺐다. 숨은 조작 요소 60개가 사라진다. -->
+            </div>
+          </details>
+          <div class="redesign-readiness"><span class="${state.meeting.agenda.title ? "ready" : "needs-attention"}"><b>${state.meeting.agenda.title ? "✓" : "1"}</b><em>주제 확인</em></span><i>→</i><span class="${state.meeting.opinions.length ? "ready" : "needs-attention"}"><b>${state.meeting.opinions.length ? "✓" : "2"}</b><em>생각 ${state.meeting.opinions.length}개 기록</em></span><i>→</i><span class="time"><b>3</b><em>다음에서 손든 수를 세어요</em></span></div>
         </section>
       </div>
     `;
@@ -1492,7 +1636,7 @@
             <div><h2 class="panel-title" style="color:var(--violet)">앞에서 나온 생각 모아보기</h2><p>생각과 이유를 읽고, 같은 생각에 손든 친구 수를 적어요.</p></div>
             <span class="tally-status ${opinionCount && talliedCount === opinionCount ? "is-complete" : ""}"><b>${talliedCount} / ${opinionCount}</b> 확인</span>
           </div>
-          <div class="summary-topic-band"><span>오늘의 안건</span><strong>${escapeHtml(state.meeting.agenda.title || "앞 단계에서 주제를 적어 주세요.")}</strong></div>
+          <div class="summary-topic-band"><span>오늘의 주제</span><strong>${escapeHtml(state.meeting.agenda.title || "앞 단계에서 오늘의 주제를 적어 주세요.")}</strong></div>
           <div class="opinion-tally-list">
             ${state.meeting.opinions.map((opinion, index) => `
               <article class="opinion-tally-card ${state.meeting.topicSelection.selectedTopic === opinion.text ? "is-selected" : ""}" style="--rank:${rankColors[index % rankColors.length]}">
@@ -1505,7 +1649,7 @@
             `).join("") || `<div class="empty-shared-state">앞 순서에서 생각과 이유를 먼저 기록해 주세요.</div>`}
           </div>
           <div class="selected-opinion-banner ${state.meeting.topicSelection.selectedTopic ? "is-selected" : ""}"><span>함께 토의할 생각</span><strong>${escapeHtml(state.meeting.topicSelection.selectedTopic || "위 생각 중 하나를 골라 주세요.")}</strong></div>
-          <div class="redesign-readiness"><span class="${opinionCount ? "ready" : "needs-attention"}"><b>${opinionCount ? "✓" : "1"}</b><em>생각 ${opinionCount}개 모음</em></span><i>→</i><span class="${opinionCount && talliedCount === opinionCount ? "ready" : "needs-attention"}"><b>${opinionCount && talliedCount === opinionCount ? "✓" : "2"}</b><em>손든 수 ${talliedCount}/${opinionCount} 확인</em></span><i>→</i><span class="${state.meeting.topicSelection.selectedTopic ? "ready" : "needs-attention"}"><b>${state.meeting.topicSelection.selectedTopic ? "✓" : "3"}</b><em>이어갈 생각 고르기</em></span></div>
+          ${readinessStrip(6)}
         </section>
       </div>
     `;
@@ -1519,14 +1663,9 @@
         ${pastelNote("걱정되는 점", "discussion.concerns", ASSETS.icons.concern, "#ef4f85")}
         ${pastelNote("더 좋은 방법", "discussion.revisionSuggestion", ASSETS.icons.idea, "#f59e0b")}
       </div>
-      <section class="discussion-counter-strip" aria-label="말하고 싶은 친구 수">
-          ${sideCount(ASSETS.icons.group, "내 생각 말하기", "discussion.handRaise.presenters", "#2f80ed")}
-          ${sideCount(ASSETS.icons.question, "질문하기", "discussion.handRaise.questions", "#7857d9")}
-          ${sideCount(ASSETS.icons.check, "좋은 점 말하기", "discussion.handRaise.agreeSpeakers", "#19b999")}
-          ${sideCount(ASSETS.icons.concern, "걱정 말하기", "discussion.handRaise.concernSpeakers", "#ef4f85")}
-      </section>
+      <!-- 발언 카운터 4세트는 검증에도 회의 기록에도 쓰이지 않아 지웠다. 데이터(discussion.handRaise)는 그대로 둔다. -->
       <details class="compact-details discussion-extra-details">
-        <summary>처음 방법·궁금한 점도 기록하기</summary>
+        <summary>처음 생각한 방법과 궁금한 점 적기</summary>
         <div class="details-content grid two">
           ${pastelNote("처음 생각한 방법", "discussion.proposal", ASSETS.icons.report, "#2f80ed")}
           ${pastelNote("궁금한 점", "discussion.questions", ASSETS.icons.question, "#7857d9")}
@@ -1536,14 +1675,13 @@
   }
 
   function renderDiscussion() {
-    const hasDiscussion = [state.meeting.discussion.agreeReasons, state.meeting.discussion.concerns, state.meeting.discussion.revisionSuggestion].some((value) => String(value || "").trim());
     return `
       <div class="workspace wide">
         <section class="panel redesign-board discussion-redesign">
           <div class="redesign-board-head"><div><h2>세 가지 질문으로 더 좋은 방법을 찾아요</h2><p>한 칸씩 차례로 이야기하면 친구들의 생각을 놓치지 않아요.</p></div><span class="board-step-chip orange">함께 토의</span></div>
-          <label class="discussion-topic-band">${chip(ASSETS.icons.megaphoneBig, "#f59e0b", "함께 말해 볼 것")}<span><b>함께 토의할 생각</b><small>앞에서 고른 생각이 이어져요.</small></span><input class="row-input" data-field="topicSelection.selectedTopic" value="${escapeAttr(state.meeting.topicSelection.selectedTopic)}" aria-label="함께 토의할 생각" /></label>
+          <label class="discussion-topic-band">${chip(ASSETS.icons.megaphoneBig, "#f59e0b", "함께 토의할 생각")}<span><b>함께 토의할 생각</b><small>앞에서 고른 생각이 이어져요.</small></span><input class="row-input" data-field="topicSelection.selectedTopic" value="${escapeAttr(state.meeting.topicSelection.selectedTopic)}" aria-label="함께 토의할 생각" /></label>
           ${renderDiscussionFields()}
-          <div class="redesign-readiness"><span class="${state.meeting.topicSelection.selectedTopic ? "ready" : "needs-attention"}"><b>${state.meeting.topicSelection.selectedTopic ? "✓" : "1"}</b><em>토의할 생각 확인</em></span><i>→</i><span class="${hasDiscussion ? "ready" : "needs-attention"}"><b>${hasDiscussion ? "✓" : "2"}</b><em>세 가지 관점으로 토의</em></span><i>→</i><span class="time"><b>3</b><em>다음에서 손들어 정해요</em></span></div>
+          ${readinessStrip(7)}
         </section>
       </div>
     `;
@@ -1553,7 +1691,7 @@
     const agree = Number(state.meeting.vote.agree || 0);
     const disagree = Number(state.meeting.vote.disagree || 0);
     const total = agree + disagree;
-    const expected = Number(state.meeting.totalStudents || 0);
+    const expected = getPresentCount();
     const agreeRate = total ? Math.round((agree / total) * 100) : 0;
     const countState = total === expected && expected > 0 ? "complete" : total > expected ? "over" : "pending";
     const interpretation = agreeRate >= 50
@@ -1580,10 +1718,11 @@
           </section>
           </div>
           <div class="vote-equation ${countState}" aria-live="polite">
-            <span>좋아요 <b data-vote-equation-agree>${agree}</b>명</span><i>＋</i><span>다른 생각 <b data-vote-equation-disagree>${disagree}</b>명</span><i>＝</i><strong><b data-vote-equation-total>${total}</b> / ${expected}명</strong>
+            <span>좋아요 <b data-vote-equation-agree>${agree}</b>명</span><i>＋</i><span>다른 생각 <b data-vote-equation-disagree>${disagree}</b>명</span><i>＝</i><strong><b data-vote-equation-total>${total}</b> / <b data-present-count>${expected}</b>명</strong>
             <em data-vote-equation-gap>${countState === "complete" ? "✓ 모두 셌어요" : countState === "over" ? `${total - expected}명 많아요` : `${expected - total}명 더 세어요`}</em>
             <button class="btn ${state.meeting.vote.confirmed ? "mint" : "secondary"} sm vote-equation-confirm" data-action="confirm-vote" data-vote-confirm ${countState === "complete" ? "" : "disabled"}>${state.meeting.vote.confirmed ? "✓ 확인했어요" : "다 세었어요"}</button>
           </div>
+          ${renderAbsentControl()}
         </section>
       </div>
     `;
@@ -1612,7 +1751,7 @@
             <textarea class="row-input decision-additional-input" data-field="decision.additionalNotes" rows="4" aria-label="정한 일에 추가로 기록할 내용" placeholder="필요한 내용을 자유롭게 적어요">${escapeHtml(state.meeting.decision.additionalNotes)}</textarea>
           </div>
         </details>
-        <div class="redesign-readiness"><span class="${decision.text ? "ready" : "needs-attention"}"><b>${decision.text ? "✓" : "1"}</b><em>정한 일</em></span><i>→</i><span class="${decision.practiceMethod && decision.owner ? "ready" : "needs-attention"}"><b>${decision.practiceMethod && decision.owner ? "✓" : "2"}</b><em>방법과 맡을 친구</em></span><i>→</i><span class="${decision.period ? "ready" : "needs-attention"}"><b>${decision.period ? "✓" : "3"}</b><em>기간 확인</em></span></div>
+        ${readinessStrip(9)}
         </section>
       </div>
     `;
@@ -1632,14 +1771,14 @@
   function renderReport() {
     const speakerOrder = getSpeakerOrder().map((index, orderIndex) => `${orderIndex + 1}. ${state.meeting.students[index]}`).join(" → ");
     const rows = [
-      ["날짜", `${state.meeting.date} · ${state.meeting.totalStudents}명`],
-      ["오늘의 안건", state.meeting.agenda.title],
+      ["날짜", `${state.meeting.date} · 우리 반 친구 ${state.meeting.totalStudents}명 · 오늘 온 친구 ${getPresentCount()}명`],
+      ["오늘의 주제", state.meeting.agenda.title],
       ["지금 우리의 문제점", formatPrepareOpinions("problem")],
       ["어떻게 바꾸면 좋을까요?", formatPrepareOpinions("outcome")],
-      ["오늘 맡은 일", formatRolesForReport()],
+      ["맡은 일", formatRolesForReport()],
       ["우리 반 약속", state.meeting.meetingRules.filter((rule) => rule.trim()).join(" / ") || "적은 약속 없음"],
-      ["지난번 약속 돌아보기", `${state.meeting.previous.promise} · 잘 지켰어요 ${state.meeting.previous.handRaise.good} / 조금 지켰어요 ${state.meeting.previous.handRaise.normal} / 지키기 어려웠어요 ${state.meeting.previous.handRaise.hard}`],
-      ["지난 약속 돌아보기", `잘된 점: ${state.meeting.previous.evidence} / 어려웠던 점: ${state.meeting.previous.cause} / 다음에 바꿀 점: ${state.meeting.previous.improvement}`],
+      // 같은 내용이 두 줄로 나뉘어 나오던 것을 한 줄로 합친다.
+      ["지난 약속 돌아보기", `${state.meeting.previous.promise} · 잘 지켰어요 ${state.meeting.previous.handRaise.good} / 조금 지켰어요 ${state.meeting.previous.handRaise.normal} / 지키기 어려웠어요 ${state.meeting.previous.handRaise.hard} · 잘된 점: ${state.meeting.previous.evidence} / 어려웠던 점: ${state.meeting.previous.cause} / 다음에 바꿀 점: ${state.meeting.previous.improvement}`],
       ["발표 순서", speakerOrder],
       ["나온 생각", state.meeting.opinions.map((op) => `${op.text}${op.reason ? ` (${op.reason})` : ""}`).join(" / ")],
       ["함께 토의한 내용", `생각한 방법: ${state.meeting.discussion.proposal} / 걱정되는 점: ${state.meeting.discussion.concerns} / 더 좋은 방법: ${state.meeting.discussion.revisionSuggestion}`],
@@ -1658,8 +1797,13 @@
       <div class="workspace wide">
         <section class="panel redesign-board report-redesign">
           <div class="redesign-board-head"><div><h2>오늘 회의를 한눈에 확인해요</h2><p>처음 주제부터 실천 약속까지 차례로 읽고 회의를 마쳐요.</p></div><span class="board-step-chip violet">마무리</span></div>
+          ${state.finalizeGaps.length ? `
+            <div class="hint-band">✏️ 아직 안 적은 곳이 있어요. 눌러서 채우고 오면 저장할 수 있어요.
+              ${state.finalizeGaps.map((gap) => `<button class="btn secondary sm" type="button" data-action="fix-gap" data-page="${gap.step}" title="${escapeAttr(gap.message)}">${escapeHtml(PAGES[gap.step]?.title || `${gap.step}쪽`)}</button>`).join("")}
+            </div>
+          ` : ""}
           <div class="report-summary-grid">
-            <article><span>1 · 오늘의 안건</span><strong>${escapeHtml(state.meeting.agenda.title || "아직 적지 않았어요.")}</strong></article>
+            <article><span>1 · 오늘의 주제</span><strong>${escapeHtml(state.meeting.agenda.title || "아직 적지 않았어요.")}</strong></article>
             <article><span>2 · 함께 토의한 생각</span><strong>${escapeHtml(representativeIdea)}</strong></article>
             <article><span>3 · 손든 결과</span><strong>좋아요 ${state.meeting.vote.agree}명 · ${agreeRate}%</strong></article>
             <article><span>4 · 함께 정한 일</span><strong>${escapeHtml(state.meeting.decision.text || "아직 정하지 않았어요.")}</strong></article>
@@ -1671,25 +1815,34 @@
           </section>
           <div class="report-finish-grid">
             <section class="report-share-card">
-              <div class="panel-head">${chip(ASSETS.icons.report, "#2f80ed", "교실에 붙일 한 장")}<span>교실에 붙일 한 장 · 모양을 골라 인쇄해요</span></div>
-              <div class="poster-style-picker" role="radiogroup" aria-label="게시물 스타일 고르기">
-                ${POSTER_STYLES.map((style) => `
-                  <button type="button" class="poster-style-option ${state.meeting.posterStyle === style.id ? "is-selected" : ""}" data-action="set-poster-style" data-style="${style.id}" role="radio" aria-checked="${state.meeting.posterStyle === style.id}" aria-label="${escapeAttr(style.name)} · ${escapeAttr(style.mood)}">
-                    <span class="poster-mini-frame">${buildA4Poster(style)}</span>
-                    <b>${escapeHtml(style.name)}</b>
-                  </button>
-                `).join("")}
-              </div>
-              <button class="btn primary poster-print-open" type="button" data-action="open-poster-print">🖨️ 크게 보고 인쇄하기</button>
+              <!-- 이 칸은 127px 인데 머리글·인쇄 버튼·모양 토글·기록 토글을 다 넣어 235px 이 되어
+                   오른쪽에 스크롤바가 생겼다. 핵심(인쇄)만 남긴다.
+                   · 머리글 문구는 인쇄 버튼이 그대로 말해 주므로 버튼에 합쳤다.
+                   · 게시물 모양 고르기는 인쇄 미리보기 안(poster-print-styles)에 이미 있다. -->
+              <button class="btn primary poster-print-open" type="button" data-action="open-poster-print">🖨️ 교실에 붙일 한 장 크게 보고 인쇄하기</button>
               <details class="compact-details report-details"><summary>오늘 회의 기록 전체 ${rows.length}개 보기</summary><div id="reportText" class="details-content report-list">${rows.map(([label, value]) => `<div class="report-row"><b class="report-key">${escapeHtml(label)}</b><span>${escapeHtml(value || "아직 입력하지 않았어요.")}</span></div>`).join("")}</div></details>
             </section>
+            <!-- 아이콘·제목·바꾸기 버튼·안내문·글상자를 한 칸에 다 넣으니 서로 겹치고
+                 오른쪽에 스크롤바가 생겼다. 칸에는 제목과 지금 문장만 두고,
+                 누르면 화면 가운데 팝업에서 크게 읽고 고치게 한다. -->
             <section class="report-closing-card">
-              <div class="panel-head"><div class="closing-comment-title">${chip(ASSETS.icons.speech, "#7857d9", "우리 반 마무리 한마디")}<span>우리 반 마무리 한마디</span></div><button class="btn secondary sm" type="button" data-action="refresh-closing-comment">↻ 문장 바꾸기</button></div>
-              <p class="closing-comment-guide">서로의 참여를 칭찬하며 오늘 회의를 마쳐요.</p>
-              <textarea class="row-input" data-field="teacherComment" rows="4" aria-label="우리 반 마무리 한마디">${escapeHtml(state.meeting.teacherComment)}</textarea>
+              <details class="compact-details closing-comment-details" ${state.closingCommentOpen ? "open" : ""}>
+                <summary>
+                  ${chip(ASSETS.icons.speech, "#7857d9", "우리 반 마무리 한마디")}
+                  <span class="closing-summary-text">
+                    <b>우리 반 마무리 한마디</b>
+                    <em>${escapeHtml(state.meeting.teacherComment || "눌러서 마무리 인사를 적어요.")}</em>
+                  </span>
+                </summary>
+                <div class="details-content closing-comment-content">
+                  <p class="closing-comment-guide">서로의 참여를 칭찬하며 오늘 회의를 마쳐요.</p>
+                  <textarea class="row-input" data-field="teacherComment" rows="5" aria-label="우리 반 마무리 한마디" placeholder="오늘 회의에서 좋았던 점을 한 문장으로 적어요.">${escapeHtml(state.meeting.teacherComment)}</textarea>
+                  <button class="btn secondary" type="button" data-action="refresh-closing-comment">↻ 다른 문장으로 바꾸기</button>
+                </div>
+              </details>
             </section>
           </div>
-          <div class="redesign-readiness"><span class="ready"><b>✓</b><em>주제 확인</em></span><i>→</i><span class="${state.meeting.decision.text ? "ready" : "needs-attention"}"><b>${state.meeting.decision.text ? "✓" : "!"}</b><em>실천 약속 확인</em></span><i>→</i><span class="time"><b>★</b><em>저장하면 오늘 회의가 끝나요</em></span></div>
+          ${readinessStrip(10)}
         </section>
       </div>
     `;
@@ -1775,7 +1928,7 @@
   function renderNav(step) {
     const validation = validateStage(step);
     const navHintId = `nav-hint-${step}`;
-    const disabledAttrs = validation.valid ? "" : `disabled aria-disabled="true" aria-describedby="${navHintId}"`;
+    const disabledAttrs = validation.valid ? "" : `data-blocked aria-disabled="true" aria-describedby="${navHintId}"`;
     const navHint = validation.valid
       ? "✓ 이 순서를 마칠 준비가 됐어요."
       : `다음으로 가려면: ${validation.message}`;
@@ -1795,7 +1948,7 @@
 
     const nextPage = getNextRoutePage(step);
     const destinationLabels = {
-      2: "필요하면 순서와 맡을 일 정하기",
+      2: "필요하면 순서와 맡은 일 정하기",
       3: "우리 반 약속 읽기",
       4: "지난번 약속 돌아보기",
       5: "우리 생각 적기",
@@ -1811,15 +1964,15 @@
       && state.meeting.flow.completedPages.includes(PAGES[step]?.id);
     return `
       <div class="nav-area">
-        <p class="nav-requirement ${validation.valid ? "ready" : "needs-attention"}" id="${navHintId}" data-nav-requirement>${escapeHtml(isFinalSaved ? "🎉 회의록을 저장했어요. 이상으로 오늘 학급회의를 마칩니다!" : navHint)}</p>
+        <p class="nav-requirement ${validation.valid ? "ready" : "needs-attention"}" id="${navHintId}" data-nav-requirement>${escapeHtml(isFinalSaved ? "🎉 회의 기록을 저장했어요. 이상으로 오늘 학급회의를 마칩니다!" : navHint)}</p>
         <div class="cta-row">
           ${step > 1 ? `<button class="btn ghost" data-action="prev">← 이전</button>` : ""}
           ${renderSaveStatus()}
           ${isFinalSaved ? `
             <button class="btn primary xl" data-action="home" data-primary-next>🎉 저장 완료 · 처음으로</button>
           ` : isRouteEnd ? `
-            <button class="btn primary xl" data-action="complete-save" data-primary-next ${disabledAttrs}>✓ 이 활동 마치고 회의록 저장</button>
-            <button class="btn dark" data-action="home">⌂ 처음으로</button>
+            <button class="btn primary xl" data-action="complete-save" data-primary-next ${disabledAttrs}>✓ 이 활동 마치고 회의 기록 저장</button>
+            <button class="btn dark" data-action="home">${ICON.home} 처음으로</button>
           ` : `<button class="btn primary xl" data-action="complete-next" data-primary-next ${disabledAttrs}>${step === 2 ? "이 순서로 시작하기 →" : `✓ 이 순서 마치고 ${nextPage ? destinationLabels[nextPage] || "다음 순서" : "활동을 한 개 이상 고르기"} →`}</button>`}
         </div>
       </div>
@@ -1830,6 +1983,7 @@
     const statuses = {
       saving: ["saving", "↻ 저장 중…"],
       error: ["error", "! 저장 확인 필요"],
+      localOnly: ["error", "! 이 브라우저에만 임시 저장"],
       saved: ["saved", "✓ 자동 저장됨"]
     };
     const [className, label] = statuses[state.saveStatus] || statuses.saved;
@@ -1853,25 +2007,31 @@
 
   function stageGuide(step) {
     return ({
-      1: { children: "어떤 일이 있었는지, 어떻게 되면 좋을지 말해요.", recorder: "주제와 의견을 낸 친구 이름을 적어요.", done: "'오늘의 안건' 칸이 채워졌으면 다 한 거예요." },
+      1: { children: "어떤 일이 있었는지, 어떻게 되면 좋을지 말해요.", recorder: "오늘의 주제와 생각을 낸 친구 이름을 적어요." },
       2: {
         children: "오늘 할 활동을 골라 눌러요.",
-        recorder: "역할 이름과 맡을 친구 이름을 적어요. 나중에 바꿔도 돼요.",
-        done: "고른 활동이 위에서부터 차례로 열려요. 앞 순서를 마치면 다음이 열려요.",
+        recorder: "맡은 일 이름과 맡을 친구 이름을 적어요. 나중에 바꿔도 돼요.",
         help: [
           { title: "오늘 할 활동 고르기", body: "누른 활동만 오늘 순서에 들어가요. 위에서부터 차례로 해요." },
-          { title: "맡을 친구 정하기", body: "맡을 일에는 회장·부회장·서기처럼 할 일을 적고, 맡은 친구에는 이름을 적어요. 지금 정하지 않아도 돼요." }
+          { title: "맡을 친구 정하기", body: "맡은 일에는 회장·부회장·서기처럼 할 일을 적고, 맡은 친구에는 이름을 적어요. 지금 정하지 않아도 돼요." }
         ]
       },
-      3: { children: "약속을 다 같이 소리 내어 읽어요.", recorder: "바꿀 약속이 있으면 칸을 눌러 고쳐요.", done: "우리 반 약속을 모두 읽었으면 다 한 거예요." },
-      4: { children: "잘 지켰는지 손을 들어 보여요.", recorder: "손든 친구가 몇 명인지 세어 적고, 왜 그런지 한 줄 적어요.", done: "잘된 점과 어려웠던 점을 한 가지씩 적었으면 다 한 거예요." },
-      5: { children: "내 생각과 이유를 한 사람씩 말해요.", recorder: "발표한 생각과 이유를 짧게 적고 '기록하기'를 눌러요.", done: "나온 생각이 아래 목록에 다 모였으면 끝난 거예요." },
-      6: { children: "나온 생각과 이유를 읽고 같은 생각에 손을 들어요.", recorder: "생각마다 손든 수를 적고 '다 세었어요'를 눌러요. 그다음 토의할 생각 하나를 골라요.", done: "모든 생각의 손든 수를 세고, 토의할 생각을 골랐으면 다 한 거예요." },
-      7: { children: "좋은 점, 걱정되는 점, 새 방법을 차례로 말해요.", recorder: "중요한 말만 짧게 화면에 적어요.", done: "'더 좋은 방법' 칸에 한 가지라도 적었으면 다 한 거예요." },
-      8: { children: "한 사람씩 손들어 좋아요 또는 다른 생각을 보여요.", recorder: "두 가지 손든 수를 적고, 우리 반 친구 수와 맞는지 확인해요.", done: "손든 수를 다 세고 '다 세었어요'를 눌렀으면 다 한 거예요." },
-      9: { children: "무엇을 누가 언제까지 할지 함께 정해요.", recorder: "무엇을·어떻게·누가·언제까지, 네 칸을 채워요.", done: "네 칸이 다 채워졌으면 다 한 거예요." },
-      10: { children: "함께 정한 일을 소리 내어 읽어요.", recorder: "아래 저장 버튼을 누르면 오늘 회의가 기록으로 남아요.", done: "'저장 완료'가 보이면 회의 끝!" }
-    })[step] || { children: "함께 토의해요.", recorder: "중요한 말을 적어요.", done: "다음 순서로 갈 준비가 됐어요." };
+      3: { children: "약속을 다 같이 소리 내어 읽어요.", recorder: "바꿀 약속이 있으면 칸을 눌러 고쳐요." },
+      4: { children: "잘 지켰는지 손을 들어 보여요.", recorder: "손든 친구가 몇 명인지 세어 적고, 왜 그런지 한 줄 적어요." },
+      5: { children: "내 생각과 이유를 한 사람씩 말해요.", recorder: "발표한 생각과 이유를 짧게 적고 '기록하기'를 눌러요." },
+      6: { children: "나온 생각과 이유를 읽고 같은 생각에 손을 들어요.", recorder: "생각마다 손든 수를 적고 '다 세었어요'를 눌러요. 그다음 토의할 생각 하나를 골라요." },
+      7: { children: "좋은 점, 걱정되는 점, 새 방법을 차례로 말해요.", recorder: "중요한 말만 짧게 화면에 적어요." },
+      8: { children: "한 사람씩 손들어 좋아요 또는 다른 생각을 보여요.", recorder: "두 가지 손든 수를 적고, 오늘 온 친구 수와 맞는지 확인해요." },
+      9: { children: "무엇을 누가 언제까지 할지 함께 정해요.", recorder: "무엇을·어떻게·누가·언제까지, 네 칸을 채워요." },
+      10: { children: "함께 정한 일을 소리 내어 읽어요.", recorder: "아래 저장 버튼을 누르면 오늘 회의가 기록으로 남아요." }
+    })[step] || { children: "함께 토의해요.", recorder: "중요한 말을 적어요." };
+  }
+
+  // 완료 조건을 손으로 적어 두면 validateStage 와 어긋난다. 하단 안내문과 같은 곳에서 만든다.
+  function stageDoneText(step) {
+    const validation = validateStage(step);
+    if (!validation.valid) return `${validation.message} 그러면 끝나요.`;
+    return getNextRoutePage(step) == null ? "다 했어요! 아래 버튼을 눌러 회의 기록을 저장해요." : "다 했어요! 다음으로 가도 좋아요.";
   }
 
   function getMeetingDurationMinutes() {
@@ -1912,11 +2072,11 @@
           <small class="meeting-clock-remaining" role="timer" aria-label="남은 회의 시간"><span>남은 시간</span><b data-timer-display>${formatTime(getRemainingMs())}</b></small>
         </div>
         <div class="meeting-clock-presets" aria-label="회의 시간 빠르게 고르기">
-          ${[15, 30, 45].map((preset) => `<button type="button" data-action="timer-preset" data-minutes="${preset}" class="${minutes === preset ? "is-active" : ""}" aria-pressed="${minutes === preset}">${preset}분</button>`).join("")}
+          ${[15, 30, 45, 60].map((preset) => `<button type="button" data-action="timer-preset" data-minutes="${preset}" class="${minutes === preset ? "is-active" : ""}" aria-pressed="${minutes === preset}">${preset}분</button>`).join("")}
         </div>
         <button class="meeting-clock-alert ${alertEnabled ? "is-on" : ""}" type="button" data-action="toggle-five-minute-alert" aria-pressed="${alertEnabled}"><span>${alertEnabled ? "🔔" : "🔕"}</span> 5분 알림 <b>${alertEnabled ? "켜짐" : "꺼짐"}</b></button>
         <button class="meeting-clock-reset" type="button" data-action="timer-reset">↺ 처음부터</button>
-        <button class="meeting-clock-toggle" type="button" data-action="${state.meeting.timer.running ? "timer-pause" : "timer-start"}">${state.meeting.timer.running ? "Ⅱ 멈춤" : "▶ 시작"}</button>
+        <button class="meeting-clock-toggle" type="button" data-action="${state.meeting.timer.running ? "timer-pause" : "timer-start"}">${state.meeting.timer.running ? `${ICON.pause} 멈춤` : `${ICON.play} 시작`}</button>
       </aside>
     `;
   }
@@ -1957,7 +2117,8 @@
         icon: "📌",
         items: [
           meetingNoteItem("날짜", meeting.date),
-          meetingNoteItem("참여 학생", meeting.totalStudents ? `${meeting.totalStudents}명` : ""),
+          meetingNoteItem("우리 반 친구", meeting.totalStudents ? `${meeting.totalStudents}명` : ""),
+          meetingNoteItem("오늘 온 친구", meeting.totalStudents ? `${getPresentCount(meeting)}명` : ""),
           meetingNoteItem("오늘의 주제", meeting.agenda?.title),
           meetingNoteItem("어떤 문제가 있었나요?", formatPrepareOpinions("problem", meeting)),
           meetingNoteItem("어떻게 바꾸면 좋을까요?", formatPrepareOpinions("outcome", meeting)),
@@ -1982,7 +2143,7 @@
         title: "함께 토의",
         icon: "🗣️",
         items: [
-          meetingNoteItem("함께 말해 볼 것", meeting.topicSelection?.selectedTopic),
+          meetingNoteItem("함께 토의할 생각", meeting.topicSelection?.selectedTopic),
           meetingNoteItem("생각한 방법", meeting.discussion?.proposal),
           meetingNoteItem("궁금한 점", meeting.discussion?.questions),
           meetingNoteItem("좋은 점", meeting.discussion?.agreeReasons),
@@ -2089,13 +2250,12 @@
     state.helpExpanded = false;
     state.noteExpanded = true;
     render();
-    requestAnimationFrame(() => document.querySelector("[data-action='close-meeting-note']")?.focus());
   }
 
   function closeMeetingNote() {
     state.noteExpanded = false;
     render();
-    requestAnimationFrame(() => document.querySelector("[data-action='open-meeting-note']")?.focus());
+    focusAfterClose("[data-action='open-meeting-note']");
   }
 
   function renderMeetingAssistant(step) {
@@ -2124,7 +2284,7 @@
               <article><span>1</span><div><b>함께 읽어요</b><p>${escapeHtml(chairPrompt(step))}</p></div></article>
               <article><span>2</span><div><b>친구들이 해요</b><p>${escapeHtml(guide.children)}</p></div></article>
               <article><span>3</span><div><b>기록할 내용</b><p>${escapeHtml(guide.recorder)}</p></div></article>
-              <article><span>✓</span><div><b>${isDone ? "이 순서를 마쳤어요" : "다 했는지 확인해요"}</b><p>${escapeHtml(guide.done)}</p></div></article>
+              <article><span>✓</span><div><b>${isDone ? "이 순서를 마쳤어요" : "다 했는지 확인해요"}</b><p>${escapeHtml(stageDoneText(step))}</p></div></article>
               ${(guide.help || []).map((item) => `<article><span>★</span><div><b>${escapeHtml(item.title)}</b><p>${escapeHtml(item.body)}</p></div></article>`).join("")}
             </div>
           </section>
@@ -2138,17 +2298,26 @@
     state.noteExpanded = false;
     state.helpExpanded = true;
     render();
-    requestAnimationFrame(() => document.querySelector("[data-action='close-meeting-help']")?.focus());
   }
 
   function closeMeetingHelp() {
     state.helpExpanded = false;
     render();
-    requestAnimationFrame(() => document.querySelector("[data-action='open-meeting-help']")?.focus());
+    focusAfterClose("[data-action='open-meeting-help']");
   }
 
+  // 회장이 읽을 문장이 도움말 모달 안에만 있어서 화면에서는 아무도 못 봤다. 페이지마다 한 줄 띠로 꺼내 준다.
   function renderFacilitationPanel(step) {
-    return "";
+    if (!Number(step)) return "";
+    const chairName = String(state.meeting.roles?.entries?.find((entry) => entry.id === "role-host")?.name || "").trim();
+    const who = chairName ? `회장 ${chairName}` : "회장이 읽어요";
+    return `
+      <div class="facilitation-panel" style="grid-template-columns:minmax(0,1fr)">
+        <div class="chair-line" style="min-height:0">
+          <strong style="min-height:0">🎤 ${escapeHtml(who)}: “${escapeHtml(chairPrompt(step))}”</strong>
+        </div>
+      </div>
+    `;
   }
 
   function renderSettingsModal() {
@@ -2191,7 +2360,7 @@
           <details class="compact-details settings-details">
             <summary>우리 반 사용 도움말 보기</summary>
             <div class="details-content guide-grid">
-              <article><b>1. 준비</b><p>오늘의 안건과 어떤 문제가 있는지 적어요. 연습용 예시는 연습할 때만 사용해요.</p></article>
+              <article><b>1. 준비</b><p>오늘의 주제와 어떤 문제가 있는지 적어요. 연습용 예시는 연습할 때만 사용해요.</p></article>
               <article><b>2. 진행</b><p>회장은 진행 문장을 읽고, 부회장은 필요한 수와 중요한 내용을 화면에 적어요.</p></article>
               <article><b>3. 기록</b><p>화면 내용은 자동으로 저장돼요. 서기는 자세한 내용을 공책에 적어요.</p></article>
               <article><b>4. 이동</b><p>화면 위쪽 번호를 눌러 필요한 순서로 직접 이동해요.</p></article>
@@ -2422,13 +2591,33 @@
     render();
   }
 
+  // 등록 인원이 아니라 '오늘 온 친구' 수를 기준으로 세야 결석생이 있어도 회의가 멈추지 않는다.
+  function getPresentCount(meeting = state.meeting) {
+    return Math.max(0, Number(meeting.totalStudents || 0) - Number(meeting.absentCount || 0));
+  }
+
+  // 4·8쪽이 같은 absentCount 를 보므로 한 번만 정하면 다시 묻지 않는다.
+  function renderAbsentControl() {
+    const absent = Number(state.meeting.absentCount || 0);
+    const present = getPresentCount();
+    return `
+      <details class="compact-details" ${absent ? "open" : ""}>
+        <summary>오늘 안 온 친구가 있어요 <span>${absent ? `${absent}명 빠졌어요` : "눌러서 고치기"}</span></summary>
+        <div class="details-content">
+          ${sideCount(ASSETS.icons.people, "오늘 안 온 친구", "absentCount", "#8296a6")}
+          <p class="shared-vote-note">오늘 온 친구는 ${present}명이에요. 손든 수를 ${present}명에 맞추면 다음으로 갈 수 있어요.</p>
+        </div>
+      </details>
+    `;
+  }
+
   function validateStage(step) {
     const meeting = state.meeting;
     const missing = (message, field = "") => ({ valid: false, message, field, step });
     const filled = (value) => String(value ?? "").trim().length > 0;
 
     if (step === 1) {
-      if (Number(meeting.totalStudents || 0) < 1) return missing("회의 참여 학생 수를 1명 이상 적어 주세요.", "totalStudents");
+      if (Number(meeting.totalStudents || 0) < 1) return missing("우리 반 친구 수를 1명 이상 적어 주세요.", "totalStudents");
       if (!filled(meeting.agenda.title)) return missing("오늘의 주제를 적어 주세요.", "agenda.title");
     }
 
@@ -2448,14 +2637,13 @@
       if (hasSavedPromise && filled(meeting.previous.promise)) {
         const handRaise = meeting.previous.handRaise;
         const counted = Number(handRaise.good || 0) + Number(handRaise.normal || 0) + Number(handRaise.hard || 0);
-        const expected = Number(meeting.totalStudents || 0);
-        if (counted !== expected) return missing(`손든 친구를 모두 세어 주세요. 지금 ${counted}/${expected}명이에요.`, "previous.handRaise.good");
+        const expected = getPresentCount(meeting);
+        if (counted !== expected) return missing(`손든 친구를 모두 세어 주세요. 지금 ${counted}/${expected}명이에요. 안 온 친구가 있으면 ‘오늘 안 온 친구가 있어요’를 눌러 고쳐요.`, "previous.handRaise.good");
       }
     }
 
     if (step === 5) {
-      if (!meeting.students.some(filled)) return missing("발표할 친구 이름을 한 명 이상 적어 주세요.", "students.0");
-      if (getSpeakerOrder().length < 1) return missing("이름표를 눌러 발표 순서를 한 명 이상 정해 주세요.", "students.0");
+      // 이름·발표 순서는 진행을 돕는 준비 도구라 통과 조건에서 뺐다. 이 순서의 목표는 '생각 기록'뿐이다.
       if (!meeting.opinions.some((opinion) => filled(opinion.text))) {
         return missing("생각과 이유를 적고 ‘기록하기’를 눌러 주세요.", "opinionDraft.text");
       }
@@ -2483,8 +2671,8 @@
     if (step === 8) {
       const vote = meeting.vote;
       const counted = Number(vote.agree || 0) + Number(vote.disagree || 0);
-      const expected = Number(meeting.totalStudents || 0);
-      if (counted !== expected) return missing(`손든 친구 ${counted}명과 우리 반 친구 ${expected}명을 맞춰 주세요.`, "vote.agree");
+      const expected = getPresentCount(meeting);
+      if (counted !== expected) return missing(`손든 친구 ${counted}명과 오늘 온 친구 ${expected}명을 맞춰 주세요. 안 온 친구가 있으면 ‘오늘 안 온 친구가 있어요’를 눌러 고쳐요.`, "vote.agree");
       if (!vote.confirmed) return missing("손든 수를 다 센 뒤 ‘다 세었어요’를 눌러 확인해 주세요.", "vote.agree");
     }
 
@@ -2545,17 +2733,21 @@
       return;
     }
     queueSave();
-    toast("🎉 모든 순서를 마쳤어요. 아래에서 회의록을 저장해요.");
+    toast("🎉 모든 순서를 마쳤어요. 아래에서 회의 기록을 저장해요.");
   }
 
   async function completeAndFinalize() {
     const current = state.meeting.currentPage;
     const requiredRoute = getFlowRoutePages().filter((step) => step < 10);
-    const firstInvalid = requiredRoute.map((step) => validateStage(step)).find((validation) => !validation.valid);
-    if (firstInvalid) {
-      showValidationError(firstInvalid, true);
+    // 10쪽까지 온 아이를 앞 페이지로 되돌리면 고장으로 보인다. 여기 남아서 안 적은 곳만 보여 준다.
+    const gaps = requiredRoute.map((step) => validateStage(step)).filter((validation) => !validation.valid);
+    if (gaps.length) {
+      state.finalizeGaps = gaps;
+      render();
+      toast("⚠️ 아직 안 적은 곳이 있어요. 위에 있는 버튼을 눌러 채우고 와요.", "warn");
       return;
     }
+    state.finalizeGaps = [];
     const pageId = PAGES[current]?.id;
     if (pageId && !state.meeting.flow.completedPages.includes(pageId)) {
       state.meeting.flow.completedPages.push(pageId);
@@ -2605,13 +2797,6 @@
     toast("🧹 준비 칸만 비웠어요. 다른 기록은 그대로예요.");
   }
 
-  async function saveWithNotice() {
-    state.saveStatus = "saving";
-    await saveMeetingNow();
-    state.saveStatus = "saved";
-    toast("💾 이 기기의 현재 브라우저에 저장했어요.");
-  }
-
   async function continueLatest() {
     const snapshot = loadSnapshot();
     if (snapshot) {
@@ -2635,11 +2820,14 @@
 
   function updateCounter(path, delta) {
     const requested = Number(getPath(state.meeting, path) || 0) + delta;
-    const limit = isHeadCountPath(path) ? Math.max(0, Number(state.meeting.totalStudents) || 0) : Number.MAX_SAFE_INTEGER;
+    // 결석 인원은 등록 인원까지, 손든 수는 '오늘 온 친구'까지만 올라간다.
+    const limit = path === "absentCount"
+      ? Math.max(0, Number(state.meeting.totalStudents) || 0)
+      : isHeadCountPath(path) ? getPresentCount() : Number.MAX_SAFE_INTEGER;
     const next = Math.min(limit, Math.max(0, requested));
     setPath(state.meeting, path, next);
     if (/^vote\.(agree|disagree|hold)$/.test(path)) state.meeting.vote.confirmed = false;
-    if (requested > limit && isHeadCountPath(path)) toast(`우리 반 친구 수 ${limit}명을 넘을 수 없어요.`, "warn");
+    if (requested > limit && limit !== Number.MAX_SAFE_INTEGER) toast(`${limit}명보다 많을 수 없어요.`, "warn");
     queueSave();
     render();
   }
@@ -2688,6 +2876,8 @@
       const list = group?.querySelector(".prepare-opinion-list");
       const latest = group?.querySelector(".prepare-opinion-toggle:last-of-type");
       if (list) list.scrollTop = list.scrollHeight;
+      // 이제 기본이 닫힘이라, 방금 더한 생각은 팝업으로 열어 바로 적게 한다.
+      if (latest) latest.open = true;
       latest?.querySelector("textarea")?.focus();
       if (list) list.scrollTop = list.scrollHeight;
     });
@@ -2722,8 +2912,8 @@
   function formatRolesForReport() {
     const roles = state.meeting.roles.entries
       .filter((role) => role.label?.trim() || role.name?.trim())
-      .map((role) => `${role.label?.trim() || "맡을 일"} ${role.name?.trim() || "아직 안 정함"}`);
-    return roles.length ? roles.join(", ") : "적은 맡을 일 없음";
+      .map((role) => `${role.label?.trim() || "맡은 일"} ${role.name?.trim() || "아직 안 정함"}`);
+    return roles.length ? roles.join(", ") : "적은 맡은 일 없음";
   }
 
   function addMeetingRule() {
@@ -2848,9 +3038,9 @@
   function confirmVoteTally() {
     const vote = state.meeting.vote;
     const total = Number(vote.agree || 0) + Number(vote.disagree || 0);
-    const expected = Number(state.meeting.totalStudents || 0);
+    const expected = getPresentCount();
     if (!expected || total !== expected) {
-      toast(`손든 친구 ${total}명과 우리 반 친구 수 ${expected}명이 맞는지 먼저 확인해요.`, "warn");
+      toast(`손든 친구 ${total}명과 오늘 온 친구 ${expected}명이 맞는지 먼저 확인해요.`, "warn");
       return;
     }
     vote.confirmed = true;
@@ -2878,6 +3068,9 @@
     document.querySelectorAll("[data-clock-control]").forEach((control) => {
       control.classList.add("is-expanded");
     });
+    // 펼친 시계는 화면을 덮는다. 홈·설정 칩이 그 위 모서리에 걸쳐 반쯤 잘려 보였다.
+    // :has() 는 오래된 교실 태블릿에서 안 먹으니 body 표시로 처리한다.
+    document.body.classList.add("clock-expanded");
     if (autoCollapse) scheduleMeetingClockCollapse(4200);
   }
 
@@ -2896,6 +3089,7 @@
     document.querySelectorAll("[data-clock-control]").forEach((control) => {
       control.classList.remove("is-expanded");
     });
+    document.body.classList.remove("clock-expanded");
   }
 
   function updateMeetingDurationFromDial(event, dial) {
@@ -2935,25 +3129,6 @@
   function getStageMinutes(step = state.meeting.currentPage) {
     const saved = Number(state.meeting.flow.stageMinutes?.[Number(step) - 1]);
     return Number.isFinite(saved) && saved > 0 ? saved : 3;
-  }
-
-  function getPlannedMinutes() {
-    return FLOW_TIME_PAGES.map((step) => getStageMinutes(step)).reduce((sum, minutes) => sum + minutes, 0);
-  }
-
-  function getStageMinutesFormula() {
-    const minutes = FLOW_TIME_PAGES.map((step) => getStageMinutes(step));
-    return `${minutes.join(" + ")} = ${minutes.reduce((sum, value) => sum + value, 0)}분`;
-  }
-
-  function syncTimerDurationToStages() {
-    const plannedMinutes = getPlannedMinutes();
-    if (plannedMinutes < 10 || plannedMinutes > 60) {
-      setMeetingDuration(Math.max(10, Math.min(60, plannedMinutes)));
-      return;
-    }
-    state.meeting.flow.durationMinutes = plannedMinutes;
-    state.meeting.timer.durationMinutes = plannedMinutes;
   }
 
   function setMeetingDuration(value) {
@@ -3059,7 +3234,7 @@
   }
 
   function timerSetPreset(minutes) {
-    if (![15, 30, 45].includes(Number(minutes))) return;
+    if (![15, 30, 45, 60].includes(Number(minutes))) return;
     setMeetingDuration(minutes);
     const timer = state.meeting.timer;
     timer.running = false;
@@ -3145,8 +3320,10 @@
     await saveMeetingNow();
     state.recentMeetings = await getAllMeetings();
     render();
+    launchStamp();
     launchConfetti();
-    toast("🎉 오늘 회의가 이 기기에 안전하게 저장됐어요!");
+    // 저장이 안 된 브라우저에서 "안전하게 저장됐어요"라고 하면 아이가 그냥 종료해 버린다.
+    toast(state.dbFailed ? LOCAL_ONLY_SAVE_MESSAGE : "🎉 오늘 회의가 이 기기에 안전하게 저장됐어요!", state.dbFailed ? "warn" : "info");
   }
 
   function askConfirm(message, { confirmLabel = "네, 할게요", cancelLabel = "아니요" } = {}) {
@@ -3194,6 +3371,36 @@
     }, 2800);
   }
 
+  // 카운터처럼 연타가 정상인 동작은 제외하고, 저장·이동 같은 동작만 350ms 안의 중복 탭을 막는다.
+  const RAPID_TAP_EXEMPT = new Set(["counter-plus", "counter-minus", "toggle-speaker-order", "toggle-flow-page", "toggle-tally"]);
+  const lastTapAt = new Map();
+
+  function isRepeatTap(button) {
+    const action = button.dataset.action;
+    if (RAPID_TAP_EXEMPT.has(action)) return false;
+    // 15분·30분 버튼처럼 data-minutes 로만 갈리는 버튼이 같은 키를 쓰면 연달아 누른 쪽이 무시되므로 dataset을 전부 넣는다.
+    const key = Object.entries({ ...button.dataset }).map(([name, value]) => `${name}=${value}`).join("|");
+    const now = Date.now();
+    if (now - (lastTapAt.get(key) || 0) < 350) return true;
+    lastTapAt.set(key, now);
+    return false;
+  }
+
+  function launchStamp() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    document.querySelectorAll(".stamp-layer").forEach((node) => node.remove());
+    const layer = document.createElement("div");
+    layer.className = "stamp-layer";
+    layer.setAttribute("aria-hidden", "true");
+    layer.innerHTML = `<div class="stamp-mark">회의 끝!<small>오늘 회의를 저장했어요</small></div>`;
+    document.body.appendChild(layer);
+    setTimeout(() => {
+      document.body.classList.add("is-stamped");
+      setTimeout(() => document.body.classList.remove("is-stamped"), 320);
+    }, 380);
+    setTimeout(() => layer.remove(), 2200);
+  }
+
   function launchConfetti() {
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const colors = ["#19b999", "#2f80ed", "#7857d9", "#ef4f85", "#f59e0b", "#7ccfff", "#ffb3cd"];
@@ -3227,12 +3434,24 @@
     downloadJson(payload, `class-meeting-${state.meeting.date || "backup"}.json`);
   }
 
+  // 회의 기록 모양인지 최소한만 확인한다. 아무 JSON이나 migrate로 넘기면 남의 파일이 회의록이 되어 버린다.
+  const MEETING_KEYS = ["id", "schemaVersion", "agenda", "flow", "opinions", "decision", "vote", "title", "date"];
+
+  function isMeetingLike(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+    return MEETING_KEYS.some((key) => Object.prototype.hasOwnProperty.call(value, key));
+  }
+
   async function importJson(file) {
     if (!file) return;
     try {
       const text = await file.text();
       const payload = JSON.parse(text);
-      const meeting = payload.meetings?.[0] || payload.meeting || payload;
+      const meeting = payload?.meetings?.[0] || payload?.meeting || payload;
+      if (!isMeetingLike(meeting)) {
+        toast("이 파일은 우리 반 회의 기록이 아닌 것 같아요. 학급회의에서 내려받은 파일을 골라 주세요.", "warn");
+        return;
+      }
       state.meeting = migrate(meeting);
       state.meeting.currentPage = Math.max(1, state.meeting.currentPage || 1);
       await saveMeetingNow();
@@ -3240,7 +3459,7 @@
       render();
     } catch (error) {
       console.warn(error);
-      alert("회의 기록 파일을 열지 못했어요. 다른 파일인지 확인해 주세요.");
+      toast("회의 기록 파일을 열지 못했어요. 다른 파일인지 확인해 주세요.", "warn");
     }
   }
 
@@ -3269,13 +3488,18 @@
     try {
       const text = await file.text();
       const payload = JSON.parse(text);
-      const candidates = extractImportedMeetings(payload).filter((item) => item && typeof item === "object" && !Array.isArray(item));
+      const candidates = extractImportedMeetings(payload).filter(isMeetingLike);
       if (!candidates.length) throw new Error("가져올 회의 기록이 없는 파일이에요.");
       let saved = 0;
       for (const raw of candidates) {
         const meeting = migrate(raw);
         if (!raw.id) meeting.id = crypto.randomUUID ? crypto.randomUUID() : `meeting-${Date.now()}-${saved}`;
-        await withStore("meetings", "readwrite", (store) => store.put(meeting));
+        // 기기 저장함이 막혀 있으면 실제로 담기지 않으므로 불러왔다고 말하지 않는다.
+        if ((await withStore("meetings", "readwrite", (store) => store.put(meeting))) == null) {
+          state.dbFailed = true;
+          toast(LOCAL_ONLY_SAVE_MESSAGE, "warn");
+          return;
+        }
         saved += 1;
       }
       state.recentMeetings = await getAllMeetings();
@@ -3312,6 +3536,8 @@
     const labels = {
       saving: ["saving", "↻ 저장 중…"],
       error: ["error", "! 저장 확인 필요"],
+      // 기기 저장함이 막힌 브라우저에서는 저장됐다고 말하지 않는다.
+      localOnly: ["error", "! 이 브라우저에만 임시 저장"],
       saved: ["saved", "✓ 자동 저장됨"]
     };
     const [className, label] = labels[status] || labels.saved;
@@ -3320,6 +3546,11 @@
       node.textContent = label;
     });
   }
+
+  // 기기 저장함이 잠긴 브라우저(시크릿 모드 등)에서 아이에게 알려 줄 문구.
+  const LOCAL_ONLY_SAVE_MESSAGE = "지금은 기기에 저장할 수 없어서 이 브라우저에만 임시로 남아요. 회의가 끝나면 '기록 파일 내려받기'를 꼭 눌러 주세요.";
+  let snapshotFailNoticed = false;
+  let localOnlyNoticed = false;
 
   function saveSnapshot() {
     try {
@@ -3331,7 +3562,11 @@
         sfxEnabled: Boolean(state.meeting.sfxEnabled)
       }));
     } catch (error) {
+      // 조용히 넘기면 아이가 저장된 줄 알고 나가 버리므로 한 번은 꼭 알린다.
       console.warn("snapshot save failed", error);
+      if (snapshotFailNoticed) return;
+      snapshotFailNoticed = true;
+      toast("기록을 담아 둘 자리가 부족해요. '기록 파일 내려받기'를 눌러 파일로 받아 주세요.", "warn");
     }
   }
 
@@ -3407,7 +3642,18 @@
     try {
       const meeting = structuredClone(state.meeting);
       meeting.updatedAt = new Date().toISOString();
-      await withStore("meetings", "readwrite", (store) => store.put(meeting));
+      // withStore는 기기 저장함을 못 쓸 때 null을 준다. 이때 '저장됨'이라고 하면 거짓말이 된다.
+      const storedKey = await withStore("meetings", "readwrite", (store) => store.put(meeting));
+      if (storedKey == null) {
+        state.dbFailed = true;
+        setSaveStatus("localOnly");
+        if (!localOnlyNoticed) {
+          localOnlyNoticed = true;
+          toast(LOCAL_ONLY_SAVE_MESSAGE, "warn");
+        }
+        return;
+      }
+      state.dbFailed = false;
       setSaveStatus("saved");
     } catch (error) {
       setSaveStatus("error");
@@ -3425,7 +3671,8 @@
   }
 
   function migrate(input) {
-    const meeting = deepMerge(structuredClone(DEFAULT_MEETING), input || {});
+    // 병합 베이스는 샘플이 아닌 빈 회의여야 한다. 샘플이면 아이가 안 적은 칸이 청소 구역·좋아요 18명 같은 가짜 내용으로 채워진다.
+    const meeting = deepMerge(createEmptyMeeting(), input || {});
     meeting.schemaVersion = SCHEMA_VERSION;
     meeting.title = friendlyMeetingTitle(meeting.title);
     meeting.agenda.problemAdditionalOpinions = normalizeAdditionalPrepareOpinions(meeting.agenda.problemAdditionalOpinions, "problem");
@@ -3554,6 +3801,8 @@
       : savedSteps.slice(0, 10);
     while (meeting.flow.stepLabels.length < 10) meeting.flow.stepLabels.push(PAGES[meeting.flow.stepLabels.length + 1]?.short || "단계");
     meeting.totalStudents = Math.min(30, Math.max(1, Number(meeting.totalStudents || DEFAULT_MEETING.totalStudents)));
+    // 구버전 저장본에는 absentCount 가 없다. 없으면 0(결석 없음)으로 두고, 등록 인원을 넘지 않게 자른다.
+    meeting.absentCount = Math.min(meeting.totalStudents, Math.max(0, Number(input?.absentCount) || 0));
     const currentPage = Number(meeting.currentPage || 1);
     meeting.currentPage = currentPage === 7 ? 6 : Number.isFinite(currentPage) ? Math.min(10, Math.max(0, currentPage)) : 1;
     return applyAudioPreferences(meeting);
@@ -3570,6 +3819,9 @@
 
   function deepMerge(target, source) {
     for (const [key, value] of Object.entries(source || {})) {
+      // 불러온 파일이 이 키들로 브라우저 전체 설정을 건드리지 못하게 막는다.
+      // 목록을 const 로 두면 파일 위쪽에서 먼저 부르는 init() → migrate() 가 TDZ 오류로 죽어 이어하기가 새 회의로 떨어진다.
+      if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
       if (value && typeof value === "object" && !Array.isArray(value)) {
         target[key] = deepMerge(target[key] || {}, value);
       } else {
@@ -3601,14 +3853,13 @@
     if (input.type === "number") {
       const min = Number(input.min || 0);
       const configuredMax = input.max ? Number(input.max) : Number.MAX_SAFE_INTEGER;
-      const headCountMax = isHeadCountPath(input.dataset.field) ? Math.max(0, Number(state.meeting.totalStudents) || 0) : Number.MAX_SAFE_INTEGER;
+      const headCountMax = isHeadCountPath(input.dataset.field) ? getPresentCount() : Number.MAX_SAFE_INTEGER;
       return Math.min(configuredMax, headCountMax, Math.max(min, Number(input.value || 0)));
     }
     return input.value;
   }
 
   function updateDependentText() {
-    const plannedMinutes = getPlannedMinutes();
     updateMeetingClockVisual();
     const hasPrepareTopic = String(state.meeting.agenda.title || "").trim().length > 0;
     const hasPrepareStory = [state.meeting.agenda.problemContext, state.meeting.agenda.expectedOutcome].some((value) => String(value || "").trim());
@@ -3617,7 +3868,7 @@
       const badge = node.querySelector("b");
       const text = node.querySelector("em");
       if (badge) badge.textContent = hasPrepareTopic ? "✓" : "1";
-      if (text) text.textContent = hasPrepareTopic ? "주제를 적었어요" : "주제를 먼저 적어요";
+      if (text) text.textContent = hasPrepareTopic ? "오늘의 주제를 적었어요" : "오늘의 주제를 먼저 적어요";
     });
     document.querySelectorAll("[data-prepare-story-status]").forEach((node) => {
       node.className = hasPrepareStory ? "ready" : "needs-attention";
@@ -3642,12 +3893,7 @@
       node.textContent = missingRoleCount ? `맡을 친구 ${missingRoleCount}명 미입력` : "맡을 친구 입력 완료";
     });
     const namedStudents = state.meeting.students.filter((name) => String(name || "").trim()).length;
-    document.querySelectorAll("[data-student-readiness-status]").forEach((node) => {
-      node.className = namedStudents ? "ready" : "needs-attention";
-    });
-    document.querySelectorAll("[data-student-readiness-icon]").forEach((node) => {
-      node.textContent = namedStudents ? "✓" : "2";
-    });
+    // 이름 수는 이제 5쪽 '발표 순서 정하기' 토글 요약에만 보인다. 접힌 채로도 숫자가 맞아야 한다.
     document.querySelectorAll("[data-student-readiness]").forEach((node) => {
       node.textContent = namedStudents ? `친구 ${namedStudents}명 입력` : "이름을 한 번에 입력해요";
     });
@@ -3664,18 +3910,20 @@
     document.querySelectorAll("[data-note-count]").forEach((node) => {
       node.textContent = String(noteRecordCount);
     });
-    document.querySelectorAll("[data-planned-minutes]").forEach((node) => {
-      node.textContent = String(plannedMinutes);
-    });
-    document.querySelectorAll("[data-planned-formula]").forEach((node) => {
-      node.textContent = getStageMinutesFormula();
+    // 3·6·7·9·10쪽 준비도 칩은 통째로 다시 만든다. 내용이 같으면 건드리지 않아 입력 중에도 깜빡이지 않는다.
+    document.querySelectorAll("[data-readiness-strip]").forEach((node) => {
+      const html = readinessChips(Number(node.dataset.readinessStrip));
+      if (html && node.innerHTML !== html) node.innerHTML = html;
     });
     document.querySelectorAll("[data-timer-display]").forEach((node) => {
       node.textContent = formatTime(getRemainingMs());
     });
     const reflection = state.meeting.previous.handRaise;
     const reflectionTotal = Number(reflection.good || 0) + Number(reflection.normal || 0) + Number(reflection.hard || 0);
-    const reflectionExpected = Number(state.meeting.totalStudents || 0);
+    const reflectionExpected = getPresentCount();
+    document.querySelectorAll("[data-present-count]").forEach((node) => {
+      node.textContent = String(reflectionExpected);
+    });
     const reflectionState = reflectionTotal === reflectionExpected && reflectionExpected > 0
       ? "complete"
       : reflectionTotal > reflectionExpected
@@ -3703,18 +3951,8 @@
       if (display) display.textContent = `${agreeRate}%`;
       const bar = document.querySelector(".result-panel .bar span");
       if (bar) bar.style.setProperty("--value", `${agreeRate}%`);
-      const expected = Number(state.meeting.totalStudents || 0);
+      const expected = getPresentCount();
       const countState = voteTotal === expected && expected > 0 ? "complete" : voteTotal > expected ? "over" : "pending";
-      const countMessage = countState === "complete"
-        ? `모두 ${expected}명을 세었어요. 이제 손든 수를 확인해도 좋아요.`
-        : countState === "over"
-          ? `손든 친구가 ${voteTotal}명이에요. 우리 반 친구 수 ${expected}명보다 많으니 한 번 더 세어 봐요.`
-          : `지금 ${voteTotal}명을 셌어요. ${Math.max(0, expected - voteTotal)}명을 더 세면 모두 확인돼요.`;
-      const countPanel = document.querySelector("[data-vote-count-status]");
-      if (countPanel) countPanel.className = `vote-count-check ${countState}`;
-      document.querySelectorAll("[data-vote-count-total]").forEach((node) => { node.textContent = String(voteTotal); });
-      document.querySelectorAll("[data-vote-count-expected]").forEach((node) => { node.textContent = String(expected); });
-      document.querySelectorAll("[data-vote-count-message]").forEach((node) => { node.textContent = countMessage; });
       document.querySelectorAll("[data-vote-confirm]").forEach((button) => { button.disabled = countState !== "complete"; });
       document.querySelectorAll("[data-vote-equation-agree]").forEach((node) => { node.textContent = String(Number(state.meeting.vote.agree || 0)); });
       document.querySelectorAll("[data-vote-equation-disagree]").forEach((node) => { node.textContent = String(Number(state.meeting.vote.disagree || 0)); });
@@ -3741,13 +3979,13 @@
       && Boolean(state.meeting.savedAt)
       && state.meeting.flow.completedPages.includes(PAGES[step]?.id);
     document.querySelectorAll("[data-primary-next]").forEach((button) => {
-      button.disabled = !validation.valid;
+      button.toggleAttribute("data-blocked", !validation.valid);
       button.setAttribute("aria-disabled", String(!validation.valid));
     });
     document.querySelectorAll("[data-nav-requirement]").forEach((node) => {
       node.className = `nav-requirement ${validation.valid ? "ready" : "needs-attention"}`;
       node.textContent = isFinalSaved
-        ? "🎉 회의록을 저장했어요. 이상으로 오늘 학급회의를 마칩니다!"
+        ? "🎉 회의 기록을 저장했어요. 이상으로 오늘 학급회의를 마칩니다!"
         : validation.valid
         ? "✓ 이 순서를 마칠 준비가 됐어요."
         : `다음으로 가려면: ${validation.message}`;
@@ -3761,6 +3999,17 @@
     root.dataset.error = String(error?.stack || error || "unknown error");
     root.querySelector("[data-reload]")?.addEventListener("click", () => location.reload());
     root.querySelector("[data-export-fallback]")?.addEventListener("click", exportJson);
+    // 같은 기록이 계속 화면을 깨뜨릴 때, 그 기록을 지우고 빠져나가는 유일한 길.
+    root.querySelector("[data-discard-restart]")?.addEventListener("click", () => {
+      if (!confirm("적어 둔 기록을 지우고 새 회의를 시작할까요?")) return;
+      discardOnUnload = true;
+      try {
+        localStorage.removeItem(SNAPSHOT_KEY);
+      } catch (removeError) {
+        console.warn("snapshot remove failed", removeError);
+      }
+      location.reload();
+    });
   }
 
   function escapeHtml(value) {
