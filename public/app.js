@@ -8,10 +8,6 @@
   const SNAPSHOT_KEY = "class-meeting-current-snapshot-v4";
   const SETTINGS_KEY = "class-meeting-settings-v4";
 
-  // 의견 보내기는 구글 폼으로만 받는다. mailto: 나 화면에 적은 메일 주소는
-  // 공개 사이트에 개인 메일이 그대로 노출돼 크롤러에 긁히고, 배포 뒤엔 회수할 수 없다.
-  // 폼 주소가 생기면 이 한 줄만 채우면 된다. 비어 있으면 버튼이 "준비 중"으로 잠긴다.
-  const FEEDBACK_FORM_URL = "";
 
   const asset = (folder, name) => `./assets/${folder}/${name}`;
 
@@ -2395,35 +2391,27 @@
             </div>
           </details>
           <details class="compact-details settings-details">
-            <summary>의견 보내기 · 정보 · 저작권</summary>
+            <summary>만든 사람과 저작권 · 정보</summary>
             <div class="details-content settings-about">
-              <section class="about-block" aria-labelledby="about-feedback-title">
-                <h3 id="about-feedback-title">💬 의견 보내기</h3>
-                <p>고치면 좋을 점이나 교실에서 겪은 불편을 알려 주세요. 다음 버전에 반영해요.</p>
-                ${FEEDBACK_FORM_URL
-                  ? `<a class="btn primary about-feedback-link" href="${escapeAttr(FEEDBACK_FORM_URL)}" target="_blank" rel="noopener noreferrer">의견 보내기 (구글 폼)</a>`
-                  : `<button class="btn secondary" type="button" disabled>의견 보내기 (준비 중)</button>
-                     <span class="about-note">의견 받는 곳을 준비하고 있어요.</span>`}
+              <section class="about-block" aria-labelledby="about-credit-title">
+                <h3 id="about-credit-title">만든 사람과 저작권</h3>
+                <ul class="about-lines">
+                  <li>기획·제작: 옐샘 · 아이스크림미디어</li>
+                  <li>제공: issamGPT AI Mart</li>
+                  <li>© 2026 옐샘 · 아이스크림미디어. 이용 조건은 issamGPT 이용약관을 따릅니다.</li>
+                  <li>앱 화면을 캡처한 이미지와 앱 안의 배경·캐릭터·아이콘 일러스트, 음원은 저작권 보호를 받습니다. 내려받아 다시 배포하거나, 다른 자료·서비스에 옮겨 쓰거나, 상업적으로 이용할 수 없습니다.</li>
+                  <li>배경·캐릭터·아이콘 일러스트는 생성형 AI로 만든 자료입니다. 효과음은 Pixabay Content License 자료이며, 글꼴은 각 라이선스(SIL OFL 1.1)를 따릅니다. 출처 기록은 <b>assets/CREDITS.md</b>에 있습니다.</li>
+                </ul>
               </section>
 
               <section class="about-block" aria-labelledby="about-info-title">
-                <h3 id="about-info-title">ℹ️ 정보</h3>
-                <dl class="about-list">
-                  <div><dt>프로그램</dt><dd>학급회의 시간 — 우리반 학급회의</dd></div>
-                  <div><dt>버전</dt><dd>${escapeHtml(APP_VERSION)}</dd></div>
-                  <div><dt>대상</dt><dd>초등학교 3~6학년 학급회의</dd></div>
-                  <div><dt>저장 방식</dt><dd>이 기기 브라우저에만 저장 (서버 전송 없음)</dd></div>
-                </dl>
-              </section>
-
-              <section class="about-block" aria-labelledby="about-license-title">
-                <h3 id="about-license-title">© 저작권</h3>
-                <dl class="about-list">
-                  <div><dt>이미지</dt><dd>생성형 AI로 제작</dd></div>
-                  <div><dt>효과음</dt><dd>Pixabay Content License<br /><small>floraphonic · steaq · Ranner · litupsubway · Meldix</small></dd></div>
-                  <div><dt>글꼴</dt><dd>Pretendard, Jua — SIL Open Font License 1.1</dd></div>
-                </dl>
-                <p class="about-note">프로그램에서 분리한 이미지·음원의 무단 복제, 재배포, 판매 및 상업적 이용을 금합니다. 글꼴은 각 라이선스를 따릅니다.</p>
+                <h3 id="about-info-title">정보</h3>
+                <ul class="about-lines">
+                  <li>프로그램: 학급회의 시간 — 우리반 학급회의</li>
+                  <li>버전: ${escapeHtml(APP_VERSION)}</li>
+                  <li>대상: 초등학교 3~6학년 학급회의</li>
+                  <li>구성: 10단계 회의 흐름 + A4 게시물 인쇄 · 저장: 이 기기의 브라우저(localStorage), 서버 전송 없음</li>
+                </ul>
               </section>
             </div>
           </details>

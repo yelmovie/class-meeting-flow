@@ -12268,23 +12268,42 @@ body.clock-expanded .app-page > .settings-chip {
 .guide-modal .compact-details > .details-content.settings-about,
 .settings-about {
   display: grid;
-  gap: 14px 18px;
+  gap: 14px;
   max-height: none;
   overflow: visible;
 }
 
-/* 설정 모달은 가로가 넉넉하다. 한 줄로 쌓으면 343px 이 넘쳐 스크롤이 생겨서
-   의견·정보를 왼쪽, 저작권을 오른쪽에 놓아 세로를 절반으로 줄인다. */
-@media (min-width: 901px) and (orientation: landscape) {
-  .settings-about {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-content: start;
-  }
-  .settings-about > .about-block:nth-child(3) {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-  }
+/* 저작권 안내는 한 줄이 길어 두 칸으로 쪼개면 오히려 읽기 나쁘다. 한 칸으로 쌓는다. */
+.about-block {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--n-50);
 }
+
+.about-lines {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.about-lines > li {
+  position: relative;
+  padding-left: 14px;
+  color: #35405a;
+  font-size: clamp(15px, 2.2cqh, 17px);
+  font-weight: 620;
+  line-height: 1.5;
+}
+.about-lines > li::before {
+  content: "·";
+  position: absolute;
+  left: 3px;
+  color: #8a93a6;
+  font-weight: 800;
+}
+.about-lines > li b { color: var(--violet-text); }
 
 .about-block > h3 {
   margin: 0 0 6px;
