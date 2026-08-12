@@ -54,3 +54,10 @@ docs/reviews/    점검 기록
 ---
 
 이 프로그램에 사용된 이미지는 생성형 이미지를 사용하여 제작되었습니다.
+
+## 배포
+
+`main` 브랜치에 푸시하면 Vercel 이 자동으로 프로덕션에 배포합니다.
+
+- 배포 주소: https://class-meeting-flow.vercel.app
+- 출력 디렉터리: `public/` (빌드 과정 없음)
