@@ -8,6 +8,11 @@
   const SNAPSHOT_KEY = "class-meeting-current-snapshot-v4";
   const SETTINGS_KEY = "class-meeting-settings-v4";
 
+  // 의견 보내기는 구글 폼으로만 받는다. mailto: 나 화면에 적은 메일 주소는
+  // 공개 사이트에 개인 메일이 그대로 노출돼 크롤러에 긁히고, 배포 뒤엔 회수할 수 없다.
+  // 폼 주소가 생기면 이 한 줄만 채우면 된다. 비어 있으면 버튼이 "준비 중"으로 잠긴다.
+  const FEEDBACK_FORM_URL = "";
+
   const asset = (folder, name) => `./assets/${folder}/${name}`;
 
   const ASSETS = {
@@ -2389,11 +2394,39 @@
               <p class="standards-note">자료를 읽을 때는 글이나 자료의 출처가 믿을 만한지도 함께 판단해요.</p>
             </div>
           </details>
-          <section class="legal-notice" aria-labelledby="legal-notice-title">
-            <strong id="legal-notice-title">생성형 콘텐츠 및 권리 고지</strong>
-            <p>이 프로그램은 생성형 AI로 제작한 이미지와 음원을 활용하여 만들어졌습니다.</p>
-            <span>해당 콘텐츠는 교육용 프로그램의 구성 요소로 제공됩니다. 프로그램에서 분리한 이미지·음원의 무단 복제, 재배포, 판매 및 상업적 이용을 금합니다.</span>
-          </section>
+          <details class="compact-details settings-details">
+            <summary>의견 보내기 · 정보 · 저작권</summary>
+            <div class="details-content settings-about">
+              <section class="about-block" aria-labelledby="about-feedback-title">
+                <h3 id="about-feedback-title">💬 의견 보내기</h3>
+                <p>고치면 좋을 점이나 교실에서 겪은 불편을 알려 주세요. 다음 버전에 반영해요.</p>
+                ${FEEDBACK_FORM_URL
+                  ? `<a class="btn primary about-feedback-link" href="${escapeAttr(FEEDBACK_FORM_URL)}" target="_blank" rel="noopener noreferrer">의견 보내기 (구글 폼)</a>`
+                  : `<button class="btn secondary" type="button" disabled>의견 보내기 (준비 중)</button>
+                     <span class="about-note">의견 받는 곳을 준비하고 있어요.</span>`}
+              </section>
+
+              <section class="about-block" aria-labelledby="about-info-title">
+                <h3 id="about-info-title">ℹ️ 정보</h3>
+                <dl class="about-list">
+                  <div><dt>프로그램</dt><dd>학급회의 시간 — 우리반 학급회의</dd></div>
+                  <div><dt>버전</dt><dd>${escapeHtml(APP_VERSION)}</dd></div>
+                  <div><dt>대상</dt><dd>초등학교 3~6학년 학급회의</dd></div>
+                  <div><dt>저장 방식</dt><dd>이 기기 브라우저에만 저장 (서버 전송 없음)</dd></div>
+                </dl>
+              </section>
+
+              <section class="about-block" aria-labelledby="about-license-title">
+                <h3 id="about-license-title">© 저작권</h3>
+                <dl class="about-list">
+                  <div><dt>이미지</dt><dd>생성형 AI로 제작</dd></div>
+                  <div><dt>효과음</dt><dd>Pixabay Content License<br /><small>floraphonic · steaq · Ranner · litupsubway · Meldix</small></dd></div>
+                  <div><dt>글꼴</dt><dd>Pretendard, Jua — SIL Open Font License 1.1</dd></div>
+                </dl>
+                <p class="about-note">프로그램에서 분리한 이미지·음원의 무단 복제, 재배포, 판매 및 상업적 이용을 금합니다. 글꼴은 각 라이선스를 따릅니다.</p>
+              </section>
+            </div>
+          </details>
           <button class="btn primary settings-confirm" type="button" data-action="close-settings">설정 닫기</button>
         </section>
       </div>

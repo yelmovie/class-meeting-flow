@@ -12259,3 +12259,83 @@ body.clock-expanded .app-page > .settings-chip {
   overflow: visible;
 }
 .report-share-card > .poster-print-open { min-height: 56px; }
+
+/* ============================================================
+   설정 — 의견 보내기 · 정보 · 저작권 (2026-08-12)
+   ============================================================ */
+/* 설정 모달은 이미 세로로 스크롤된다. 여기에 자체 스크롤을 또 주면
+   스크롤바가 두 겹으로 겹쳐 어디를 굴려야 할지 헷갈린다. 모달 스크롤에 맡긴다. */
+.guide-modal .compact-details > .details-content.settings-about,
+.settings-about {
+  display: grid;
+  gap: 14px 18px;
+  max-height: none;
+  overflow: visible;
+}
+
+/* 설정 모달은 가로가 넉넉하다. 한 줄로 쌓으면 343px 이 넘쳐 스크롤이 생겨서
+   의견·정보를 왼쪽, 저작권을 오른쪽에 놓아 세로를 절반으로 줄인다. */
+@media (min-width: 901px) and (orientation: landscape) {
+  .settings-about {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-content: start;
+  }
+  .settings-about > .about-block:nth-child(3) {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+.about-block > h3 {
+  margin: 0 0 6px;
+  color: var(--violet-text);
+  font-size: clamp(17px, 2.5cqh, 20px);
+}
+.about-block > p {
+  margin: 0 0 10px;
+  color: #45536b;
+  font-size: clamp(15px, 2.2cqh, 17px);
+  line-height: 1.45;
+}
+
+.about-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.about-list > div {
+  display: grid;
+  grid-template-columns: minmax(84px, auto) minmax(0, 1fr);
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--n-50);
+}
+.about-list dt {
+  color: #5f6d84;
+  font-size: clamp(14px, 2.1cqh, 16px);
+  font-weight: 780;
+}
+.about-list dd {
+  margin: 0;
+  color: #35405a;
+  font-size: clamp(15px, 2.2cqh, 17px);
+  font-weight: 650;
+  line-height: 1.4;
+}
+.about-list dd small {
+  color: #6b7a91;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.about-note {
+  display: block;
+  margin: 8px 0 0;
+  color: #6b7a91;
+  font-size: clamp(13px, 2cqh, 15px);
+  line-height: 1.45;
+}
+
+.about-feedback-link { text-decoration: none; }
